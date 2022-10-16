@@ -10,10 +10,10 @@ import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class HashAndEqualsAssistContributor extends Object
+class CopyWithAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
     implements AssistContributor {
-  HashAndEqualsAssistContributor(this.filePath);
+  CopyWithAssistContributor(this.filePath);
 
   final String filePath;
 
@@ -32,10 +32,10 @@ class HashAndEqualsAssistContributor extends Object
   ) async {
     assistRequest = request;
     this.collector = collector;
-    await _generateHashAndEquals();
+    await _generateCopyWith();
   }
 
-  Future<void> _generateHashAndEquals() async {
+  Future<void> _generateCopyWith() async {
     final ClassDeclaration? classNode = findClassDeclaration();
     if (classNode == null ||
         classNode.members.isEmpty ||
@@ -44,92 +44,65 @@ class HashAndEqualsAssistContributor extends Object
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? equalsSourceRange =
-        classNode.members.getSourceRangeForMethod('==');
-    final SourceRange? hashCodeSourceRange =
-        classNode.members.getSourceRangeForMethod('hashCode');
+    final SourceRange? copyWithSourceRange =
+        classNode.members.getSourceRangeForMethod('copyWith');
 
-    final List<FieldElement> finalFieldsElements = classElement.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic)
-        .toList(growable: false);
+    final List<FieldElement> finalFieldsElements =
+        classElement.fields.where((FieldElement field) {
+      return field.isFinal && field.isPublic && !field.hasInitializer;
+    }).toList(growable: false);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
-        void writerHashCode(DartEditBuilder builder) {
-          _writeHashCode(
-            finalFieldsElements: finalFieldsElements,
-            builder: builder,
-          );
-        }
-
-        if (hashCodeSourceRange != null) {
-          fileEditBuilder.addReplacement(hashCodeSourceRange, writerHashCode);
-        } else {
-          fileEditBuilder.addInsertion(
-              classNode.rightBracket.offset, writerHashCode);
-        }
-
-        void writerEquals(DartEditBuilder builder) {
-          _writeEquals(
-            finalFieldsElements: finalFieldsElements,
+        void writerCopyWith(DartEditBuilder builder) {
+          _writeCopyWith(
             className: classElement.name,
+            finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
 
-        if (equalsSourceRange != null) {
-          fileEditBuilder.addReplacement(equalsSourceRange, writerEquals);
+        if (copyWithSourceRange != null) {
+          fileEditBuilder.addReplacement(copyWithSourceRange, writerCopyWith);
         } else {
           fileEditBuilder.addInsertion(
-              classNode.rightBracket.offset, writerEquals);
+            classNode.rightBracket.offset,
+            writerCopyWith,
+          );
         }
 
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
       },
     );
 
-    addAssist(AvailableAssists.hashCodeAndEquals, changeBuilder);
+    addAssist(AvailableAssists.copyWith, changeBuilder);
   }
 
-  void _writeHashCode({
-    required final List<FieldElement> finalFieldsElements,
-    required final DartEditBuilder builder,
-  }) {
-    builder
-      ..writeln()
-      ..writeln('@override')
-      ..writeln('int get hashCode {')
-      ..writeln('return Object.hashAll([');
-
-    for (final FieldElement field in finalFieldsElements) {
-      builder.writeln('${field.name},');
-    }
-
-    builder
-      ..writeln(']);')
-      ..writeln('}');
-  }
-
-  void _writeEquals({
-    required final List<FieldElement> finalFieldsElements,
+  void _writeCopyWith({
     required final String className,
+    required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('@override')
-      ..writeln('bool operator ==(Object other) {')
-      // TODO(pantelis): should 'runtimeType' be checked instead of 'is'
-      ..writeln('return identical(this, other) || other is $className');
+      ..writeln('$className copyWith({');
 
     for (final FieldElement field in finalFieldsElements) {
-      builder.write(' && ${field.name} == other.${field.name}');
+      builder.writeln('final ${field.type.typeStringValue()}? ${field.name},');
     }
 
     builder
-      ..write(';')
+      ..writeln('}) {')
+      ..writeln('return $className(');
+
+    for (final FieldElement field in finalFieldsElements) {
+      builder.writeln('${field.name}: ${field.name} ?? this.${field.name},');
+    }
+
+    builder
+      ..writeln(');')
       ..writeln('}');
   }
 }
