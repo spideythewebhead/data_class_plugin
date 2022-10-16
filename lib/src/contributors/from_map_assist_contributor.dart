@@ -7,9 +7,9 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
+import 'package:data_class_plugin/src/annotations/map_key_internal.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
-import 'package:data_class_plugin/src/annotations/json_key.dart';
 
 class FromMapAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
@@ -98,13 +98,19 @@ class FromMapAssistContributor extends Object
       ..writeln('return ${classElement.name}(');
 
     for (final FieldElement field in finalFieldsElements) {
+      final ElementAnnotation? mapKeyAnnotation = field.metadata
+          .firstWhereOrNull(
+              (ElementAnnotation annotation) => annotation.isMapKeyAnnotation);
+      final MapKeyInternal mapKey = MapKeyInternal //
+          .fromDartObject(mapKeyAnnotation?.computeConstantValue());
+
+      if (mapKey.ignore) {
+        continue;
+      }
+
       final String fieldName = field.name;
       final DartType fieldType = field.type;
-      final ElementAnnotation? jsonAnnotation = field.metadata.firstWhereOrNull(
-          (ElementAnnotation annotation) => annotation.isJsonKey);
-      final JsonKey jsonKey =
-          JsonKey.fromDartObject(jsonAnnotation?.computeConstantValue());
-      final String jsonFieldName = "map['${jsonKey.name ?? fieldName}']";
+      final String mapFieldName = "map['${mapKey.name ?? fieldName}']";
       final ConstructorElement? defaultConstructor = classElement.constructors
           .firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
       final String? defaultValueString = defaultConstructor?.parameters
@@ -113,10 +119,21 @@ class FromMapAssistContributor extends Object
 
       builder.write('$fieldName: ');
 
+      if (mapKey.fromJson != null) {
+        _parseWithCustomMethod(
+          builder: builder,
+          parentVariableName: 'map',
+          parsingMethodName: mapKey.fromJson!.fullyQualifiedName(
+            enclosingImports: classElement.library.libraryImports,
+          ),
+        );
+        continue;
+      }
+
       _decideNextParsingMethodBasedOnType(
         nextType: fieldType,
         builder: builder,
-        parentVariableName: jsonFieldName,
+        parentVariableName: mapFieldName,
         depthIndex: 0,
         defaultValue: defaultValueString,
       );
@@ -142,8 +159,8 @@ class FromMapAssistContributor extends Object
       return;
     }
 
-    if (type.isDateTime) {
-      builder.writeln('DateTime.parse($parentVariableName as String),');
+    if (type.isUri) {
+      builder.writeln('Uri.parse($parentVariableName as String),');
       return;
     }
 
@@ -208,8 +225,16 @@ class FromMapAssistContributor extends Object
     builder.writeln('}');
   }
 
+  void _parseWithCustomMethod({
+    required final DartEditBuilder builder,
+    required final String parentVariableName,
+    required final String parsingMethodName,
+  }) {
+    builder.write('$parsingMethodName($parentVariableName),');
+  }
+
   void _decideNextParsingMethodBasedOnType({
-    final DartType? nextType,
+    required final DartType? nextType,
     required final DartEditBuilder builder,
     required final int depthIndex,
     required final String parentVariableName,
