@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
+import 'package:data_class_plugin/src/annotations/map_key.dart';
 
 extension DartTypeX on DartType {
   bool get isNullable {
@@ -22,6 +23,10 @@ extension DartTypeX on DartType {
     return element2!.name == 'DateTime';
   }
 
+  bool get isUri {
+    return element2!.name == 'Uri';
+  }
+
   bool get isJsonSupported {
     return isPrimary ||
         isDateTime ||
@@ -34,8 +39,8 @@ extension DartTypeX on DartType {
 }
 
 extension ElementAnnotationX on ElementAnnotation {
-  bool get isJsonKey {
-    return element?.displayName == 'JsonKey';
+  bool get isMapKeyAnnotation {
+    return element?.displayName == '$MapKey';
   }
 }
 
@@ -46,6 +51,27 @@ extension ListX<T> on List<T> {
     } catch (_) {
       return null;
     }
+  }
+}
+
+extension ExecutableElementX<T> on ExecutableElement {
+  String fullyQualifiedName({
+    required List<LibraryImportElement> enclosingImports,
+  }) {
+    String qualifiedName = name;
+
+    if (enclosingElement3.nameLength > 0) {
+      qualifiedName = '${enclosingElement3.name!}.$qualifiedName';
+    }
+
+    for (final LibraryImportElement import in enclosingImports) {
+      if (import.prefix != null && import.importedLibrary?.id == library.id) {
+        qualifiedName = '${import.prefix!.element.name}.$qualifiedName';
+        break;
+      }
+    }
+
+    return qualifiedName;
   }
 }
 

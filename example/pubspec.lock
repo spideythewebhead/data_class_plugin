@@ -79,7 +79,7 @@ packages:
     source: hosted
     version: "2.2.4"
   data_class_plugin:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: ".."
       relative: true
