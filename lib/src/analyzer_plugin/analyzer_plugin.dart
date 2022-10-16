@@ -6,6 +6,7 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:data_class_plugin/src/contributors/from_map_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/hash_and_equals_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/to_map_assist_contributor.dart';
+import 'package:data_class_plugin/src/contributors/copy_with_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/to_string_assist_contributor.dart';
 
 class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
@@ -29,10 +30,12 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
 
   @override
   List<AssistContributor> getAssistContributors(String path) {
+    // Add the assists based on the order you want them to be displayed
     return <AssistContributor>[
-      HashAndEqualsAssistContributor(path),
       FromMapAssistContributor(path),
       ToMapAssistContributor(path),
+      CopyWithAssistContributor(path),
+      HashAndEqualsAssistContributor(path),
       ToStringAssistContributor(path),
     ];
   }

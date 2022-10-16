@@ -36,6 +36,33 @@ extension DartTypeX on DartType {
         !isDartCoreFunction ||
         alias == null;
   }
+
+  String typeStringValue() {
+    final StringBuffer buffer = StringBuffer();
+
+    void visit(DartType type) {
+      if (type is InterfaceType && type.typeArguments.isNotEmpty) {
+        buffer
+          ..write(type.element2.name)
+          ..write('<');
+
+        for (final DartType typeArg in type.typeArguments) {
+          visit(typeArg);
+          if (typeArg != type.typeArguments.last) {
+            buffer.write(',');
+          }
+        }
+
+        buffer.write('>');
+        return;
+      }
+
+      buffer.write(type.element2!.name);
+    }
+
+    visit(this);
+    return buffer.toString();
+  }
 }
 
 extension ElementAnnotationX on ElementAnnotation {

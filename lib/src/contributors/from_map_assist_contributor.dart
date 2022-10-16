@@ -8,6 +8,7 @@ import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/map_key_internal.dart';
+import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
@@ -15,8 +16,6 @@ class FromMapAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
     implements AssistContributor {
   FromMapAssistContributor(this.filePath);
-
-  static AssistKind assist = AssistKind('fromMap', 1000, "Generate 'fromMap'");
 
   final String filePath;
 
@@ -83,7 +82,7 @@ class FromMapAssistContributor extends Object
       },
     );
 
-    addAssist(assist, changeBuilder);
+    addAssist(AvailableAssists.fromMap, changeBuilder);
   }
 
   void _writeFromMap({
