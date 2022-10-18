@@ -101,7 +101,7 @@ class HashAndEqualsAssistContributor extends Object
       ..writeln()
       ..writeln('@override')
       ..writeln('int get hashCode {')
-      ..writeln('return Object.hashAll([');
+      ..writeln('return Object.hashAll(<Object?>[');
 
     for (final FieldElement field in finalFieldsElements) {
       builder.writeln('${field.name},');
@@ -121,11 +121,16 @@ class HashAndEqualsAssistContributor extends Object
       ..writeln()
       ..writeln('@override')
       ..writeln('bool operator ==(Object other) {')
-      // TODO(pantelis): should 'runtimeType' be checked instead of 'is'
       ..writeln('return identical(this, other) || other is $className');
 
     for (final FieldElement field in finalFieldsElements) {
-      builder.write(' && ${field.name} == other.${field.name}');
+      if (field.type.isDartCoreList ||
+          field.type.isDartCoreMap ||
+          field.type.isDartCoreSet) {
+        builder.write(' && deepEquality(${field.name}, other.${field.name})');
+      } else {
+        builder.write(' && ${field.name} == other.${field.name}');
+      }
     }
 
     builder
