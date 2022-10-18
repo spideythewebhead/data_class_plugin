@@ -1,4 +1,4 @@
-import 'package:data_class_plugin/public/data_class.dart';
+import 'package:data_class_plugin/public/annotations.dart';
 
 const String _appId = 'app_id';
 

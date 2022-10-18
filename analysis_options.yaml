@@ -8,3 +8,5 @@ linter:
   rules:
     - always_specify_types
     - always_use_package_imports
+    - prefer_const_constructors
+    - prefer_const_declarations
