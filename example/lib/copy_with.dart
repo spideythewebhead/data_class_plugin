@@ -7,7 +7,7 @@ class User {
 
   final String id;
   final String username;
-  final List<int> permissions;
+  final List<int>? permissions;
 
   User copyWith({
     final String? id,

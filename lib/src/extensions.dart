@@ -58,6 +58,9 @@ extension DartTypeX on DartType {
       }
 
       buffer.write(type.element2!.name);
+      if (type.isNullable) {
+        buffer.write('?');
+      }
     }
 
     visit(this);
