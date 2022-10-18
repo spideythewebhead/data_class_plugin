@@ -8,9 +8,9 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
 
 ### How to install
 
-1. In your project's pubspec.yaml add on `dev_dependencies` the following
+1. In your project's pubspec.yaml add on `dependencies` the following
    ```yaml
-   dev_dependencies:
+   dependencies:
      data_class_plugin: 0.0.1
    ```
 1. Update your `analysis_options.yaml` (in case you don't have one, just create)
