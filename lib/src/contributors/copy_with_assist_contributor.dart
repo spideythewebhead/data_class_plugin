@@ -90,7 +90,10 @@ class CopyWithAssistContributor extends Object
       ..writeln('$className copyWith({');
 
     for (final FieldElement field in finalFieldsElements) {
-      builder.writeln('final ${field.type.typeStringValue()}? ${field.name},');
+      final String typeStringValue = field.type.typeStringValue();
+      final bool isNullable = typeStringValue.endsWith('?');
+      builder.writeln(
+          'final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
     }
 
     builder
