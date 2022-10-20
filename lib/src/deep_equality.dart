@@ -21,7 +21,7 @@ bool deepEquality(dynamic a, dynamic b) {
     }
 
     for (final String key in a.keys) {
-      if (!deepEquality(a[key], b[key])) {
+      if (!b.containsKey(key) || !deepEquality(a[key], b[key])) {
         return false;
       }
     }

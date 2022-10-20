@@ -130,6 +130,16 @@ void main() {
           equals(true),
         );
       });
+
+      test('have missing key', () {
+        expect(
+          deepEquality(
+            <String, int>{'a': 1, 'b': 3, 'c': 2},
+            <String, int>{'c': 2, 'b': 3, 'd': 1},
+          ),
+          equals(false),
+        );
+      });
     });
 
     group('sets -', () {
