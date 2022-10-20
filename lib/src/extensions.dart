@@ -106,7 +106,7 @@ extension ExecutableElementX<T> on ExecutableElement {
 }
 
 extension NodeListX on NodeList<ClassMember> {
-  SourceRange? getSourceRangeForFactory(String name) {
+  SourceRange? getSourceRangeForConstructor(String? name) {
     for (final ClassMember node in this) {
       if (node is ConstructorDeclaration && node.name?.lexeme == name) {
         return SourceRange(node.offset, node.length);

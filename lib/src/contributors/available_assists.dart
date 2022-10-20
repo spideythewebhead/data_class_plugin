@@ -6,6 +6,12 @@ int _nextId() {
 }
 
 abstract class AvailableAssists {
+  static AssistKind constructorWithNamedParameters = AssistKind(
+    'constructorWithNamedParameters',
+    _nextId(),
+    'Generate constructor with named parameters',
+  );
+
   static AssistKind fromMap =
       AssistKind('fromMap', _nextId(), "Generate 'fromMap'");
 
