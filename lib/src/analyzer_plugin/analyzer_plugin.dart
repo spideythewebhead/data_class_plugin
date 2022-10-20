@@ -3,6 +3,7 @@ import 'package:analyzer/file_system/file_system.dart' as analyzer;
 import 'package:analyzer_plugin/plugin/assist_mixin.dart';
 import 'package:analyzer_plugin/plugin/plugin.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
+import 'package:data_class_plugin/src/contributors/constructor_with_named_parameters_contributor.dart';
 import 'package:data_class_plugin/src/contributors/from_map_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/hash_and_equals_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/to_map_assist_contributor.dart';
@@ -32,6 +33,7 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
   List<AssistContributor> getAssistContributors(String path) {
     // Add the assists based on the order you want them to be displayed
     return <AssistContributor>[
+      ConstructorWithNamedParametersAssistContributor(path),
       FromMapAssistContributor(path),
       ToMapAssistContributor(path),
       CopyWithAssistContributor(path),

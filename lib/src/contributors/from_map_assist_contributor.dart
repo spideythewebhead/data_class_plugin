@@ -47,7 +47,7 @@ class FromMapAssistContributor extends Object
 
     final ClassElement classElement = classNode.declaredElement!;
     final SourceRange? fromMapSourceRange =
-        classNode.members.getSourceRangeForFactory('fromMap');
+        classNode.members.getSourceRangeForConstructor('fromMap');
 
     final List<FieldElement> finalFieldsElements =
         classElement.fields.where((FieldElement field) {
