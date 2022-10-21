@@ -4,16 +4,16 @@ import 'package:analyzer/dart/element/element.dart';
 class MapKeyInternal {
   const MapKeyInternal({
     this.name,
-    this.fromJson,
-    this.toJson,
+    this.fromMap,
+    this.toMap,
     this.ignore = false,
     this.readValue,
     this.unknownEnumValue,
   });
 
   final String? name;
-  final ExecutableElement? fromJson;
-  final ExecutableElement? toJson;
+  final ExecutableElement? fromMap;
+  final ExecutableElement? toMap;
   final bool ignore;
   final ExecutableElement? readValue;
   final String? unknownEnumValue;
@@ -24,8 +24,8 @@ class MapKeyInternal {
     }
     return MapKeyInternal(
       name: object.getField('name')?.toStringValue(),
-      fromJson: object.getField('fromMap')?.toFunctionValue(),
-      toJson: object.getField('toMap')?.toFunctionValue(),
+      fromMap: object.getField('fromMap')?.toFunctionValue(),
+      toMap: object.getField('toMap')?.toFunctionValue(),
       ignore: object.getField('ignore')?.toBoolValue() ?? false,
       readValue: object.getField('readValue')?.toFunctionValue(),
       // unknownEnumValue:
@@ -36,8 +36,8 @@ class MapKeyInternal {
   String toString() {
     return """MapKeyInternal(
 <name= $name>,
-<fromJson= $fromJson>,
-<toJson= $toJson>,
+<fromMap= $fromMap>,
+<toMap= $toMap>,
 <ignore= $ignore>,
 <readValue= $readValue>,
 <unknownEnumValue= $unknownEnumValue>,

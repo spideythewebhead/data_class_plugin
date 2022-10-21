@@ -118,11 +118,11 @@ class FromMapAssistContributor extends Object
 
       builder.write('$fieldName: ');
 
-      if (mapKey.fromJson != null) {
+      if (mapKey.fromMap != null) {
         _parseWithCustomMethod(
           builder: builder,
           parentVariableName: 'map',
-          parsingMethodName: mapKey.fromJson!.fullyQualifiedName(
+          parsingMethodName: mapKey.fromMap!.fullyQualifiedName(
             enclosingImports: classElement.library.libraryImports,
           ),
         );

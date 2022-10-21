@@ -54,6 +54,10 @@ extension DartTypeX on DartType {
         }
 
         buffer.write('>');
+
+        if (type.isNullable) {
+          buffer.write('?');
+        }
         return;
       }
 
