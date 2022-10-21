@@ -1,5 +1,5 @@
 typedef FromMapConverter = dynamic Function(Map<String, dynamic> map);
-typedef ToMapConverter = dynamic Function(Object? value);
+typedef ToMapConverter = dynamic Function(dynamic value);
 
 class MapKey {
   const MapKey({
