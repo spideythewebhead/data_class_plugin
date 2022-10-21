@@ -65,11 +65,13 @@ packages:
     source: hosted
     version: "2.2.4"
   data_class_plugin:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
-      path: "/home/paradox11/projects/data_class_plugin"
-      relative: false
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "1c24a1ea578e558126edd466ab84af449f5e407e"
+      url: "https://github.com/spideythewebhead/dart_data_class_plugin.git"
+    source: git
     version: "0.0.1"
   file:
     dependency: transitive

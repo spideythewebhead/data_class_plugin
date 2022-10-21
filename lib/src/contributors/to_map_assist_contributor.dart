@@ -187,18 +187,31 @@ class ToMapAssistContributor extends Object
       return;
     }
 
-    final String nullableAnnotationPlaceholder = type.isNullable ? '?' : '';
+    final String? fieldType = type.element2!.name;
 
-    if (type.isUri) {
-      builder.writeln('$parentVariableName'
-          '$nullableAnnotationPlaceholder'
-          '.toString(),');
-      return;
+    if (type.element2 is ClassElement) {
+      final ClassElement classElement = type.element2 as ClassElement;
+      final String? convertMethod = <String>[
+        ...classElement.methods.map((MethodElement method) => method.name),
+        ...classElement.constructors.map((ConstructorElement ctor) => ctor.name)
+      ].firstWhereOrNull((String name) {
+        switch (name) {
+          case 'toMap':
+          case 'toJson':
+            return true;
+          default:
+            return false;
+        }
+      });
+
+      if (convertMethod != null) {
+        builder.writeln('$parentVariableName.$convertMethod(),');
+        return;
+      }
     }
 
-    builder.writeln('$parentVariableName'
-        '$nullableAnnotationPlaceholder'
-        '.toMap(),');
+    builder.write(
+        'typeConverterRegistrant.find($fieldType).toMap($parentVariableName),');
   }
 
   void _writeList({

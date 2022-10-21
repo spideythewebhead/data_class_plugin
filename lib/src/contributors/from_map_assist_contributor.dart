@@ -119,13 +119,11 @@ class FromMapAssistContributor extends Object
       builder.write('$fieldName: ');
 
       if (mapKey.fromMap != null) {
-        _parseWithCustomMethod(
-          builder: builder,
-          parentVariableName: 'map',
-          parsingMethodName: mapKey.fromMap!.fullyQualifiedName(
+        builder
+          ..write(mapKey.fromMap!.fullyQualifiedName(
             enclosingImports: classElement.library.libraryImports,
-          ),
-        );
+          ))
+          ..write('(map),');
         continue;
       }
 
@@ -143,27 +141,65 @@ class FromMapAssistContributor extends Object
       ..writeln('}');
   }
 
-  void _parsePrimary({
+  void _decideNextParsingMethodBasedOnType({
+    required final DartType? nextType,
     required final DartEditBuilder builder,
-    required final DartType type,
+    required final int depthIndex,
     required final String parentVariableName,
+    final String? defaultValue,
   }) {
-    if (type.isDynamic) {
-      builder.writeln('$parentVariableName,');
+    if (nextType == null) {
       return;
     }
 
-    if (type.isPrimary) {
-      builder.writeln('$parentVariableName as ${type.element2!.name},');
+    if (nextType.isDartCoreList) {
+      if (nextType.isNullable || defaultValue != null) {
+        _writeNullableParsingPrefix(
+          builder: builder,
+          parentVariableName: parentVariableName,
+          defaultValue: defaultValue,
+        );
+      }
+      _parseList(
+        builder: builder,
+        type: nextType as ParameterizedType,
+        parentVariableName: parentVariableName,
+        depthIndex: depthIndex,
+      );
+      builder.writeln(',');
       return;
     }
 
-    if (type.isUri) {
-      builder.writeln('Uri.parse($parentVariableName as String),');
+    if (nextType.isDartCoreMap) {
+      if (nextType.isNullable || defaultValue != null) {
+        _writeNullableParsingPrefix(
+          builder: builder,
+          parentVariableName: parentVariableName,
+          defaultValue: defaultValue,
+        );
+      }
+      _parseMap(
+        builder: builder,
+        type: nextType as ParameterizedType,
+        parentVariableName: parentVariableName,
+        depthIndex: depthIndex,
+      );
+      builder.writeln(',');
       return;
     }
 
-    builder.writeln('${type.element2!.name}.fromMap($parentVariableName),');
+    if (defaultValue != null) {
+      _writeNullableParsingPrefix(
+        builder: builder,
+        parentVariableName: parentVariableName,
+        defaultValue: defaultValue,
+      );
+    }
+    _parsePrimary(
+      builder: builder,
+      type: nextType,
+      parentVariableName: parentVariableName,
+    );
   }
 
   void _writeNullableParsingPrefix({
@@ -174,20 +210,63 @@ class FromMapAssistContributor extends Object
     builder.write('$parentVariableName == null ? $defaultValue : ');
   }
 
+  void _parsePrimary({
+    required final DartEditBuilder builder,
+    required final DartType type,
+    required final String parentVariableName,
+  }) {
+    final String? fieldType = type.element2!.name;
+
+    if (type.isDynamic) {
+      builder.writeln('$parentVariableName,');
+      return;
+    }
+
+    if (type.isPrimary) {
+      builder.writeln('$parentVariableName as $fieldType,');
+      return;
+    }
+
+    if (type.element2 is ClassElement) {
+      final ClassElement classElement = type.element2 as ClassElement;
+      final String? convertMethod = <String>[
+        ...classElement.methods.map((MethodElement method) => method.name),
+        ...classElement.constructors.map((ConstructorElement ctor) => ctor.name)
+      ].firstWhereOrNull((String name) {
+        switch (name) {
+          case 'fromMap':
+          case 'fromJson':
+            return true;
+          default:
+            return false;
+        }
+      });
+
+      if (convertMethod != null) {
+        builder.writeln('$fieldType.$convertMethod($parentVariableName),');
+        return;
+      }
+    }
+
+    builder.write(
+        'typeConverterRegistrant.find($fieldType).fromMap($parentVariableName) '
+        'as $fieldType,');
+  }
+
   void _parseList({
     required final DartEditBuilder builder,
     required final ParameterizedType type,
     required final String parentVariableName,
     required final int depthIndex,
   }) {
-    builder.write('[');
+    builder.write('<${type.typeArguments[0].typeStringValue()}>[');
 
     final String loopVariableName = 'i$depthIndex';
     builder.writeln(
         'for (final dynamic $loopVariableName in ($parentVariableName as ${type.element2!.name}<dynamic>))');
 
     _decideNextParsingMethodBasedOnType(
-      nextType: type.typeArguments.first,
+      nextType: type.typeArguments[0],
       builder: builder,
       parentVariableName: loopVariableName,
       depthIndex: 1 + depthIndex,
@@ -206,7 +285,7 @@ class FromMapAssistContributor extends Object
       return;
     }
 
-    builder.write('<String, ${type.typeArguments[1].element2!.name}>{');
+    builder.write('<String, ${type.typeArguments[1].typeStringValue()}>{');
 
     final String loopVariableName = 'e$depthIndex';
     builder
@@ -222,61 +301,5 @@ class FromMapAssistContributor extends Object
     );
 
     builder.writeln('}');
-  }
-
-  void _parseWithCustomMethod({
-    required final DartEditBuilder builder,
-    required final String parentVariableName,
-    required final String parsingMethodName,
-  }) {
-    builder.write('$parsingMethodName($parentVariableName),');
-  }
-
-  void _decideNextParsingMethodBasedOnType({
-    required final DartType? nextType,
-    required final DartEditBuilder builder,
-    required final int depthIndex,
-    required final String parentVariableName,
-    final String? defaultValue,
-  }) {
-    if (nextType == null) {
-      return;
-    }
-
-    if (nextType.isNullable || defaultValue != null) {
-      _writeNullableParsingPrefix(
-        builder: builder,
-        parentVariableName: parentVariableName,
-        defaultValue: defaultValue,
-      );
-    }
-
-    if (nextType.isDartCoreList) {
-      _parseList(
-        builder: builder,
-        type: nextType as ParameterizedType,
-        parentVariableName: parentVariableName,
-        depthIndex: depthIndex,
-      );
-      builder.writeln(',');
-      return;
-    }
-
-    if (nextType.isDartCoreMap) {
-      _parseMap(
-        builder: builder,
-        type: nextType as ParameterizedType,
-        parentVariableName: parentVariableName,
-        depthIndex: depthIndex,
-      );
-      builder.writeln(',');
-      return;
-    }
-
-    _parsePrimary(
-      builder: builder,
-      type: nextType,
-      parentVariableName: parentVariableName,
-    );
   }
 }
