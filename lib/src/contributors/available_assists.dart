@@ -1,28 +1,23 @@
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 
-int _id = 1000;
-int _nextId() {
-  return _id--;
-}
-
 abstract class AvailableAssists {
-  static AssistKind constructorWithNamedParameters = AssistKind(
-    'constructorWithNamedParameters',
-    _nextId(),
-    'Generate constructor with named parameters',
+  static const AssistKind shorthandConstructor = AssistKind(
+    'shorthandConstructor',
+    1000,
+    'Generate shorthand constructor',
   );
 
-  static AssistKind fromMap =
-      AssistKind('fromMap', _nextId(), "Generate 'fromMap'");
+  static const AssistKind fromMap =
+      AssistKind('fromMap', 999, "Generate 'fromMap'");
 
-  static AssistKind toMap = AssistKind('toMap', _nextId(), "Generate 'toMap'");
+  static const AssistKind toMap = AssistKind('toMap', 999, "Generate 'toMap'");
 
-  static AssistKind copyWith =
-      AssistKind('copyWith', _nextId(), "Generate 'copyWith'");
+  static const AssistKind copyWith =
+      AssistKind('copyWith', 998, "Generate 'copyWith'");
 
-  static AssistKind hashCodeAndEquals = AssistKind(
-      'hashCodeAndEquals', _nextId(), "Generate 'hashCode' and 'equals'");
+  static const AssistKind hashCodeAndEquals =
+      AssistKind('hashCodeAndEquals', 997, "Generate 'hashCode' and 'equals'");
 
-  static AssistKind toString2 =
-      AssistKind('toString', _nextId(), "Generate 'toString'");
+  static const AssistKind toString2 =
+      AssistKind('toString', 996, "Generate 'toString'");
 }
