@@ -10,10 +10,10 @@ import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class ConstructorWithNamedParametersAssistContributor extends Object
+class ShorthandConstructorAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
     implements AssistContributor {
-  ConstructorWithNamedParametersAssistContributor(this.filePath);
+  ShorthandConstructorAssistContributor(this.filePath);
 
   final String filePath;
 
@@ -80,7 +80,7 @@ class ConstructorWithNamedParametersAssistContributor extends Object
       },
     );
 
-    addAssist(AvailableAssists.constructorWithNamedParameters, changeBuilder);
+    addAssist(AvailableAssists.shorthandConstructor, changeBuilder);
   }
 
   void _writeConstructor({
