@@ -15,7 +15,7 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
       : super(resourceProvider: provider);
 
   @override
-  List<String> get fileGlobsToAnalyze => <String>['**/*.dart'];
+  List<String> get fileGlobsToAnalyze => const <String>['*.dart'];
 
   @override
   String get name => 'data_class_plugin';
