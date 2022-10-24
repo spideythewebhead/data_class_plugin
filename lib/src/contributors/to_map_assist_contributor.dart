@@ -88,6 +88,7 @@ class ToMapAssistContributor extends Object
   }) {
     builder
       ..writeln()
+      ..writeln('/// Converts [this] to a [Map]')
       ..writeln('Map<String, dynamic> toMap() {')
       ..writeln('return <String, dynamic>{');
 

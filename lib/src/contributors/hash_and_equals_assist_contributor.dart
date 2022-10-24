@@ -99,6 +99,7 @@ class HashAndEqualsAssistContributor extends Object
   }) {
     builder
       ..writeln()
+      ..writeln('/// Returns a hash code based on [this] properties')
       ..writeln('@override')
       ..writeln('int get hashCode {')
       ..writeln('return Object.hashAll(<Object?>[');
@@ -119,6 +120,9 @@ class HashAndEqualsAssistContributor extends Object
   }) {
     builder
       ..writeln()
+      ..writeln(
+          '/// Compares [this] with [other] on identity, class type, and properties')
+      ..writeln('/// *with deep comparison on collections*')
       ..writeln('@override')
       ..writeln('bool operator ==(Object other) {')
       ..writeln('return identical(this, other) || other is $className');

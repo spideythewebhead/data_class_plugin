@@ -87,6 +87,7 @@ class CopyWithAssistContributor extends Object
   }) {
     builder
       ..writeln()
+      ..writeln('/// Creates a new instance of [this] with optional new values')
       ..writeln('$className copyWith({');
 
     for (final FieldElement field in finalFieldsElements) {
