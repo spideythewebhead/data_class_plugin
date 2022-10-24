@@ -86,6 +86,7 @@ class ToStringAssistContributor extends Object
   }) {
     builder
       ..writeln()
+      ..writeln('/// Returns a string with the properties of [this]')
       ..writeln('@override')
       ..writeln('String toString() {')
       ..writeln('return """$className(');

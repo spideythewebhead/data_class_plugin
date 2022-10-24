@@ -94,6 +94,7 @@ class ShorthandConstructorAssistContributor extends Object
 
     builder
       ..writeln()
+      ..writeln('/// Shorthand constructor')
       ..writeln('${isConstructor ? 'const' : ''} ${classElement.name}({');
 
     for (final FieldElement field in finalFieldsElements) {

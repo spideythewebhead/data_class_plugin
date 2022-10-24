@@ -92,6 +92,7 @@ class FromMapAssistContributor extends Object
   }) {
     builder
       ..writeln()
+      ..writeln('/// Creates an instance of [${classElement.name}] from [map]')
       ..writeln(
           'factory ${classElement.name}.fromMap(Map<String, dynamic> map) {')
       ..writeln('return ${classElement.name}(');
