@@ -4,15 +4,14 @@ import 'package:analyzer_plugin/plugin/assist_mixin.dart';
 import 'package:analyzer_plugin/plugin/plugin.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:data_class_plugin/src/contributors/shorthand_constructor.dart';
-import 'package:data_class_plugin/src/contributors/from_map_assist_contributor.dart';
+import 'package:data_class_plugin/src/contributors/from_json_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/hash_and_equals_assist_contributor.dart';
-import 'package:data_class_plugin/src/contributors/to_map_assist_contributor.dart';
+import 'package:data_class_plugin/src/contributors/to_json_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/copy_with_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/to_string_assist_contributor.dart';
 
 class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
-  DataClassPlugin(analyzer.ResourceProvider provider)
-      : super(resourceProvider: provider);
+  DataClassPlugin(analyzer.ResourceProvider provider) : super(resourceProvider: provider);
 
   @override
   List<String> get fileGlobsToAnalyze => const <String>['*.dart'];
@@ -33,8 +32,8 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
   List<AssistContributor> getAssistContributors(String path) {
     return <AssistContributor>[
       ShorthandConstructorAssistContributor(path),
-      FromMapAssistContributor(path),
-      ToMapAssistContributor(path),
+      FromJsonAssistContributor(path),
+      ToJsonAssistContributor(path),
       CopyWithAssistContributor(path),
       HashAndEqualsAssistContributor(path),
       ToStringAssistContributor(path),

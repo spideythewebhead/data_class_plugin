@@ -7,15 +7,15 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
-import 'package:data_class_plugin/src/annotations/map_key_internal.dart';
+import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class FromMapAssistContributor extends Object
+class FromJsonAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
     implements AssistContributor {
-  FromMapAssistContributor(this.filePath);
+  FromJsonAssistContributor(this.filePath);
 
   final String filePath;
 
@@ -34,47 +34,41 @@ class FromMapAssistContributor extends Object
   ) async {
     assistRequest = request;
     this.collector = collector;
-    await _generateFromMap();
+    await _generateFromJson();
   }
 
-  Future<void> _generateFromMap() async {
+  Future<void> _generateFromJson() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null ||
-        classNode.members.isEmpty ||
-        classNode.declaredElement == null) {
+    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? fromMapSourceRange =
-        classNode.members.getSourceRangeForConstructor('fromMap');
+    final SourceRange? fromJsonSourceRange =
+        classNode.members.getSourceRangeForConstructor('fromJson');
 
-    final List<FieldElement> finalFieldsElements =
-        classElement.fields.where((FieldElement field) {
-      return field.isFinal &&
-          field.isPublic &&
-          !field.hasInitializer &&
-          field.type.isJsonSupported;
+    final List<FieldElement> finalFieldsElements = classElement.fields.where((FieldElement field) {
+      return field.isFinal && field.isPublic && !field.hasInitializer && field.type.isJsonSupported;
     }).toList(growable: false);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
-        void writerFromMap(DartEditBuilder builder) {
-          _writeFromMap(
+        void writerFromJson(DartEditBuilder builder) {
+          _writeFromJson(
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
 
-        if (fromMapSourceRange != null) {
-          fileEditBuilder.addReplacement(fromMapSourceRange, writerFromMap);
+        if (fromJsonSourceRange != null) {
+          fileEditBuilder.addReplacement(fromJsonSourceRange, writerFromJson);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerFromMap,
+            writerFromJson,
           );
         }
 
@@ -82,35 +76,33 @@ class FromMapAssistContributor extends Object
       },
     );
 
-    addAssist(AvailableAssists.fromMap, changeBuilder);
+    addAssist(AvailableAssists.fromJson, changeBuilder);
   }
 
-  void _writeFromMap({
+  void _writeFromJson({
     required final ClassElement classElement,
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Creates an instance of [${classElement.name}] from [map]')
-      ..writeln(
-          'factory ${classElement.name}.fromMap(Map<String, dynamic> map) {')
+      ..writeln('/// Creates an instance of [${classElement.name}] from [json]')
+      ..writeln('factory ${classElement.name}.fromJson(Map<String, dynamic> json) {')
       ..writeln('return ${classElement.name}(');
 
     for (final FieldElement field in finalFieldsElements) {
-      final ElementAnnotation? mapKeyAnnotation = field.metadata
-          .firstWhereOrNull(
-              (ElementAnnotation annotation) => annotation.isMapKeyAnnotation);
-      final MapKeyInternal mapKey = MapKeyInternal //
-          .fromDartObject(mapKeyAnnotation?.computeConstantValue());
+      final ElementAnnotation? jsonKeyAnnotation = field.metadata
+          .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
+      final JsonKeyInternal jsonKey = JsonKeyInternal //
+          .fromDartObject(jsonKeyAnnotation?.computeConstantValue());
 
-      if (mapKey.ignore) {
+      if (jsonKey.ignore) {
         continue;
       }
 
       final String fieldName = field.name;
       final DartType fieldType = field.type;
-      final String mapFieldName = "map['${mapKey.name ?? fieldName}']";
+      final String jsonFieldName = "json['${jsonKey.name ?? fieldName}']";
       final ConstructorElement? defaultConstructor = classElement.constructors
           .firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
       final String? defaultValueString = defaultConstructor?.parameters
@@ -119,19 +111,19 @@ class FromMapAssistContributor extends Object
 
       builder.write('$fieldName: ');
 
-      if (mapKey.fromMap != null) {
+      if (jsonKey.fromJson != null) {
         builder
-          ..write(mapKey.fromMap!.fullyQualifiedName(
+          ..write(jsonKey.fromJson!.fullyQualifiedName(
             enclosingImports: classElement.library.libraryImports,
           ))
-          ..write('(map),');
+          ..write('(json),');
         continue;
       }
 
       _decideNextParsingMethodBasedOnType(
         nextType: fieldType,
         builder: builder,
-        parentVariableName: mapFieldName,
+        parentVariableName: jsonFieldName,
         depthIndex: 0,
         defaultValue: defaultValueString,
       );
@@ -189,13 +181,14 @@ class FromMapAssistContributor extends Object
       return;
     }
 
-    if (defaultValue != null) {
+    if (nextType.isNullable || defaultValue != null) {
       _writeNullableParsingPrefix(
         builder: builder,
         parentVariableName: parentVariableName,
         defaultValue: defaultValue,
       );
     }
+
     _parsePrimary(
       builder: builder,
       type: nextType,
@@ -249,8 +242,7 @@ class FromMapAssistContributor extends Object
       }
     }
 
-    builder.write(
-        'typeConverterRegistrant.find($fieldType).fromMap($parentVariableName) '
+    builder.write('jsonConverterRegistrant.find($fieldType).fromJson($parentVariableName) '
         'as $fieldType,');
   }
 

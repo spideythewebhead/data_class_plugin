@@ -65,7 +65,6 @@ class Point {
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is Point && x == other.x && y == other.y;
+    return identical(this, other) || other is Point && x == other.x && y == other.y;
   }
 }

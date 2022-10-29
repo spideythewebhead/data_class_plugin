@@ -1,1 +1,1 @@
-export '../src/annotations/map_key.dart';
+export '../src/annotations/json_key.dart';

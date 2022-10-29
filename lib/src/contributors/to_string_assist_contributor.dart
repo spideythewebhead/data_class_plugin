@@ -37,15 +37,12 @@ class ToStringAssistContributor extends Object
 
   Future<void> _generateToString() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null ||
-        classNode.members.isEmpty ||
-        classNode.declaredElement == null) {
+    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? toStringSourceRange =
-        classNode.members.getSourceRangeForMethod('toString');
+    final SourceRange? toStringSourceRange = classNode.members.getSourceRangeForMethod('toString');
 
     final List<FieldElement> finalFieldsElements = classElement.fields
         .where((FieldElement field) => field.isFinal && field.isPublic)

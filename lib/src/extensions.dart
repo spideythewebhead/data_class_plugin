@@ -3,7 +3,6 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
-import 'package:data_class_plugin/src/annotations/map_key.dart';
 
 extension DartTypeX on DartType {
   bool get isNullable {
@@ -73,8 +72,8 @@ extension DartTypeX on DartType {
 }
 
 extension ElementAnnotationX on ElementAnnotation {
-  bool get isMapKeyAnnotation {
-    return element?.displayName == '$MapKey';
+  bool get isJsonKeyAnnotation {
+    return element?.displayName == 'JsonKey';
   }
 }
 
