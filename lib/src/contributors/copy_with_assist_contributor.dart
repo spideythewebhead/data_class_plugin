@@ -37,18 +37,14 @@ class CopyWithAssistContributor extends Object
 
   Future<void> _generateCopyWith() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null ||
-        classNode.members.isEmpty ||
-        classNode.declaredElement == null) {
+    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? copyWithSourceRange =
-        classNode.members.getSourceRangeForMethod('copyWith');
+    final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
 
-    final List<FieldElement> finalFieldsElements =
-        classElement.fields.where((FieldElement field) {
+    final List<FieldElement> finalFieldsElements = classElement.fields.where((FieldElement field) {
       return field.isFinal && field.isPublic && !field.hasInitializer;
     }).toList(growable: false);
 
@@ -93,8 +89,7 @@ class CopyWithAssistContributor extends Object
     for (final FieldElement field in finalFieldsElements) {
       final String typeStringValue = field.type.typeStringValue();
       final bool isNullable = typeStringValue.endsWith('?');
-      builder.writeln(
-          'final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
+      builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
     }
 
     builder

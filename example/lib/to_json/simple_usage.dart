@@ -1,4 +1,5 @@
 class User {
+  /// Shorthand constructor
   User({
     required this.id,
     required this.username,
@@ -9,7 +10,8 @@ class User {
   final String username;
   final String? email;
 
-  Map<String, dynamic> toMap() {
+  /// Converts [User] to a [Map] json
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
       'username': username,
@@ -19,6 +21,7 @@ class User {
 }
 
 class GetUsersResponse {
+  /// Shorthand constructor
   GetUsersResponse({
     required this.ok,
     required this.users,
@@ -27,11 +30,12 @@ class GetUsersResponse {
   final bool ok;
   final List<User> users;
 
-  Map<String, dynamic> toMap() {
+  /// Converts [GetUsersResponse] to a [Map] json
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'ok': ok,
       'users': <dynamic>[
-        for (final User i0 in users) i0.toMap(),
+        for (final User i0 in users) i0.toJson(),
       ],
     };
   }

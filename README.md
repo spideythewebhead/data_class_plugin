@@ -45,8 +45,8 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
 1. Place the cursor on top of the `User` string in class declaration
 1. Run code actions on your IDE
 1. You should a list with the following actions
-   1. Generate 'fromMap'
-   1. Generate 'toMap'
+   1. Generate 'fromJson'
+   1. Generate 'toJson'
    1. Generate 'hashCode' and 'equals'
    1. Generate 'toString
 

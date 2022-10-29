@@ -1,12 +1,13 @@
 import 'package:data_class_plugin/public/annotations.dart';
 
 class User {
+  /// Shorthand constructor
   User({
     required this.id,
     required this.username,
   });
 
-  @MapKey(toMap: _toIdMapper)
+  @JsonKey<String>(toJson: _toIdMapper)
   final String id;
   final String username;
 
@@ -14,7 +15,8 @@ class User {
     return '__${id}__';
   }
 
-  Map<String, dynamic> toMap() {
+  /// Converts [User] to a [Map] json
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': User._toIdMapper(id),
       'username': username,

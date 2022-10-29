@@ -7,15 +7,15 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
-import 'package:data_class_plugin/src/annotations/map_key_internal.dart';
+import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class ToMapAssistContributor extends Object
+class ToJsonAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
     implements AssistContributor {
-  ToMapAssistContributor(this.filePath);
+  ToJsonAssistContributor(this.filePath);
 
   final String filePath;
 
@@ -34,20 +34,17 @@ class ToMapAssistContributor extends Object
   ) async {
     assistRequest = request;
     this.collector = collector;
-    await _generateToMap();
+    await _generateToJson();
   }
 
-  Future<void> _generateToMap() async {
+  Future<void> _generateToJson() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null ||
-        classNode.members.isEmpty ||
-        classNode.declaredElement == null) {
+    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? toMapSourceRange =
-        classNode.members.getSourceRangeForMethod('toMap');
+    final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
 
     final List<FieldElement> finalFieldsElements = classElement.fields
         .where((FieldElement field) => field.isFinal && field.isPublic)
@@ -57,20 +54,20 @@ class ToMapAssistContributor extends Object
     await changeBuilder.addDartFileEdit(
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
-        void writerToMap(DartEditBuilder builder) {
-          _writeToMap(
+        void writerToJson(DartEditBuilder builder) {
+          _writeToJson(
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
 
-        if (toMapSourceRange != null) {
-          fileEditBuilder.addReplacement(toMapSourceRange, writerToMap);
+        if (toJsonSourceRange != null) {
+          fileEditBuilder.addReplacement(toJsonSourceRange, writerToJson);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerToMap,
+            writerToJson,
           );
         }
 
@@ -78,37 +75,36 @@ class ToMapAssistContributor extends Object
       },
     );
 
-    addAssist(AvailableAssists.toMap, changeBuilder);
+    addAssist(AvailableAssists.toJson, changeBuilder);
   }
 
-  void _writeToMap({
+  void _writeToJson({
     required final ClassElement classElement,
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Converts [this] to a [Map]')
-      ..writeln('Map<String, dynamic> toMap() {')
+      ..writeln('/// Converts [${classElement.name}] to a [Map] json')
+      ..writeln('Map<String, dynamic> toJson() {')
       ..writeln('return <String, dynamic>{');
 
     for (final FieldElement field in finalFieldsElements) {
-      final ElementAnnotation? mapKeyAnnotation = field.metadata
-          .firstWhereOrNull(
-              (ElementAnnotation annotation) => annotation.isMapKeyAnnotation);
-      final MapKeyInternal mapKey = MapKeyInternal //
-          .fromDartObject(mapKeyAnnotation?.computeConstantValue());
+      final ElementAnnotation? jsonKeyAnnotation = field.metadata
+          .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
+      final JsonKeyInternal jsonKey = JsonKeyInternal //
+          .fromDartObject(jsonKeyAnnotation?.computeConstantValue());
 
-      if (mapKey.ignore) {
+      if (jsonKey.ignore) {
         continue;
       }
 
-      builder.write("'${mapKey.name ?? field.name}': ");
+      builder.write("'${jsonKey.name ?? field.name}': ");
 
-      if (mapKey.toMap != null) {
+      if (jsonKey.toJson != null) {
         builder
-          ..write(mapKey.toMap!.fullyQualifiedName(
-              enclosingImports: classElement.library.libraryImports))
+          ..write(jsonKey.toJson!
+              .fullyQualifiedName(enclosingImports: classElement.library.libraryImports))
           ..write('(${field.name}),');
         continue;
       }
@@ -211,8 +207,7 @@ class ToMapAssistContributor extends Object
       }
     }
 
-    builder.write(
-        'typeConverterRegistrant.find($fieldType).toMap($parentVariableName),');
+    builder.write('jsonConverterRegistrant.find($fieldType).toJson($parentVariableName),');
   }
 
   void _writeList({

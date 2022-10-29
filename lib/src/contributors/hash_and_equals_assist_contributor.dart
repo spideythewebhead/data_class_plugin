@@ -37,17 +37,13 @@ class HashAndEqualsAssistContributor extends Object
 
   Future<void> _generateHashAndEquals() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null ||
-        classNode.members.isEmpty ||
-        classNode.declaredElement == null) {
+    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? equalsSourceRange =
-        classNode.members.getSourceRangeForMethod('==');
-    final SourceRange? hashCodeSourceRange =
-        classNode.members.getSourceRangeForMethod('hashCode');
+    final SourceRange? equalsSourceRange = classNode.members.getSourceRangeForMethod('==');
+    final SourceRange? hashCodeSourceRange = classNode.members.getSourceRangeForMethod('hashCode');
 
     final List<FieldElement> finalFieldsElements = classElement.fields
         .where((FieldElement field) => field.isFinal && field.isPublic)
@@ -67,8 +63,7 @@ class HashAndEqualsAssistContributor extends Object
         if (hashCodeSourceRange != null) {
           fileEditBuilder.addReplacement(hashCodeSourceRange, writerHashCode);
         } else {
-          fileEditBuilder.addInsertion(
-              classNode.rightBracket.offset, writerHashCode);
+          fileEditBuilder.addInsertion(classNode.rightBracket.offset, writerHashCode);
         }
 
         void writerEquals(DartEditBuilder builder) {
@@ -82,8 +77,7 @@ class HashAndEqualsAssistContributor extends Object
         if (equalsSourceRange != null) {
           fileEditBuilder.addReplacement(equalsSourceRange, writerEquals);
         } else {
-          fileEditBuilder.addInsertion(
-              classNode.rightBracket.offset, writerEquals);
+          fileEditBuilder.addInsertion(classNode.rightBracket.offset, writerEquals);
         }
 
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
@@ -120,17 +114,14 @@ class HashAndEqualsAssistContributor extends Object
   }) {
     builder
       ..writeln()
-      ..writeln(
-          '/// Compares [this] with [other] on identity, class type, and properties')
+      ..writeln('/// Compares [this] with [other] on identity, class type, and properties')
       ..writeln('/// *with deep comparison on collections*')
       ..writeln('@override')
       ..writeln('bool operator ==(Object other) {')
       ..writeln('return identical(this, other) || other is $className');
 
     for (final FieldElement field in finalFieldsElements) {
-      if (field.type.isDartCoreList ||
-          field.type.isDartCoreMap ||
-          field.type.isDartCoreSet) {
+      if (field.type.isDartCoreList || field.type.isDartCoreMap || field.type.isDartCoreSet) {
         builder.write(' && deepEquality(${field.name}, other.${field.name})');
       } else {
         builder.write(' && ${field.name} == other.${field.name}');

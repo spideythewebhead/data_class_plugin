@@ -37,18 +37,14 @@ class ShorthandConstructorAssistContributor extends Object
 
   Future<void> _generateConstructor() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null ||
-        classNode.members.isEmpty ||
-        classNode.declaredElement == null) {
+    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? copyWithSourceRange =
-        classNode.members.getSourceRangeForConstructor(null);
+    final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForConstructor(null);
 
-    final List<FieldElement> finalFieldsElements =
-        classElement.fields.where((FieldElement field) {
+    final List<FieldElement> finalFieldsElements = classElement.fields.where((FieldElement field) {
       return field.isFinal && field.isPublic && !field.hasInitializer;
     }).toList(growable: false);
 
@@ -88,8 +84,8 @@ class ShorthandConstructorAssistContributor extends Object
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
-    final ConstructorElement? constructor = classElement.constructors
-        .firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
+    final ConstructorElement? constructor =
+        classElement.constructors.firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
     final bool isConstructor = constructor?.isConst ?? true;
 
     builder
