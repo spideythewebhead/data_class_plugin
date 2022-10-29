@@ -6,7 +6,7 @@ class User {
     required this.username,
   });
 
-  @MapKey(toMap: _toIdMapper)
+  @MapKey(toJson: _toIdMapper)
   final String id;
   final String username;
 
@@ -14,7 +14,7 @@ class User {
     return '__${id}__';
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': User._toIdMapper(id),
       'username': username,

@@ -11,7 +11,7 @@ class User {
   @MapKey(name: '_id')
   final String id;
 
-  @MapKey(fromMap: _usernameConverter)
+  @MapKey(fromJson: _usernameConverter)
   final String username;
 
   @MapKey(ignore: true)
@@ -20,14 +20,14 @@ class User {
   // fields with initial values are ignored
   final int isSpecial = 0;
 
-  static String _usernameConverter(Map<String, dynamic> map) {
-    return map['username'] ?? map['uname'];
+  static String _usernameConverter(Map<String, dynamic> json) {
+    return json['username'] ?? json['uname'];
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
+  factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: map['_id'] as String,
-      username: User._usernameConverter(map),
+      id: json['_id'] as String,
+      username: User._usernameConverter(json),
     );
   }
 }

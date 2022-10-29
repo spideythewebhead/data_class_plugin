@@ -7,10 +7,10 @@ class User {
   final String id;
   final String username;
 
-  factory User.fromMap(Map<String, dynamic> map) {
+  factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: map['id'] as String,
-      username: map['username'] as String,
+      id: json['id'] as String,
+      username: json['username'] as String,
     );
   }
 }

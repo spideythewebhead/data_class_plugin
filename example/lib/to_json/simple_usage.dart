@@ -9,7 +9,7 @@ class User {
   final String username;
   final String? email;
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
       'username': username,
@@ -27,11 +27,11 @@ class GetUsersResponse {
   final bool ok;
   final List<User> users;
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'ok': ok,
       'users': <dynamic>[
-        for (final User i0 in users) i0.toMap(),
+        for (final User i0 in users) i0.toJson(),
       ],
     };
   }

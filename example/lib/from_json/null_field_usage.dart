@@ -5,9 +5,9 @@ class User {
 
   final String? avatarUrl;
 
-  factory User.fromMap(Map<String, dynamic> map) {
+  factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      avatarUrl: map['avatarUrl'] == null ? null : map['avatarUrl'] as String,
+      avatarUrl: json['avatarUrl'] == null ? null : json['avatarUrl'] as String,
     );
   }
 }

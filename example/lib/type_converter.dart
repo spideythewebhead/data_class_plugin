@@ -24,12 +24,12 @@ class LatLngConverter implements TypeConverter<LatLng, String> {
   const LatLngConverter();
 
   @override
-  String toMap(LatLng value) {
+  String toJson(LatLng value) {
     return '${value.lat}|${value.lng}';
   }
 
   @override
-  LatLng fromMap(String value) {
+  LatLng fromJson(String value) {
     final values = value.split('|').map(double.parse).toList(growable: false);
     return LatLng(lat: values[0], lng: values[1]);
   }
@@ -47,21 +47,19 @@ class MyClass {
   final Uri uri;
   final LatLng latLng;
 
-  factory MyClass.fromMap(Map<String, dynamic> map) {
+  factory MyClass.fromJson(Map<String, dynamic> json) {
     return MyClass(
-      datetime: typeConverterRegistrant.find(DateTime).fromMap(map['datetime'])
-          as DateTime,
-      uri: typeConverterRegistrant.find(Uri).fromMap(map['uri']) as Uri,
-      latLng:
-          typeConverterRegistrant.find(LatLng).fromMap(map['latLng']) as LatLng,
+      datetime: typeConverterRegistrant.find(DateTime).fromJson(json['datetime']) as DateTime,
+      uri: typeConverterRegistrant.find(Uri).fromJson(json['uri']) as Uri,
+      latLng: typeConverterRegistrant.find(LatLng).fromJson(json['latLng']) as LatLng,
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'datetime': typeConverterRegistrant.find(DateTime).toMap(datetime),
-      'uri': typeConverterRegistrant.find(Uri).toMap(uri),
-      'latLng': typeConverterRegistrant.find(LatLng).toMap(latLng),
+      'datetime': typeConverterRegistrant.find(DateTime).toJson(datetime),
+      'uri': typeConverterRegistrant.find(Uri).toJson(uri),
+      'latLng': typeConverterRegistrant.find(LatLng).toJson(latLng),
     };
   }
 
@@ -78,11 +76,13 @@ class MyClass {
 void main() {
   typeConverterRegistrant.register(const LatLngConverter());
 
-  final o = MyClass.fromMap(<String, dynamic>{
-    'datetime': DateTime.now().toIso8601String(),
-    'uri': 'https://google.com',
-    'latLng': '0.01|0.99'
-  });
+  final o = MyClass.fromJson(
+    <String, dynamic>{
+      'datetime': DateTime.now().toIso8601String(),
+      'uri': 'https://google.com',
+      'latLng': '0.01|0.99',
+    },
+  );
 
   print(o);
 }

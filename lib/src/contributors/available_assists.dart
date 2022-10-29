@@ -7,17 +7,33 @@ abstract class AvailableAssists {
     'Generate shorthand constructor',
   );
 
-  static const AssistKind fromMap =
-      AssistKind('fromMap', 999, "Generate 'fromMap'");
+  static const AssistKind fromJson = AssistKind(
+    'fromJson',
+    999,
+    "Generate 'fromJson'",
+  );
 
-  static const AssistKind toMap = AssistKind('toMap', 999, "Generate 'toMap'");
+  static const AssistKind toJson = AssistKind(
+    'toJson',
+    999,
+    "Generate 'toJson'",
+  );
 
-  static const AssistKind copyWith =
-      AssistKind('copyWith', 998, "Generate 'copyWith'");
+  static const AssistKind copyWith = AssistKind(
+    'copyWith',
+    998,
+    "Generate 'copyWith'",
+  );
 
-  static const AssistKind hashCodeAndEquals =
-      AssistKind('hashCodeAndEquals', 997, "Generate 'hashCode' and 'equals'");
+  static const AssistKind hashCodeAndEquals = AssistKind(
+    'hashCodeAndEquals',
+    997,
+    "Generate 'hashCode' and 'equals'",
+  );
 
-  static const AssistKind toString2 =
-      AssistKind('toString', 996, "Generate 'toString'");
+  static const AssistKind toString2 = AssistKind(
+    'toString',
+    996,
+    "Generate 'toString'",
+  );
 }
