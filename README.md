@@ -28,9 +28,14 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
        - data_class_plugin
    ```
 1. Restart the analysis server
-   1. VSCode: Command Panel > Type "Restart Analysis Server"
-   2. Intellij: Restart IDE
-
+   #### VSCode
+   1. Open the Command Palette (Windows/Linux: Ctrl+Shift+P, MacOS: ⌘+Shift+P) 
+   1. Type and select "Dart: Restart Analysis Server"
+   
+   #### IntelliJ
+   1. Open Find Action (Windows/Linux: Ctrl+Shift+A, MacOS: ⌘+Shift+A)
+   1. Type and select "Restart Dart Analysis Server"
+   
 ### Verify it works
 
 1. Create a simple class that contains `final public fields`.
@@ -63,7 +68,7 @@ If the generated method exists, it will update in place the existing code with t
 
 ### Development
 
-For order to see your changes in the plugin you need to modify `tools/analyzer_plugin/pubspec.yaml` and add the following section
+In order to see your changes in the plugin you need to modify `tools/analyzer_plugin/pubspec.yaml` and add the following section
 
 ```yaml
 dependency_overrides:
