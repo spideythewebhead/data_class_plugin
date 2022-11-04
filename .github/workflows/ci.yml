@@ -1,0 +1,19 @@
+name: CI Workflow
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+
+jobs:
+  validate-plugin:
+    uses: ./.github/workflows/validate_plugin.yml
+    with:
+      working_directory: ./
+
+  build:
+    needs: validate-plugin
+    runs-on: ubuntu-latest
+    steps:
+      - name: noop
+        run: echo 'noop'
