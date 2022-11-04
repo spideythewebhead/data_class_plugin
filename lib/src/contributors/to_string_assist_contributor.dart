@@ -89,7 +89,7 @@ class ToStringAssistContributor extends Object
       ..writeln('return """$className(');
 
     for (final FieldElement field in finalFieldsElements) {
-      builder.writeln("<${field.name}= \$${field.name}>,");
+      builder.writeln('<${field.name}= \$${field.name}>,');
     }
 
     builder

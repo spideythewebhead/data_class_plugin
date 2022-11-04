@@ -29,11 +29,11 @@ class JsonKeyInternal {
   /// Returns a string with the properties of [this]
   @override
   String toString() {
-    return """JsonKeyInternal(
+    return '''JsonKeyInternal(
 <name= $name>,
 <fromJson= $fromJson>,
 <toJson= $toJson>,
 <ignore= $ignore>,
-)""";
+)''';
   }
 }
