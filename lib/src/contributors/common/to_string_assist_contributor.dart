@@ -11,7 +11,7 @@ import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class ToStringAssistContributor extends Object
-    with AssistContributorMixin, ClassAstVisitorMixin
+    with AssistContributorMixin, ClassAstVisitorMixin, EnumAstVisitorMixin
     implements AssistContributor {
   ToStringAssistContributor(this.filePath);
 
@@ -32,19 +32,37 @@ class ToStringAssistContributor extends Object
   ) async {
     assistRequest = request;
     this.collector = collector;
-    await _generateToString();
-  }
 
-  Future<void> _generateToString() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
-      return;
+    if (classNode != null && classNode.members.isNotEmpty && classNode.declaredElement != null) {
+      await _generateToString(
+        node: classNode,
+        element: classNode.declaredElement!,
+        classMembers: classNode.members,
+        rightBracketOffset: classNode.rightBracket.offset,
+      );
     }
 
-    final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? toStringSourceRange = classNode.members.getSourceRangeForMethod('toString');
+    final EnumDeclaration? enumNode = findEnumDeclaration();
+    if (enumNode != null && enumNode.members.isNotEmpty && enumNode.declaredElement != null) {
+      await _generateToString(
+        node: enumNode,
+        element: enumNode.declaredElement!,
+        classMembers: enumNode.members,
+        rightBracketOffset: enumNode.rightBracket.offset,
+      );
+    }
+  }
 
-    final List<FieldElement> finalFieldsElements = classElement.fields
+  Future<void> _generateToString({
+    required final AstNode node,
+    required final NodeList<ClassMember> classMembers,
+    required final InterfaceElement element,
+    required final int rightBracketOffset,
+  }) async {
+    final SourceRange? toStringSourceRange = classMembers.getSourceRangeForMethod('toString');
+
+    final List<FieldElement> finalFieldsElements = element.fields
         .where((FieldElement field) => field.isFinal && field.isPublic)
         .toList(growable: false);
 
@@ -54,8 +72,8 @@ class ToStringAssistContributor extends Object
       (DartFileEditBuilder fileEditBuilder) {
         void writerToString(DartEditBuilder builder) {
           _writeToString(
-            className: classElement.name,
-            finalFieldsElements: finalFieldsElements,
+            element: element,
+            finalFieldsElement: finalFieldsElements,
             builder: builder,
           );
         }
@@ -64,12 +82,12 @@ class ToStringAssistContributor extends Object
           fileEditBuilder.addReplacement(toStringSourceRange, writerToString);
         } else {
           fileEditBuilder.addInsertion(
-            classNode.rightBracket.offset,
+            rightBracketOffset,
             writerToString,
           );
         }
 
-        fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
+        fileEditBuilder.format(SourceRange(node.offset, node.length));
       },
     );
 
@@ -77,19 +95,25 @@ class ToStringAssistContributor extends Object
   }
 
   void _writeToString({
-    required final String className,
-    required final List<FieldElement> finalFieldsElements,
+    required final InterfaceElement element,
+    required final List<FieldElement> finalFieldsElement,
     required final DartEditBuilder builder,
   }) {
+    String elementName = element.name;
+
+    if (element is EnumElement) {
+      elementName = '$elementName.\$name';
+    }
+
     builder
       ..writeln()
-      ..writeln('/// Returns a string with the properties of [this]')
+      ..writeln('/// Returns a string with the properties of [$elementName]')
       ..writeln('@override')
       ..writeln('String toString() {')
-      ..writeln('return """$className(');
+      ..writeln('return """$elementName(');
 
-    for (final FieldElement field in finalFieldsElements) {
-      builder.writeln('<${field.name}= \$${field.name}>,');
+    for (final FieldElement field in finalFieldsElement) {
+      builder.writeln('  <${field.name}= \$${field.name}>,');
     }
 
     builder

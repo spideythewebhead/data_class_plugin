@@ -12,10 +12,10 @@ import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class ToJsonAssistContributor extends Object
+class FromJsonAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
     implements AssistContributor {
-  ToJsonAssistContributor(this.filePath);
+  FromJsonAssistContributor(this.filePath);
 
   final String filePath;
 
@@ -34,40 +34,41 @@ class ToJsonAssistContributor extends Object
   ) async {
     assistRequest = request;
     this.collector = collector;
-    await _generateToJson();
+    await _generateFromJson();
   }
 
-  Future<void> _generateToJson() async {
+  Future<void> _generateFromJson() async {
     final ClassDeclaration? classNode = findClassDeclaration();
     if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
+    final SourceRange? fromJsonSourceRange =
+        classNode.members.getSourceRangeForConstructor('fromJson');
 
-    final List<FieldElement> finalFieldsElements = classElement.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic)
-        .toList(growable: false);
+    final List<FieldElement> finalFieldsElements = classElement.fields.where((FieldElement field) {
+      return field.isFinal && field.isPublic && !field.hasInitializer && field.type.isJsonSupported;
+    }).toList(growable: false);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
-        void writerToJson(DartEditBuilder builder) {
-          _writeToJson(
+        void writerFromJson(DartEditBuilder builder) {
+          _writeFromJson(
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
 
-        if (toJsonSourceRange != null) {
-          fileEditBuilder.addReplacement(toJsonSourceRange, writerToJson);
+        if (fromJsonSourceRange != null) {
+          fileEditBuilder.addReplacement(fromJsonSourceRange, writerFromJson);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerToJson,
+            writerFromJson,
           );
         }
 
@@ -75,19 +76,19 @@ class ToJsonAssistContributor extends Object
       },
     );
 
-    addAssist(AvailableAssists.toJson, changeBuilder);
+    addAssist(AvailableAssists.fromJson, changeBuilder);
   }
 
-  void _writeToJson({
+  void _writeFromJson({
     required final ClassElement classElement,
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Converts [${classElement.name}] to a [Map] json')
-      ..writeln('Map<String, dynamic> toJson() {')
-      ..writeln('return <String, dynamic>{');
+      ..writeln('/// Creates an instance of [${classElement.name}] from [json]')
+      ..writeln('factory ${classElement.name}.fromJson(Map<String, dynamic> json) {')
+      ..writeln('return ${classElement.name}(');
 
     for (final FieldElement field in finalFieldsElements) {
       final ElementAnnotation? jsonKeyAnnotation = field.metadata
@@ -99,26 +100,37 @@ class ToJsonAssistContributor extends Object
         continue;
       }
 
-      builder.write("'${jsonKey.name ?? field.name}': ");
+      final String fieldName = field.name;
+      final DartType fieldType = field.type;
+      final String jsonFieldName = "json['${jsonKey.name ?? fieldName}']";
+      final ConstructorElement? defaultConstructor = classElement.constructors
+          .firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
+      final String? defaultValueString = defaultConstructor?.parameters
+          .firstWhereOrNull((ParameterElement param) => param.name == fieldName)
+          ?.defaultValueCode;
 
-      if (jsonKey.toJson != null) {
+      builder.write('$fieldName: ');
+
+      if (jsonKey.fromJson != null) {
         builder
-          ..write(jsonKey.toJson!
-              .fullyQualifiedName(enclosingImports: classElement.library.libraryImports))
-          ..write('(${field.name}),');
+          ..write(jsonKey.fromJson!.fullyQualifiedName(
+            enclosingImports: classElement.library.libraryImports,
+          ))
+          ..write('(json),');
         continue;
       }
 
       _decideNextParsingMethodBasedOnType(
-        nextType: field.type,
+        nextType: fieldType,
         builder: builder,
-        parentVariableName: field.name,
+        parentVariableName: jsonFieldName,
         depthIndex: 0,
+        defaultValue: defaultValueString,
       );
     }
 
     builder
-      ..writeln('};')
+      ..writeln(');')
       ..writeln('}');
   }
 
@@ -127,74 +139,97 @@ class ToJsonAssistContributor extends Object
     required final DartEditBuilder builder,
     required final int depthIndex,
     required final String parentVariableName,
+    final String? defaultValue,
   }) {
     if (nextType == null) {
       return;
     }
 
     if (nextType.isDartCoreList) {
-      _writeList(
+      if (nextType.isNullable || defaultValue != null) {
+        _writeNullableParsingPrefix(
+          builder: builder,
+          parentVariableName: parentVariableName,
+          defaultValue: defaultValue,
+        );
+      }
+      _parseList(
         builder: builder,
         type: nextType as ParameterizedType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
-        requiresBangOperator: depthIndex == 0,
       );
       builder.writeln(',');
       return;
     }
 
     if (nextType.isDartCoreMap) {
-      _writeMap(
+      if (nextType.isNullable || defaultValue != null) {
+        _writeNullableParsingPrefix(
+          builder: builder,
+          parentVariableName: parentVariableName,
+          defaultValue: defaultValue,
+        );
+      }
+      _parseMap(
         builder: builder,
         type: nextType as ParameterizedType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
-        requiresBangOperator: depthIndex == 0,
       );
       builder.writeln(',');
       return;
     }
 
-    _writePrimary(
+    if (nextType.isNullable || defaultValue != null) {
+      _writeNullableParsingPrefix(
+        builder: builder,
+        parentVariableName: parentVariableName,
+        defaultValue: defaultValue,
+      );
+    }
+
+    _parsePrimary(
       builder: builder,
       type: nextType,
       parentVariableName: parentVariableName,
     );
   }
 
-  String _getBangOperatorIfNullable(DartType type) {
-    return type.isNullable ? '!' : '';
-  }
-
   void _writeNullableParsingPrefix({
     required final DartEditBuilder builder,
     required final String parentVariableName,
+    final String? defaultValue,
   }) {
-    builder.write('$parentVariableName == null ? null : ');
+    builder.write('$parentVariableName == null ? $defaultValue : ');
   }
 
-  void _writePrimary({
+  void _parsePrimary({
     required final DartEditBuilder builder,
     required final DartType type,
     required final String parentVariableName,
   }) {
-    if (type.isDynamic || type.isPrimary) {
+    final String? fieldType = type.element!.name;
+
+    if (type.isDynamic) {
       builder.writeln('$parentVariableName,');
       return;
     }
 
-    final String? fieldType = type.element!.name;
+    if (type.isPrimary) {
+      builder.writeln('$parentVariableName as $fieldType,');
+      return;
+    }
 
-    if (type.element is ClassElement) {
-      final ClassElement classElement = type.element as ClassElement;
+    if (type.element is ClassElement || type.element is EnumElement) {
+      final InterfaceElement element = type.element as InterfaceElement;
       final String? convertMethod = <String>[
-        ...classElement.methods.map((MethodElement method) => method.name),
-        ...classElement.constructors.map((ConstructorElement ctor) => ctor.name)
+        ...element.methods.map((MethodElement method) => method.name),
+        ...element.constructors.map((ConstructorElement ctor) => ctor.name)
       ].firstWhereOrNull((String name) {
         switch (name) {
-          case 'toMap':
-          case 'toJson':
+          case 'fromMap':
+          case 'fromJson':
             return true;
           default:
             return false;
@@ -202,38 +237,29 @@ class ToJsonAssistContributor extends Object
       });
 
       if (convertMethod != null) {
-        builder.writeln('$parentVariableName.$convertMethod(),');
+        builder.writeln('$fieldType.$convertMethod($parentVariableName),');
         return;
       }
     }
 
-    builder.write('jsonConverterRegistrant.find($fieldType).toJson($parentVariableName),');
+    builder.write('jsonConverterRegistrant.find($fieldType).fromJson($parentVariableName) '
+        'as $fieldType,');
   }
 
-  void _writeList({
+  void _parseList({
     required final DartEditBuilder builder,
     required final ParameterizedType type,
     required final String parentVariableName,
     required final int depthIndex,
-    required final bool requiresBangOperator,
   }) {
-    if (type.isNullable) {
-      _writeNullableParsingPrefix(
-        builder: builder,
-        parentVariableName: parentVariableName,
-      );
-    }
-
-    builder.write('<dynamic>[');
+    builder.write('<${type.typeArguments[0].typeStringValue()}>[');
 
     final String loopVariableName = 'i$depthIndex';
-    builder.writeln('for (final '
-        '${type.typeArguments[0].typeStringValue()} '
-        '$loopVariableName in $parentVariableName'
-        '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''})');
+    builder.writeln(
+        'for (final dynamic $loopVariableName in ($parentVariableName as ${type.element!.name}<dynamic>))');
 
     _decideNextParsingMethodBasedOnType(
-      nextType: type.typeArguments.first,
+      nextType: type.typeArguments[0],
       builder: builder,
       parentVariableName: loopVariableName,
       depthIndex: 1 + depthIndex,
@@ -242,33 +268,22 @@ class ToJsonAssistContributor extends Object
     builder.writeln(']');
   }
 
-  void _writeMap({
+  void _parseMap({
     required final DartEditBuilder builder,
     required final ParameterizedType type,
     required final String parentVariableName,
     required final int depthIndex,
-    required final bool requiresBangOperator,
   }) {
     if (!type.typeArguments[0].isDartCoreString) {
       return;
     }
 
-    if (type.isNullable) {
-      _writeNullableParsingPrefix(
-        builder: builder,
-        parentVariableName: parentVariableName,
-      );
-    }
-
-    builder.write('<String, dynamic>{');
+    builder.write('<String, ${type.typeArguments[1].typeStringValue()}>{');
 
     final String loopVariableName = 'e$depthIndex';
     builder
-      ..writeln('for (final '
-          'MapEntry<String, ${type.typeArguments[1].typeStringValue()}> '
-          '$loopVariableName in $parentVariableName'
-          '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''}'
-          '.entries)')
+      ..writeln(
+          'for (final MapEntry<String, dynamic> $loopVariableName in ($parentVariableName as ${type.element!.name}<String, dynamic>).entries)')
       ..write('$loopVariableName.key: ');
 
     _decideNextParsingMethodBasedOnType(

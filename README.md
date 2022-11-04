@@ -36,7 +36,9 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
    1. Open Find Action (Windows/Linux: Ctrl+Shift+A, MacOS: ⌘+Shift+A)
    1. Type and select "Restart Dart Analysis Server"
    
-### Verify it works
+### Generate the code you want!
+
+#### Class
 
 1. Create a simple class that contains `final public fields`.
 
@@ -60,6 +62,38 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
    1. Generate 'copyWith'
    1. Generate 'hashCode' and 'equals'
    1. Generate 'toString
+
+#### Enum
+
+1. Create an enumeration with the last field closed by semicolon
+
+   ```dart
+   enum Category {
+      science,
+      sports;
+   }
+   ```
+
+1. Place the cursor on top of the `Category` string in enum declaration
+1. Run code actions on your IDE
+   1. VSCode: Control/Command + .
+   1. Intellij: Alt/Command + Enter
+1. You should a list with the following actions
+   1. Generate constructor
+   1. Generate 'fromJson'
+   1. Generate 'toJson'
+   1. Generate 'toString'
+
+> Enums can have an optional single field of primary type to be used in the fromJson or toJson transforms
+
+   ```dart
+   enum Category {
+      science(0),
+      sports(1);
+
+      final int value;
+   }
+   ```
 
 ### Notes
 

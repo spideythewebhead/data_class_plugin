@@ -85,6 +85,8 @@ extension ListX<T> on List<T> {
       return null;
     }
   }
+
+  T? get firstOrNull => isEmpty ? null : this[0];
 }
 
 extension ExecutableElementX<T> on ExecutableElement {

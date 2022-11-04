@@ -36,4 +36,10 @@ abstract class AvailableAssists {
     996,
     "Generate 'toString'",
   );
+
+  static const AssistKind enumConstructor = AssistKind(
+    'enumConstructor',
+    1000,
+    'Generate constructor',
+  );
 }
