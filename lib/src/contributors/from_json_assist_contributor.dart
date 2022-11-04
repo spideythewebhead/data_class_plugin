@@ -209,7 +209,7 @@ class FromJsonAssistContributor extends Object
     required final DartType type,
     required final String parentVariableName,
   }) {
-    final String? fieldType = type.element2!.name;
+    final String? fieldType = type.element!.name;
 
     if (type.isDynamic) {
       builder.writeln('$parentVariableName,');
@@ -221,8 +221,8 @@ class FromJsonAssistContributor extends Object
       return;
     }
 
-    if (type.element2 is ClassElement) {
-      final ClassElement classElement = type.element2 as ClassElement;
+    if (type.element is ClassElement) {
+      final ClassElement classElement = type.element as ClassElement;
       final String? convertMethod = <String>[
         ...classElement.methods.map((MethodElement method) => method.name),
         ...classElement.constructors.map((ConstructorElement ctor) => ctor.name)
@@ -256,7 +256,7 @@ class FromJsonAssistContributor extends Object
 
     final String loopVariableName = 'i$depthIndex';
     builder.writeln(
-        'for (final dynamic $loopVariableName in ($parentVariableName as ${type.element2!.name}<dynamic>))');
+        'for (final dynamic $loopVariableName in ($parentVariableName as ${type.element!.name}<dynamic>))');
 
     _decideNextParsingMethodBasedOnType(
       nextType: type.typeArguments[0],
@@ -283,7 +283,7 @@ class FromJsonAssistContributor extends Object
     final String loopVariableName = 'e$depthIndex';
     builder
       ..writeln(
-          'for (final MapEntry<String, dynamic> $loopVariableName in ($parentVariableName as ${type.element2!.name}<String, dynamic>).entries)')
+          'for (final MapEntry<String, dynamic> $loopVariableName in ($parentVariableName as ${type.element!.name}<String, dynamic>).entries)')
       ..write('$loopVariableName.key: ');
 
     _decideNextParsingMethodBasedOnType(
