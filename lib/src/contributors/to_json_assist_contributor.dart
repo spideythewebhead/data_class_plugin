@@ -184,10 +184,10 @@ class ToJsonAssistContributor extends Object
       return;
     }
 
-    final String? fieldType = type.element2!.name;
+    final String? fieldType = type.element!.name;
 
-    if (type.element2 is ClassElement) {
-      final ClassElement classElement = type.element2 as ClassElement;
+    if (type.element is ClassElement) {
+      final ClassElement classElement = type.element as ClassElement;
       final String? convertMethod = <String>[
         ...classElement.methods.map((MethodElement method) => method.name),
         ...classElement.constructors.map((ConstructorElement ctor) => ctor.name)

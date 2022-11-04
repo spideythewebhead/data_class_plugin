@@ -19,11 +19,11 @@ extension DartTypeX on DartType {
   }
 
   bool get isDateTime {
-    return element2!.name == 'DateTime';
+    return element!.name == 'DateTime';
   }
 
   bool get isUri {
-    return element2!.name == 'Uri';
+    return element!.name == 'Uri';
   }
 
   bool get isJsonSupported {
@@ -42,7 +42,7 @@ extension DartTypeX on DartType {
     void visit(DartType type) {
       if (type is InterfaceType && type.typeArguments.isNotEmpty) {
         buffer
-          ..write(type.element2.name)
+          ..write(type.element.name)
           ..write('<');
 
         for (final DartType typeArg in type.typeArguments) {
@@ -60,7 +60,7 @@ extension DartTypeX on DartType {
         return;
       }
 
-      buffer.write(type.element2!.name);
+      buffer.write(type.element!.name);
       if (type.isNullable) {
         buffer.write('?');
       }
@@ -93,8 +93,8 @@ extension ExecutableElementX<T> on ExecutableElement {
   }) {
     String qualifiedName = name;
 
-    if (enclosingElement3.nameLength > 0) {
-      qualifiedName = '${enclosingElement3.name!}.$qualifiedName';
+    if (enclosingElement.nameLength > 0) {
+      qualifiedName = '${enclosingElement.name!}.$qualifiedName';
     }
 
     for (final LibraryImportElement import in enclosingImports) {
