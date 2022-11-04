@@ -1,7 +1,8 @@
 import 'package:meta/meta.dart' show visibleForTesting;
 
-part 'uri_converter.dart';
 part 'datetime_converter.dart';
+part 'duration_converter.dart';
+part 'uri_converter.dart';
 
 /// Interface that custom converters can use to register a convertation between 2 types
 ///
@@ -71,4 +72,5 @@ class JsonConverterRegistrant {
 /// see also on how to register a converter [JsonConverter]
 final JsonConverterRegistrant jsonConverterRegistrant = JsonConverterRegistrant()
   ..register(const _UriJsonConverter())
-  ..register(const _DateTimeJsonConverter());
+  ..register(const _DateTimeJsonConverter())
+  ..register(const _DurationJsonConverter());
