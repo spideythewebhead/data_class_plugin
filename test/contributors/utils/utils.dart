@@ -1,7 +1,18 @@
+import 'dart:io' as io;
+
+import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/file_system/file_system.dart';
+import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:analyzer_plugin/protocol/protocol_generated.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
+import 'package:dart_style/dart_style.dart';
+import 'package:path/path.dart' as path;
+import 'package:test/test.dart';
+
+part 'extensions.dart';
+part 'get_test_files_in_directory.dart';
+part 'in_out_files_pair.dart';
 
 class DartAssistRequestTest extends DartAssistRequest {
   /// Shorthand constructor
@@ -32,10 +43,4 @@ class AssistCollectorTest extends AssistCollector {
   void addAssist(PrioritizedSourceChange assist) => assists.add(assist);
 
   String get firstReplacement => assists[0].change.edits[0].edits[0].replacement;
-}
-
-extension StringX on String {
-  String removeTrailingWhitespace() {
-    return replaceFirst(RegExp(r'\s$'), '');
-  }
 }
