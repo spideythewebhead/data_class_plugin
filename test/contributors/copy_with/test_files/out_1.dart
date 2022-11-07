@@ -9,7 +9,7 @@ class CopyWithTest {
   int z;
   final int w = 0;
 
-  /// Creates a new instance of [this] with optional new values
+  /// Creates a new instance of [CopyWithTest] with optional new values
   CopyWithTest copyWith({
     final int? x,
   }) {

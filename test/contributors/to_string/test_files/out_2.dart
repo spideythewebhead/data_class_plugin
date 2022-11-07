@@ -11,8 +11,8 @@ class ToStringTest {
   /// Returns a string with the properties of [ToStringTest]
   @override
   String toString() {
-    return """ToStringTest(
+    return '''ToStringTest(
   <intValue= $intValue>,
-)""";
+)''';
   }
 }

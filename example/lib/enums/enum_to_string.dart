@@ -12,12 +12,12 @@ enum Colors {
   final String hex;
   final double opacity;
 
-  /// Returns a string with the properties of [Colors.$name]
+  /// Returns a string with the properties of [Colors]
   @override
   String toString() {
-    return """Colors.$name(
+    return '''Colors.$name(
   <hex= $hex>,
   <opacity= $opacity>,
-)""";
+)''';
   }
 }

@@ -45,9 +45,10 @@ extension DartTypeX on DartType {
           ..write(type.element.name)
           ..write('<');
 
-        for (final DartType typeArg in type.typeArguments) {
+        for (int i = 0; i < type.typeArguments.length; i += 1) {
+          final DartType typeArg = type.typeArguments[i];
           visit(typeArg);
-          if (typeArg != type.typeArguments.last) {
+          if (1 + i != type.typeArguments.length) {
             buffer.write(',');
           }
         }
@@ -74,6 +75,14 @@ extension DartTypeX on DartType {
 extension ElementAnnotationX on ElementAnnotation {
   bool get isJsonKeyAnnotation {
     return element?.displayName == 'JsonKey';
+  }
+
+  bool get isUnionAnnotation {
+    return element?.displayName == 'Union';
+  }
+
+  bool get isUnionFieldValueAnnotation {
+    return element?.displayName == 'UnionFieldValue';
   }
 }
 
@@ -127,5 +136,13 @@ extension NodeListX on NodeList<ClassMember> {
       }
     }
     return null;
+  }
+}
+
+extension ElementX on Element {
+  bool get hasUnionAnnotation {
+    return metadata
+            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isUnionAnnotation) !=
+        null;
   }
 }

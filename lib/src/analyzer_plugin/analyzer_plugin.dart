@@ -42,6 +42,7 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
 
       // Common contributors
       ToStringAssistContributor(path),
+      UnionAssistContributor(path),
     ];
   }
 }
