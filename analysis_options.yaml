@@ -1,6 +1,8 @@
 include: package:lints/recommended.yaml
 
 analyzer:
+  exclude:
+    - test/contributors/**/test_files/**
   plugins:
     - data_class_plugin
 

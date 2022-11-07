@@ -44,9 +44,9 @@ class CopyWithAssistContributor extends Object
     final ClassElement classElement = classNode.declaredElement!;
     final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
 
-    final List<FieldElement> finalFieldsElements = classElement.fields.where((FieldElement field) {
-      return field.isFinal && field.isPublic && !field.hasInitializer;
-    }).toList(growable: false);
+    final List<FieldElement> finalFieldsElements = classElement.fields
+        .where((FieldElement field) => field.isFinal && field.isPublic && !field.hasInitializer)
+        .toList(growable: false);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(

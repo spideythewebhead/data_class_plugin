@@ -46,7 +46,7 @@ class HashAndEqualsAssistContributor extends Object
     final SourceRange? hashCodeSourceRange = classNode.members.getSourceRangeForMethod('hashCode');
 
     final List<FieldElement> finalFieldsElements = classElement.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic)
+        .where((FieldElement field) => field.isFinal && field.isPublic && !field.hasInitializer)
         .toList(growable: false);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
