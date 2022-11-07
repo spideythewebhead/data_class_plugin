@@ -8,7 +8,7 @@ class CopyWithTest {
   final int? x;
   final List<int?>? y;
 
-  /// Creates a new instance of [this] with optional new values
+  /// Creates a new instance of [CopyWithTest] with optional new values
   CopyWithTest copyWith({
     final int? x,
     final List<int?>? y,

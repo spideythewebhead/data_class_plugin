@@ -42,6 +42,11 @@ class HashAndEqualsAssistContributor extends Object
     }
 
     final ClassElement classElement = classNode.declaredElement!;
+
+    if (classElement.hasUnionAnnotation) {
+      return;
+    }
+
     final SourceRange? equalsSourceRange = classNode.members.getSourceRangeForMethod('==');
     final SourceRange? hashCodeSourceRange = classNode.members.getSourceRangeForMethod('hashCode');
 
@@ -54,7 +59,7 @@ class HashAndEqualsAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerHashCode(DartEditBuilder builder) {
-          _writeHashCode(
+          writeHashCode(
             finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
@@ -67,7 +72,7 @@ class HashAndEqualsAssistContributor extends Object
         }
 
         void writerEquals(DartEditBuilder builder) {
-          _writeEquals(
+          writeEquals(
             finalFieldsElements: finalFieldsElements,
             className: classElement.name,
             builder: builder,
@@ -87,8 +92,8 @@ class HashAndEqualsAssistContributor extends Object
     addAssist(AvailableAssists.hashCodeAndEquals, changeBuilder);
   }
 
-  void _writeHashCode({
-    required final List<FieldElement> finalFieldsElements,
+  static void writeHashCode({
+    required final List<Element> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
@@ -98,7 +103,7 @@ class HashAndEqualsAssistContributor extends Object
       ..writeln('int get hashCode {')
       ..writeln('return Object.hashAll(<Object?>[');
 
-    for (final FieldElement field in finalFieldsElements) {
+    for (final Element field in finalFieldsElements) {
       builder.writeln('${field.name},');
     }
 
@@ -107,8 +112,8 @@ class HashAndEqualsAssistContributor extends Object
       ..writeln('}');
   }
 
-  void _writeEquals({
-    required final List<FieldElement> finalFieldsElements,
+  static void writeEquals({
+    required final List<VariableElement> finalFieldsElements,
     required final String className,
     required final DartEditBuilder builder,
   }) {
@@ -120,7 +125,7 @@ class HashAndEqualsAssistContributor extends Object
       ..writeln('bool operator ==(Object other) {')
       ..writeln('return identical(this, other) || other is $className');
 
-    for (final FieldElement field in finalFieldsElements) {
+    for (final VariableElement field in finalFieldsElements) {
       if (field.type.isDartCoreList || field.type.isDartCoreMap || field.type.isDartCoreSet) {
         builder.write(' && deepEquality(${field.name}, other.${field.name})');
       } else {

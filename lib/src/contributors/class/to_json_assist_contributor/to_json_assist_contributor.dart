@@ -6,14 +6,16 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
+import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
+import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/utils.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class CopyWithAssistContributor extends Object
+class ToJsonAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin
     implements AssistContributor {
-  CopyWithAssistContributor(this.filePath);
+  ToJsonAssistContributor(this.filePath);
 
   final String filePath;
 
@@ -32,10 +34,10 @@ class CopyWithAssistContributor extends Object
   ) async {
     assistRequest = request;
     this.collector = collector;
-    await _generateCopyWith();
+    await _generateToJson();
   }
 
-  Future<void> _generateCopyWith() async {
+  Future<void> _generateToJson() async {
     final ClassDeclaration? classNode = findClassDeclaration();
     if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
       return;
@@ -47,30 +49,30 @@ class CopyWithAssistContributor extends Object
       return;
     }
 
-    final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
+    final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
 
     final List<FieldElement> finalFieldsElements = classElement.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic && !field.hasInitializer)
+        .where((FieldElement field) => field.isFinal && field.isPublic)
         .toList(growable: false);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
-        void writerCopyWith(DartEditBuilder builder) {
-          writeCopyWith(
-            className: classElement.name,
+        void writerToJson(DartEditBuilder builder) {
+          _writeToJson(
+            classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
 
-        if (copyWithSourceRange != null) {
-          fileEditBuilder.addReplacement(copyWithSourceRange, writerCopyWith);
+        if (toJsonSourceRange != null) {
+          fileEditBuilder.addReplacement(toJsonSourceRange, writerToJson);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerCopyWith,
+            writerToJson,
           );
         }
 
@@ -78,41 +80,50 @@ class CopyWithAssistContributor extends Object
       },
     );
 
-    addAssist(AvailableAssists.copyWith, changeBuilder);
+    addAssist(AvailableAssists.toJson, changeBuilder);
   }
 
-  static void writeCopyWith({
-    required final String className,
-    required final List<VariableElement> finalFieldsElements,
+  void _writeToJson({
+    required final ClassElement classElement,
+    required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
-    final String? commentClassName,
   }) {
     builder
       ..writeln()
-      ..writeln(
-          '/// Creates a new instance of [${commentClassName ?? className}] with optional new values')
-      ..writeln('$className copyWith(');
+      ..writeln('/// Converts [${classElement.name}] to a [Map] json')
+      ..writeln('Map<String, dynamic> toJson() {')
+      ..writeln('return <String, dynamic>{');
 
-    if (finalFieldsElements.isNotEmpty) {
-      builder.write('{');
-      for (final VariableElement field in finalFieldsElements) {
-        final String typeStringValue = field.type.typeStringValue();
-        final bool isNullable = typeStringValue.endsWith('?');
-        builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
+    for (final FieldElement field in finalFieldsElements) {
+      final ElementAnnotation? jsonKeyAnnotation = field.metadata
+          .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
+      final JsonKeyInternal jsonKey = JsonKeyInternal //
+          .fromDartObject(jsonKeyAnnotation?.computeConstantValue());
+
+      if (jsonKey.ignore) {
+        continue;
       }
-      builder.write('}');
+
+      builder.write("'${jsonKey.name ?? field.name}': ");
+
+      if (jsonKey.toJson != null) {
+        builder
+          ..write(jsonKey.toJson!
+              .fullyQualifiedName(enclosingImports: classElement.library.libraryImports))
+          ..write('(${field.name}),');
+        continue;
+      }
+
+      ToJsonUtils.convert(
+        nextType: field.type,
+        builder: builder,
+        parentVariableName: field.name,
+        depthIndex: 0,
+      );
     }
 
     builder
-      ..writeln(') {')
-      ..writeln('return $className(');
-
-    for (final VariableElement field in finalFieldsElements) {
-      builder.writeln('${field.name}: ${field.name} ?? this.${field.name},');
-    }
-
-    builder
-      ..writeln(');')
+      ..writeln('};')
       ..writeln('}');
   }
 }

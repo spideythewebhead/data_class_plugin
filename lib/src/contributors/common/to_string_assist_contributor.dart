@@ -60,6 +60,10 @@ class ToStringAssistContributor extends Object
     required final InterfaceElement element,
     required final int rightBracketOffset,
   }) async {
+    if (element.hasUnionAnnotation) {
+      return;
+    }
+
     final SourceRange? toStringSourceRange = classMembers.getSourceRangeForMethod('toString');
 
     final List<FieldElement> finalFieldsElements = element.fields
@@ -71,9 +75,15 @@ class ToStringAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerToString(DartEditBuilder builder) {
-          _writeToString(
-            element: element,
-            finalFieldsElement: finalFieldsElements,
+          String elementName = element.name;
+          if (element is EnumElement) {
+            elementName = '$elementName.\$name';
+          }
+
+          writeToString(
+            elementName: elementName,
+            commentElementName: element.name,
+            finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
@@ -94,30 +104,26 @@ class ToStringAssistContributor extends Object
     addAssist(AvailableAssists.toString2, changeBuilder);
   }
 
-  void _writeToString({
-    required final InterfaceElement element,
-    required final List<FieldElement> finalFieldsElement,
+  static void writeToString({
+    required final String elementName,
+    required final List<VariableElement> finalFieldsElements,
     required final DartEditBuilder builder,
+    final String? commentElementName,
   }) {
-    String elementName = element.name;
-
-    if (element is EnumElement) {
-      elementName = '$elementName.\$name';
-    }
-
     builder
       ..writeln()
-      ..writeln('/// Returns a string with the properties of [$elementName]')
+      ..writeln(
+          '/// Returns a string with the properties of [${commentElementName ?? elementName}]')
       ..writeln('@override')
       ..writeln('String toString() {')
-      ..writeln('return """$elementName(');
+      ..writeln("return '''$elementName(");
 
-    for (final FieldElement field in finalFieldsElement) {
+    for (final VariableElement field in finalFieldsElements) {
       builder.writeln('  <${field.name}= \$${field.name}>,');
     }
 
     builder
-      ..writeln(')""";')
+      ..writeln(")''';")
       ..writeln('}');
   }
 }
