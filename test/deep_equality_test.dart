@@ -30,8 +30,7 @@ class _EqualsOverride {
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is _EqualsOverride && x == other.x && y == other.y;
+    return identical(this, other) || other is _EqualsOverride && x == other.x && y == other.y;
   }
 }
 
