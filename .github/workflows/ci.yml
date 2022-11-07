@@ -1,0 +1,13 @@
+name: CI Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-plugin:
+    uses: ./.github/workflows/validate_plugin.yml
+    with:
+      working_directory: ./
