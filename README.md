@@ -1,5 +1,7 @@
 # Dart Data Class Plugin
 
+[![CI Workflow](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml)
+
 A way to create a dart data class without needing code generation.
 
 ### How it works
