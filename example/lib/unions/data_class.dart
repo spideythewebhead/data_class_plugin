@@ -79,6 +79,7 @@ class AsyncResultData<T> extends AsyncResult<T> {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       data,
     ]);
   }
@@ -110,7 +111,9 @@ class AsyncResultLoading<T> extends AsyncResult<T> {
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[]);
+    return Object.hashAll(<Object?>[
+      runtimeType,
+    ]);
   }
 
   /// Compares [this] with [other] on identity, class type, and properties
@@ -152,6 +155,7 @@ class AsyncResultError<T> extends AsyncResult<T> {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       error,
       stackTrace,
     ]);

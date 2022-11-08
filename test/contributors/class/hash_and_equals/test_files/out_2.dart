@@ -14,6 +14,7 @@ class HashAndEqualsTest {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       x,
       y,
       z,
