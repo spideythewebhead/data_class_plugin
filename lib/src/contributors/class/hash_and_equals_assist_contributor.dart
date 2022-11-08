@@ -74,7 +74,7 @@ class HashAndEqualsAssistContributor extends Object
         void writerEquals(DartEditBuilder builder) {
           writeEquals(
             finalFieldsElements: finalFieldsElements,
-            className: classElement.name,
+            className: classElement.thisType.toString(),
             builder: builder,
           );
         }
