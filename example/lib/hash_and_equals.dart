@@ -19,6 +19,7 @@ class ClassName {
   final Map<String, int> f;
   final Set<Point> g;
 
+  /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
@@ -32,6 +33,8 @@ class ClassName {
     ]);
   }
 
+  /// Compares [this] with [other] on identity, class type, and properties
+  /// *with deep comparison on collections*
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -55,6 +58,7 @@ class Point {
   final double x;
   final double y;
 
+  /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
@@ -63,6 +67,8 @@ class Point {
     ]);
   }
 
+  /// Compares [this] with [other] on identity, class type, and properties
+  /// *with deep comparison on collections*
   @override
   bool operator ==(Object other) {
     return identical(this, other) || other is Point && x == other.x && y == other.y;
