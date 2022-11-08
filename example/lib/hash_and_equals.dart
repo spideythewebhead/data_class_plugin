@@ -23,6 +23,7 @@ class ClassName {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       a,
       b,
       c,
@@ -62,6 +63,7 @@ class Point {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       x,
       y,
     ]);

@@ -87,6 +87,7 @@ class UserNormal extends User {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       id,
       username,
       email,
@@ -143,6 +144,7 @@ class UserAdmin extends User {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       id,
       username,
       email,

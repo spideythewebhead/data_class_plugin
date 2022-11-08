@@ -1,20 +1,17 @@
-class HashAndEqualsTest {
+class Test {
   /// Shorthand constructor
-  HashAndEqualsTest({
-    required this.x,
+  Test({
+    required this.value,
   });
 
-  final int x;
-  final int _y;
-  int z;
-  final int w = 0;
+  final int value;
 
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
-      x,
+      value,
     ]);
   }
 
@@ -22,6 +19,10 @@ class HashAndEqualsTest {
   /// *with deep comparison on collections*
   @override
   bool operator ==(Object other) {
-    return identical(this, other) || other is HashAndEqualsTest && x == other.x;
+    return identical(this, other) || other is Test && value == other.value;
   }
+}
+
+void main() {
+  print(Test(value: 0).hashCode == Test(value: 0).hashCode);
 }

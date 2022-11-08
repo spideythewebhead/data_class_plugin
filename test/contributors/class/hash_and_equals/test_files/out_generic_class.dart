@@ -5,6 +5,7 @@ class HashAndEqualsTest<T, R, S> {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       value,
     ]);
   }

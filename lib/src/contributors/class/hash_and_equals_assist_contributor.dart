@@ -101,14 +101,15 @@ class HashAndEqualsAssistContributor extends Object
       ..writeln('/// Returns a hash code based on [this] properties')
       ..writeln('@override')
       ..writeln('int get hashCode {')
-      ..writeln('return Object.hashAll(<Object?>[');
+      ..writeln('return Object.hashAll(<Object?>[')
+      ..writeln('runtimeType');
 
     for (final Element field in finalFieldsElements) {
-      builder.writeln('${field.name},');
+      builder.writeln(',${field.name}');
     }
 
     builder
-      ..writeln(']);')
+      ..writeln(',]);')
       ..writeln('}');
   }
 
