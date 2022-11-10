@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -10,8 +11,8 @@ import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/annotations/union_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
-import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/utils.dart';
-import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/utils.dart';
+import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_generator.dart';
+import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_generator.dart';
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
@@ -403,7 +404,9 @@ class UnionAssistContributor extends Object
 
         final String jsonFieldName = "json['${jsonKey.name ?? param.name}']";
 
-        FromJsonUtils.parse(
+        FromJsonGenerator(
+          checkIfShouldUseFromJson: (DartType type) => false,
+        ).run(
           nextType: param.type,
           builder: builder,
           depthIndex: 0,
@@ -445,7 +448,9 @@ class UnionAssistContributor extends Object
           continue;
         }
 
-        ToJsonUtils.convert(
+        ToJsonGenerator(
+          checkIfShouldUseToJson: (DartType dartType) => false,
+        ).run(
           nextType: param.type,
           builder: builder,
           parentVariableName: param.name,
