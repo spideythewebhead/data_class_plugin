@@ -9,7 +9,7 @@ import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dar
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
-import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/utils.dart';
+import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_generator.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
@@ -126,7 +126,11 @@ class FromJsonAssistContributor extends Object
         continue;
       }
 
-      FromJsonUtils.parse(
+      FromJsonGenerator(
+        checkIfShouldUseFromJson: (DartType type) {
+          return type.element == classElement;
+        },
+      ).run(
         nextType: fieldType,
         builder: builder,
         parentVariableName: jsonFieldName,

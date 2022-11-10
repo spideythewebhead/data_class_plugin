@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -8,7 +9,7 @@ import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dar
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
-import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/utils.dart';
+import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_generator.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
@@ -114,7 +115,11 @@ class ToJsonAssistContributor extends Object
         continue;
       }
 
-      ToJsonUtils.convert(
+      ToJsonGenerator(
+        checkIfShouldUseToJson: (DartType type) {
+          return type.element == classElement;
+        },
+      ).run(
         nextType: field.type,
         builder: builder,
         parentVariableName: field.name,

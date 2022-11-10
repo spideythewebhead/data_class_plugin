@@ -3,72 +3,102 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 
-class ToJsonUtils {
-  const ToJsonUtils._();
+class FromJsonGenerator {
+  /// Shorthand constructor
+  FromJsonGenerator({
+    this.checkIfShouldUseFromJson,
+  });
 
-  static void convert({
+  final bool Function(DartType dartType)? checkIfShouldUseFromJson;
+
+  void run({
     required final DartType? nextType,
     required final DartEditBuilder builder,
     required final int depthIndex,
     required final String parentVariableName,
+    final String? defaultValue,
   }) {
     if (nextType == null) {
       return;
     }
 
     if (nextType.isDartCoreList) {
-      _writeList(
+      if (nextType.isNullable || defaultValue != null) {
+        _writeNullableParsingPrefix(
+          builder: builder,
+          parentVariableName: parentVariableName,
+          defaultValue: defaultValue,
+        );
+      }
+      _parseList(
         builder: builder,
         type: nextType as ParameterizedType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
-        requiresBangOperator: depthIndex == 0,
       );
       builder.writeln(',');
       return;
     }
 
     if (nextType.isDartCoreMap) {
-      _writeMap(
+      if (nextType.isNullable || defaultValue != null) {
+        _writeNullableParsingPrefix(
+          builder: builder,
+          parentVariableName: parentVariableName,
+          defaultValue: defaultValue,
+        );
+      }
+      _parseMap(
         builder: builder,
         type: nextType as ParameterizedType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
-        requiresBangOperator: depthIndex == 0,
       );
       builder.writeln(',');
       return;
     }
 
-    _writePrimary(
+    if (nextType.isNullable || defaultValue != null) {
+      _writeNullableParsingPrefix(
+        builder: builder,
+        parentVariableName: parentVariableName,
+        defaultValue: defaultValue,
+      );
+    }
+
+    _parsePrimary(
       builder: builder,
       type: nextType,
       parentVariableName: parentVariableName,
     );
   }
 
-  static String _getBangOperatorIfNullable(DartType type) {
-    return type.isNullable ? '!' : '';
-  }
-
-  static void _writeNullableParsingPrefix({
+  void _writeNullableParsingPrefix({
     required final DartEditBuilder builder,
     required final String parentVariableName,
+    final String? defaultValue,
   }) {
-    builder.write('$parentVariableName == null ? null : ');
+    builder.write('$parentVariableName == null ? $defaultValue : ');
   }
 
-  static void _writePrimary({
+  void _parsePrimary({
     required final DartEditBuilder builder,
     required final DartType type,
     required final String parentVariableName,
   }) {
-    if (type.isDynamic || type.isPrimary) {
-      builder.writeln('$parentVariableName,');
+    final String? fieldType = type.element!.name;
+
+    if (type.isDynamic) {
+      builder
+        ..writeln('// FIXME: variable is dynamic or contains a type that is not yet declared')
+        ..writeln('$parentVariableName, ');
       return;
     }
 
-    final String? fieldType = type.element!.name;
+    if (type.isPrimary) {
+      builder.writeln('$parentVariableName as $fieldType,');
+      return;
+    }
 
     if (type.element is ClassElement || type.element is EnumElement) {
       final InterfaceElement element = type.element as InterfaceElement;
@@ -77,8 +107,8 @@ class ToJsonUtils {
         ...element.constructors.map((ConstructorElement ctor) => ctor.name)
       ].firstWhereOrNull((String name) {
         switch (name) {
-          case 'toMap':
-          case 'toJson':
+          case 'fromMap':
+          case 'fromJson':
             return true;
           default:
             return false;
@@ -86,38 +116,34 @@ class ToJsonUtils {
       });
 
       if (convertMethod != null) {
-        builder.writeln('$parentVariableName.$convertMethod(),');
+        builder.writeln('$fieldType.$convertMethod($parentVariableName),');
+        return;
+      }
+
+      if (checkIfShouldUseFromJson?.call(type) ?? false) {
+        builder.writeln('$fieldType.fromJson($parentVariableName),');
         return;
       }
     }
 
-    builder.write('jsonConverterRegistrant.find($fieldType).toJson($parentVariableName),');
+    builder.write('jsonConverterRegistrant.find($fieldType).fromJson($parentVariableName) '
+        'as $fieldType,');
   }
 
-  static void _writeList({
+  void _parseList({
     required final DartEditBuilder builder,
     required final ParameterizedType type,
     required final String parentVariableName,
     required final int depthIndex,
-    required final bool requiresBangOperator,
   }) {
-    if (type.isNullable) {
-      _writeNullableParsingPrefix(
-        builder: builder,
-        parentVariableName: parentVariableName,
-      );
-    }
-
-    builder.write('<dynamic>[');
+    builder.write('<${type.typeArguments[0].typeStringValue()}>[');
 
     final String loopVariableName = 'i$depthIndex';
-    builder.writeln('for (final '
-        '${type.typeArguments[0].typeStringValue()} '
-        '$loopVariableName in $parentVariableName'
-        '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''})');
+    builder.writeln(
+        'for (final dynamic $loopVariableName in ($parentVariableName as ${type.element!.name}<dynamic>))');
 
-    convert(
-      nextType: type.typeArguments.first,
+    run(
+      nextType: type.typeArguments[0],
       builder: builder,
       parentVariableName: loopVariableName,
       depthIndex: 1 + depthIndex,
@@ -126,36 +152,25 @@ class ToJsonUtils {
     builder.writeln(']');
   }
 
-  static void _writeMap({
+  void _parseMap({
     required final DartEditBuilder builder,
     required final ParameterizedType type,
     required final String parentVariableName,
     required final int depthIndex,
-    required final bool requiresBangOperator,
   }) {
     if (!type.typeArguments[0].isDartCoreString) {
       return;
     }
 
-    if (type.isNullable) {
-      _writeNullableParsingPrefix(
-        builder: builder,
-        parentVariableName: parentVariableName,
-      );
-    }
-
-    builder.write('<String, dynamic>{');
+    builder.write('<String, ${type.typeArguments[1].typeStringValue()}>{');
 
     final String loopVariableName = 'e$depthIndex';
     builder
-      ..writeln('for (final '
-          'MapEntry<String, ${type.typeArguments[1].typeStringValue()}> '
-          '$loopVariableName in $parentVariableName'
-          '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''}'
-          '.entries)')
+      ..writeln(
+          'for (final MapEntry<String, dynamic> $loopVariableName in ($parentVariableName as ${type.element!.name}<String, dynamic>).entries)')
       ..write('$loopVariableName.key: ');
 
-    convert(
+    run(
       nextType: type.typeArguments[1],
       builder: builder,
       parentVariableName: '$loopVariableName.value',
