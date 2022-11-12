@@ -1,3 +1,12 @@
+import 'package:data_class_plugin/public/annotations.dart';
+
+@DataClass(
+  copyWith: true,
+  fromJson: false,
+  toJson: false,
+  hashAndEquals: false,
+  $toString: false,
+)
 class User {
   User({
     required this.id,

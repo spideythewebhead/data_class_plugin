@@ -62,7 +62,7 @@ class FromJsonAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerFromJson(DartEditBuilder builder) {
-          _writeFromJson(
+          writeFromJson(
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
@@ -85,7 +85,7 @@ class FromJsonAssistContributor extends Object
     addAssist(AvailableAssists.fromJson, changeBuilder);
   }
 
-  void _writeFromJson({
+  static void writeFromJson({
     required final ClassElement classElement,
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,

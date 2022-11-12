@@ -1,5 +1,13 @@
+import 'package:data_class_plugin/public/annotations.dart';
 import 'package:data_class_plugin/public/deep_equality.dart';
 
+@DataClass(
+  hashAndEquals: true,
+  fromJson: false,
+  toJson: false,
+  copyWith: false,
+  $toString: false,
+)
 class ClassName {
   ClassName({
     required this.a,
@@ -50,6 +58,13 @@ class ClassName {
   }
 }
 
+@DataClass(
+  hashAndEquals: true,
+  fromJson: false,
+  toJson: false,
+  copyWith: false,
+  $toString: false,
+)
 class Point {
   Point({
     required this.x,

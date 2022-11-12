@@ -30,10 +30,11 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
     return <AssistContributor>[
       // Class contributors
       ShorthandConstructorAssistContributor(path),
-      FromJsonAssistContributor(path),
-      ToJsonAssistContributor(path),
-      CopyWithAssistContributor(path),
-      HashAndEqualsAssistContributor(path),
+      DataClassAssistContributor(path),
+      // FromJsonAssistContributor(path),
+      // ToJsonAssistContributor(path),
+      // CopyWithAssistContributor(path),
+      // HashAndEqualsAssistContributor(path),
 
       // Enum contributors
       EnumConstructorAssistContributor(path),

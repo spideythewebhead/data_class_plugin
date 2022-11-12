@@ -60,7 +60,7 @@ class ToStringAssistContributor extends Object
     required final InterfaceElement element,
     required final int rightBracketOffset,
   }) async {
-    if (element.hasUnionAnnotation) {
+    if (element.hasUnionAnnotation || element.hasDataClassAnnotation) {
       return;
     }
 

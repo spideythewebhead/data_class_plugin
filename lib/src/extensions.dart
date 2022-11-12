@@ -84,6 +84,10 @@ extension ElementAnnotationX on ElementAnnotation {
   bool get isUnionFieldValueAnnotation {
     return element?.displayName == 'UnionFieldValue';
   }
+
+  bool get isDataClassAnnotation {
+    return element?.displayName == 'DataClass';
+  }
 }
 
 extension ListX<T> on List<T> {
@@ -143,6 +147,12 @@ extension ElementX on Element {
   bool get hasUnionAnnotation {
     return metadata
             .firstWhereOrNull((ElementAnnotation annotation) => annotation.isUnionAnnotation) !=
+        null;
+  }
+
+  bool get hasDataClassAnnotation {
+    return metadata
+            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isDataClassAnnotation) !=
         null;
   }
 }

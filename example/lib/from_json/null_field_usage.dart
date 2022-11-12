@@ -1,3 +1,12 @@
+import 'package:data_class_plugin/public/annotations.dart';
+
+@DataClass(
+  fromJson: true,
+  toJson: false,
+  copyWith: false,
+  hashAndEquals: false,
+  $toString: false,
+)
 class User {
   /// Shorthand constructor
   User({

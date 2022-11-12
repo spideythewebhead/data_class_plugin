@@ -2,6 +2,13 @@ import 'package:data_class_plugin/public/annotations.dart';
 
 const String _appId = 'app_id';
 
+@DataClass(
+  fromJson: true,
+  toJson: false,
+  copyWith: false,
+  hashAndEquals: false,
+  $toString: false,
+)
 class User {
   User({
     required this.id,
