@@ -13,6 +13,12 @@ abstract class AvailableAssists {
     'Generate union',
   );
 
+  static const AssistKind dataClass = AssistKind(
+    'dataClass',
+    1000,
+    'Generate data class',
+  );
+
   static const AssistKind fromJson = AssistKind(
     'fromJson',
     999,
