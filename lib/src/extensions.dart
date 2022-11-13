@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
@@ -90,7 +92,7 @@ extension ElementAnnotationX on ElementAnnotation {
   }
 }
 
-extension ListX<T> on List<T> {
+extension IterableX<T> on Iterable<T> {
   T? firstWhereOrNull(bool Function(T element) test) {
     try {
       return firstWhere(test);
@@ -99,7 +101,7 @@ extension ListX<T> on List<T> {
     }
   }
 
-  T? get firstOrNull => isEmpty ? null : this[0];
+  T? get firstOrNull => isEmpty ? null : elementAt(0);
 }
 
 extension ExecutableElementX<T> on ExecutableElement {
@@ -154,5 +156,13 @@ extension ElementX on Element {
     return metadata
             .firstWhereOrNull((ElementAnnotation annotation) => annotation.isDataClassAnnotation) !=
         null;
+  }
+}
+
+extension StringX on String {
+  String snakeCaseToCamelCase() {
+    return replaceAllMapped(RegExp(r'_([a-z])'), (Match match) {
+      return match.group(1)!.toUpperCase();
+    });
   }
 }

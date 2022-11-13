@@ -1,3 +1,5 @@
+import 'package:data_class_plugin/src/json_key_name_convention.dart';
+
 typedef FromJsonConverter<T> = T Function(Map<String, dynamic> json);
 typedef ToJsonConverter<T> = Object? Function(T value);
 
@@ -6,7 +8,8 @@ class JsonKey<T> {
     this.name,
     this.fromJson,
     this.toJson,
-    this.ignore = false,
+    this.ignore,
+    this.nameConvention,
   });
 
   /// Replaces the field's access name on json
@@ -55,5 +58,12 @@ class JsonKey<T> {
   /// Ignores adding the field in the from/to json methods
   ///
   /// *Note: Fields that are private or have initializers will be ignored automatically*
-  final bool ignore;
+  ///
+  /// If no value is provided (default), then false is assumed
+  final bool? ignore;
+
+  /// Transforms the variable name into one of the [nameJsonKeyNameConventionConvention] typing cases
+  ///
+  /// If no value is provided (default), then [JsonKeyNameConvention.camelCase] is assumed
+  final JsonKeyNameConvention? nameConvention;
 }

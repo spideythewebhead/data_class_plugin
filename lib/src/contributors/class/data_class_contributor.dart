@@ -12,16 +12,23 @@ import 'package:data_class_plugin/src/contributors/class/copy_with_assist_contri
 import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/class/hash_and_equals_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_assist_contributor.dart';
+import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
+import 'package:data_class_plugin/src/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class DataClassAssistContributor extends Object
-    with AssistContributorMixin, ClassAstVisitorMixin
+    with
+        AssistContributorMixin,
+        ClassAstVisitorMixin,
+        DataClassPluginOptionsMixin,
+        RelativeFilePathMixin
     implements AssistContributor {
-  DataClassAssistContributor(this.filePath);
+  DataClassAssistContributor(this.targetFilePath);
 
-  final String filePath;
+  @override
+  final String targetFilePath;
 
   @override
   late final DartAssistRequest assistRequest;
@@ -29,6 +36,7 @@ class DataClassAssistContributor extends Object
   @override
   late final AssistCollector collector;
 
+  @override
   AnalysisSession get session => assistRequest.result.session;
 
   @override
@@ -71,8 +79,11 @@ class DataClassAssistContributor extends Object
         .where((FieldElement field) => field.isFinal && field.isPublic && !field.hasInitializer)
         .toList(growable: false);
 
+    final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
+        utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
+
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
-    await changeBuilder.addDartFileEdit(filePath, (DartFileEditBuilder fileEditBuilder) {
+    await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
       if (dataClassAnnotation.$toString) {
         void writerToString(DartEditBuilder builder) {
           ToStringAssistContributor.writeToString(
@@ -163,6 +174,8 @@ class DataClassAssistContributor extends Object
       if (dataClassAnnotation.toJson) {
         void writerToJson(DartEditBuilder builder) {
           ToJsonAssistContributor.writeToJson(
+            targetFileRelativePath: relativeFilePath,
+            pluginOptions: pluginOptions,
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
@@ -184,6 +197,8 @@ class DataClassAssistContributor extends Object
       if (dataClassAnnotation.fromJson) {
         void writerFromJson(DartEditBuilder builder) {
           FromJsonAssistContributor.writeFromJson(
+            targetFileRelativePath: relativeFilePath,
+            pluginOptions: pluginOptions,
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
