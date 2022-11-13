@@ -7,33 +7,22 @@ class JsonKeyInternal {
     this.fromJson,
     this.toJson,
     this.ignore = false,
+    this.nameConvention,
   });
 
   final String? name;
   final ExecutableElement? fromJson;
   final ExecutableElement? toJson;
   final bool ignore;
+  final String? nameConvention;
 
   factory JsonKeyInternal.fromDartObject(DartObject? object) {
-    if (object == null) {
-      return const JsonKeyInternal();
-    }
     return JsonKeyInternal(
-      name: object.getField('name')?.toStringValue(),
-      fromJson: object.getField('fromJson')?.toFunctionValue(),
-      toJson: object.getField('toJson')?.toFunctionValue(),
-      ignore: object.getField('ignore')?.toBoolValue() ?? false,
+      name: object?.getField('name')?.toStringValue(),
+      fromJson: object?.getField('fromJson')?.toFunctionValue(),
+      toJson: object?.getField('toJson')?.toFunctionValue(),
+      ignore: object?.getField('ignore')?.toBoolValue() ?? false,
+      nameConvention: object?.getField('nameConvention')?.variable?.name,
     );
-  }
-
-  /// Returns a string with the properties of [this]
-  @override
-  String toString() {
-    return '''JsonKeyInternal(
-<name= $name>,
-<fromJson= $fromJson>,
-<toJson= $toJson>,
-<ignore= $ignore>,
-)''';
   }
 }

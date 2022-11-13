@@ -10,15 +10,23 @@ import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dar
 import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_generator.dart';
+import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
+import 'package:data_class_plugin/src/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class ToJsonAssistContributor extends Object
-    with AssistContributorMixin, ClassAstVisitorMixin
+    with
+        AssistContributorMixin,
+        ClassAstVisitorMixin,
+        DataClassPluginOptionsMixin,
+        RelativeFilePathMixin
     implements AssistContributor {
-  ToJsonAssistContributor(this.filePath);
+  ToJsonAssistContributor(this.targetFilePath);
 
-  final String filePath;
+  @override
+  final String targetFilePath;
 
   @override
   late final DartAssistRequest assistRequest;
@@ -26,6 +34,7 @@ class ToJsonAssistContributor extends Object
   @override
   late final AssistCollector collector;
 
+  @override
   AnalysisSession get session => assistRequest.result.session;
 
   @override
@@ -56,12 +65,17 @@ class ToJsonAssistContributor extends Object
         .where((FieldElement field) => field.isFinal && field.isPublic)
         .toList(growable: false);
 
+    final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
+        utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
+
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
-      filePath,
+      targetFilePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerToJson(DartEditBuilder builder) {
           writeToJson(
+            targetFileRelativePath: relativeFilePath,
+            pluginOptions: pluginOptions,
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
@@ -85,6 +99,8 @@ class ToJsonAssistContributor extends Object
   }
 
   static void writeToJson({
+    required final String targetFileRelativePath,
+    required final DataClassPluginOptions pluginOptions,
     required final ClassElement classElement,
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
@@ -105,7 +121,13 @@ class ToJsonAssistContributor extends Object
         continue;
       }
 
-      builder.write("'${jsonKey.name ?? field.name}': ");
+      final JsonKeyNameConvention jsonKeyNameConvention = utils.getJsonKeyNameConvention(
+        targetFileRelativePath: targetFileRelativePath,
+        jsonKey: jsonKey,
+        pluginOptions: pluginOptions,
+      );
+
+      builder.write("'${jsonKey.name ?? jsonKeyNameConvention.transform(field.name)}': ");
 
       if (jsonKey.toJson != null) {
         builder

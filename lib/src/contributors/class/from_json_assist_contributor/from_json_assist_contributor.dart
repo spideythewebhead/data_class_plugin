@@ -10,15 +10,23 @@ import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dar
 import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_generator.dart';
+import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
+import 'package:data_class_plugin/src/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class FromJsonAssistContributor extends Object
-    with AssistContributorMixin, ClassAstVisitorMixin
+    with
+        AssistContributorMixin,
+        ClassAstVisitorMixin,
+        DataClassPluginOptionsMixin,
+        RelativeFilePathMixin
     implements AssistContributor {
-  FromJsonAssistContributor(this.filePath);
+  FromJsonAssistContributor(this.targetFilePath);
 
-  final String filePath;
+  @override
+  final String targetFilePath;
 
   @override
   late final DartAssistRequest assistRequest;
@@ -26,6 +34,7 @@ class FromJsonAssistContributor extends Object
   @override
   late final AssistCollector collector;
 
+  @override
   AnalysisSession get session => assistRequest.result.session;
 
   @override
@@ -57,12 +66,17 @@ class FromJsonAssistContributor extends Object
       return field.isFinal && field.isPublic && !field.hasInitializer && field.type.isJsonSupported;
     }).toList(growable: false);
 
+    final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
+        utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
+
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
-      filePath,
+      targetFilePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerFromJson(DartEditBuilder builder) {
           writeFromJson(
+            targetFileRelativePath: relativeFilePath,
+            pluginOptions: pluginOptions,
             classElement: classElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
@@ -86,6 +100,8 @@ class FromJsonAssistContributor extends Object
   }
 
   static void writeFromJson({
+    required final String targetFileRelativePath,
+    required final DataClassPluginOptions pluginOptions,
     required final ClassElement classElement,
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
@@ -106,9 +122,15 @@ class FromJsonAssistContributor extends Object
         continue;
       }
 
+      final JsonKeyNameConvention jsonKeyNameConvention = utils.getJsonKeyNameConvention(
+        targetFileRelativePath: targetFileRelativePath,
+        jsonKey: jsonKey,
+        pluginOptions: pluginOptions,
+      );
       final String fieldName = field.name;
       final DartType fieldType = field.type;
-      final String jsonFieldName = "json['${jsonKey.name ?? fieldName}']";
+      final String jsonFieldName =
+          "json['${jsonKey.name ?? jsonKeyNameConvention.transform(fieldName)}']";
       final ConstructorElement? defaultConstructor = classElement.constructors
           .firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
       final String? defaultValueString = defaultConstructor?.parameters

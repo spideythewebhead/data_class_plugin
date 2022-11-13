@@ -1,0 +1,9 @@
+json:
+  # key_name_conventions glob match takes precedence over key_name_convention
+  key_name_conventions:
+    kebab_case:
+      - "test/contributors/class/**/*_kebab_case.dart"
+    pascal_case:
+      - "test/contributors/class/**/*_pascal_case.dart"
+    snake_case:
+      - "test/contributors/class/**/*_snake_case.dart"
