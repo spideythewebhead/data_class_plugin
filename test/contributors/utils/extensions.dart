@@ -45,8 +45,8 @@ extension InOutFilesList on List<InOutFilesPair> {
 
     await assistContributor.computeAssists(
       DartAssistRequestTest(
-        offset: offsetProvider?.call(compilationUnit) ?? 0,
-        length: 1,
+        offset: offsetProvider?.call(compilationUnit) ?? compilationUnit.beginToken.offset,
+        length: compilationUnit.length,
         resourceProvider: PhysicalResourceProvider.INSTANCE,
         result: resolvedUnitResult,
       ),
