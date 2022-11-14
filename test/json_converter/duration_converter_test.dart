@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:data_class_plugin/public/json_converter.dart';
+import 'package:data_class_plugin/data_class_plugin.dart';
 import 'package:test/test.dart';
 
 class _TestModel {

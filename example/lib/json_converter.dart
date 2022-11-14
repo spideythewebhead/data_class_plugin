@@ -1,4 +1,4 @@
-import 'package:data_class_plugin/public/json_converter.dart';
+import 'package:data_class_plugin/data_class_plugin.dart';
 
 // Assume this is in external package
 class LatLng {

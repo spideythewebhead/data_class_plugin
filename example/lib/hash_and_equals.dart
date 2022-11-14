@@ -1,5 +1,4 @@
-import 'package:data_class_plugin/public/annotations.dart';
-import 'package:data_class_plugin/public/deep_equality.dart';
+import 'package:data_class_plugin/data_class_plugin.dart';
 
 @DataClass(
   hashAndEquals: true,
