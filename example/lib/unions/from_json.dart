@@ -1,5 +1,4 @@
-import 'package:data_class_plugin/public/annotations.dart';
-import 'package:data_class_plugin/public/json_converter.dart';
+import 'package:data_class_plugin/data_class_plugin.dart';
 
 @Union(
   dataClass: false,
