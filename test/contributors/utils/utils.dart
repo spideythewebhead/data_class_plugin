@@ -5,6 +5,7 @@ import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/file_system/file_system.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
+import 'package:analyzer_plugin/protocol/protocol_common.dart';
 import 'package:analyzer_plugin/protocol/protocol_generated.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:dart_style/dart_style.dart';
@@ -44,4 +45,6 @@ class AssistCollectorTest extends AssistCollector {
   void addAssist(PrioritizedSourceChange assist) => assists.add(assist);
 
   String get firstReplacement => assists[0].change.edits[0].edits[0].replacement;
+
+  bool get hasMultipleReplacements => assists[0].change.edits[0].edits.length > 1;
 }
