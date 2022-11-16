@@ -159,6 +159,14 @@ extension ElementX on Element {
   }
 }
 
+extension ClassDeclarationX on ClassDeclaration {
+  bool get hasDataClassAnnotation {
+    return metadata
+            .firstWhereOrNull((Annotation annotation) => annotation.name.name == 'DataClass') !=
+        null;
+  }
+}
+
 extension StringX on String {
   String snakeCaseToCamelCase() {
     return replaceAllMapped(RegExp(r'_([a-z])'), (Match match) {

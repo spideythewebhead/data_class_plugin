@@ -6,6 +6,14 @@
   hashAndEquals: false,
 )
 class PascalCaseTest {
+  /// Shorthand constructor
+  PascalCaseTest({
+    required this.thisVariableWillBePascalCase,
+    required this.onewordvariable,
+    required this.thisIsAVariable,
+    required this.aNumber11Variable,
+  });
+
   final String thisVariableWillBePascalCase;
   final String onewordvariable;
   final String thisIsAVariable;

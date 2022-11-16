@@ -37,18 +37,11 @@ class ShorthandConstructorAssistContributor extends Object
 
   Future<void> _generateConstructor() async {
     final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
+    if (classNode == null ||
+        classNode.members.isEmpty ||
+        classNode.declaredElement == null ||
+        classNode.declaredElement!.hasDataClassAnnotation) {
       return;
-    }
-
-    String? initializerList;
-    for (final ClassMember member in classNode.members) {
-      if (member is ConstructorDeclaration &&
-          member.name?.lexeme == null &&
-          member.initializers.isNotEmpty) {
-        initializerList = member.initializers.join(', ');
-        break;
-      }
     }
 
     final ClassElement classElement = classNode.declaredElement!;
@@ -60,10 +53,10 @@ class ShorthandConstructorAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerConstructor(DartEditBuilder builder) {
-          _writeConstructor(
+          writeConstructor(
             classElement: classElement,
             builder: builder,
-            initializerList: initializerList,
+            members: classNode.members,
           );
         }
 
@@ -86,13 +79,36 @@ class ShorthandConstructorAssistContributor extends Object
     addAssist(AvailableAssists.shorthandConstructor, changeBuilder);
   }
 
-  void _writeConstructor({
+  static void writeConstructor({
     required final ClassElement classElement,
     required final DartEditBuilder builder,
-    final String? initializerList,
+    required List<ClassMember> members,
   }) {
     final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
     final bool isConst = defaultConstructor?.isConst ?? true;
+
+    final List<VariableElement> fields = <VariableElement>[
+      ...classElement.dataClassFinalFields,
+      ...classElement.chainSuperClassDataClassFinalFields,
+    ];
+
+    if (fields.isEmpty) {
+      builder
+        ..writeln()
+        ..writeln('/// Shorthand constructor')
+        ..writeln('${isConst ? 'const' : ''} ${classElement.name}();');
+      return;
+    }
+
+    String? initializerList;
+    for (final ClassMember member in members) {
+      if (member is ConstructorDeclaration &&
+          member.name?.lexeme == null &&
+          member.initializers.isNotEmpty) {
+        initializerList = member.initializers.join(', ');
+        break;
+      }
+    }
 
     builder
       ..writeln()
@@ -133,7 +149,7 @@ class ShorthandConstructorAssistContributor extends Object
     ]);
 
     if (defaultConstructor != null) {
-      // keep existing declartions of super.*
+      // keep existing declarations of super.*
       for (final ParameterElement param in defaultConstructor.dataClassSuperFields) {
         builder
           ..write(param.isRequired ? 'required ' : '')

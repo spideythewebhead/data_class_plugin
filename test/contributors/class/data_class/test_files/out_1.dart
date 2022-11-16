@@ -6,6 +6,9 @@
   toJson: false,
 )
 class ToStringTest {
+  /// Shorthand constructor
+  ToStringTest();
+
   /// Returns a string with the properties of [ToStringTest]
   @override
   String toString() {

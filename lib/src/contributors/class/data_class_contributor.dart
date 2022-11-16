@@ -8,10 +8,7 @@ import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dar
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
-import 'package:data_class_plugin/src/contributors/class/copy_with_assist_contributor.dart';
-import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_assist_contributor.dart';
-import 'package:data_class_plugin/src/contributors/class/hash_and_equals_assist_contributor.dart';
-import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_assist_contributor.dart';
+import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/data_class_plugin_options.dart';
@@ -67,6 +64,8 @@ class DataClassAssistContributor extends Object
           .computeConstantValue(),
     );
 
+    final SourceRange? constructorSourceRange =
+        classNode.members.getSourceRangeForConstructor(null);
     final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
     final SourceRange? equalsSourceRange = classNode.members.getSourceRangeForMethod('==');
     final SourceRange? hashCodeSourceRange = classNode.members.getSourceRangeForMethod('hashCode');
@@ -85,6 +84,26 @@ class DataClassAssistContributor extends Object
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
+      void writerConstructor(DartEditBuilder builder) {
+        ShorthandConstructorAssistContributor.writeConstructor(
+          classElement: classElement,
+          builder: builder,
+          members: classNode.members,
+        );
+      }
+
+      if (constructorSourceRange != null) {
+        fileEditBuilder.addReplacement(
+          constructorSourceRange,
+          writerConstructor,
+        );
+      } else {
+        fileEditBuilder.addInsertion(
+          classNode.leftBracket.offset + 1,
+          writerConstructor,
+        );
+      }
+
       if (dataClassAnnotation.$toString) {
         void writerToString(DartEditBuilder builder) {
           ToStringAssistContributor.writeToString(
@@ -96,7 +115,10 @@ class DataClassAssistContributor extends Object
         }
 
         if (toStringSourceRange != null) {
-          fileEditBuilder.addReplacement(toStringSourceRange, writerToString);
+          fileEditBuilder.addReplacement(
+            toStringSourceRange,
+            writerToString,
+          );
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,

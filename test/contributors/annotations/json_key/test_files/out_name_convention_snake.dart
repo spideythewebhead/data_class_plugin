@@ -6,6 +6,7 @@
   $toString: false,
 )
 class User {
+  /// Shorthand constructor
   User({
     required this.thisIsATestVariable,
   });

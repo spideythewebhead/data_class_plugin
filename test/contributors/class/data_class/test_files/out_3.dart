@@ -6,6 +6,9 @@
   toJson: false,
 )
 class HashAndEqualsTest {
+  /// Shorthand constructor
+  HashAndEqualsTest();
+
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {

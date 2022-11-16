@@ -6,6 +6,14 @@
   hashAndEquals: false,
 )
 class SnakeCaseTest {
+  /// Shorthand constructor
+  SnakeCaseTest({
+    required this.thisVariableWillBeSnakeCase,
+    required this.onewordvariable,
+    required this.thisIsAVariable,
+    required this.aNumber11Variable,
+  });
+
   final String thisVariableWillBeSnakeCase;
   final String onewordvariable;
   final String thisIsAVariable;

@@ -80,7 +80,7 @@ extension InOutFilesList on List<InOutFilesPair> {
 
         // Get the code generated from contributor's assists
         final String actual = collector.hasMultipleReplacements
-            ? collector.assists.getGeneratedCode()
+            ? collector.assists.getGeneratedCode().dartFormat()
             : collector.firstReplacement.dartFormat();
 
         expect(
@@ -102,6 +102,6 @@ extension on List<PrioritizedSourceChange> {
         }
       }
     }
-    return replacements.reversed.join('\n\n').dartFormat();
+    return replacements.reversed.join('\n\n');
   }
 }
