@@ -74,11 +74,34 @@ extension InOutFilesList on List<InOutFilesPair> {
         );
 
         expect(collector.assists, hasLength(1));
+
+        // Read the content of the 'out_.dart' file
+        final String expected = io.File(outPath).readAsStringSync().normalizeWhitespaces();
+
+        // Get the code generated from contributor's assists
+        final String actual = collector.hasMultipleReplacements
+            ? collector.assists.getGeneratedCode()
+            : collector.firstReplacement.dartFormat();
+
         expect(
-          io.File(outPath).readAsStringSync().normalizeWhitespaces(),
-          equals(collector.firstReplacement.dartFormat()),
+          expected,
+          equals(actual),
         );
       });
     }
+  }
+}
+
+extension on List<PrioritizedSourceChange> {
+  String getGeneratedCode() {
+    final List<String> replacements = <String>[];
+    for (final PrioritizedSourceChange assist in this) {
+      for (final SourceFileEdit edit in assist.change.edits) {
+        for (final SourceEdit e in edit.edits) {
+          replacements.add(e.replacement);
+        }
+      }
+    }
+    return replacements.reversed.join('\n\n').dartFormat();
   }
 }
