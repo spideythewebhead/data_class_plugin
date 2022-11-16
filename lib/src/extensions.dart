@@ -166,3 +166,43 @@ extension StringX on String {
     });
   }
 }
+
+extension ClassElementX on ClassElement {
+  ConstructorElement? get defaultConstructor {
+    return constructors.firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
+  }
+
+  List<FieldElement> get dataClassFinalFields {
+    return <FieldElement>[
+      for (final FieldElement field in fields)
+        if (field.isFinal && field.isPublic && !field.hasInitializer) field,
+    ];
+  }
+
+  List<FieldElement> get chainSuperClassDataClassFinalFields {
+    final List<FieldElement> fields = <FieldElement>[];
+
+    ClassElement? superClassClassElement = supertype?.classElement;
+    while (superClassClassElement != null) {
+      fields.addAll(superClassClassElement.dataClassFinalFields);
+      superClassClassElement = superClassClassElement.supertype?.classElement;
+    }
+
+    return fields;
+  }
+}
+
+extension ConstructorElementX on ConstructorElement {
+  List<ParameterElement> get dataClassSuperFields {
+    return <ParameterElement>[
+      for (final ParameterElement param in parameters)
+        if (param.isNamed && param.isSuperFormal) param
+    ];
+  }
+}
+
+extension InterfaceTypeX on InterfaceType {
+  ClassElement? get classElement {
+    return element is ClassElement ? element as ClassElement : null;
+  }
+}

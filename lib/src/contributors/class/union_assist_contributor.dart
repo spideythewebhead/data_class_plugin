@@ -467,18 +467,18 @@ class UnionAssistContributor extends Object
       CopyWithAssistContributor.writeCopyWith(
         className: '$redirectedCtor',
         commentClassName: redirectedCtor.name,
-        finalFieldsElements: constructorElement.parameters,
+        fields: constructorElement.parameters,
         builder: builder,
       );
 
       HashAndEqualsAssistContributor.writeHashCode(
-        finalFieldsElements: constructorElement.parameters,
+        fields: constructorElement.parameters,
         builder: builder,
       );
 
       HashAndEqualsAssistContributor.writeEquals(
         className: '$redirectedCtor',
-        finalFieldsElements: constructorElement.parameters,
+        fields: constructorElement.parameters,
         builder: builder,
       );
 

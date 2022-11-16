@@ -75,9 +75,10 @@ class DataClassAssistContributor extends Object
         classNode.members.getSourceRangeForConstructor('fromJson');
     final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
 
-    final List<FieldElement> finalFieldsElements = classElement.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic && !field.hasInitializer)
-        .toList(growable: false);
+    final List<VariableElement> fields = <VariableElement>[
+      ...classElement.dataClassFinalFields,
+      ...classElement.chainSuperClassDataClassFinalFields,
+    ];
 
     final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
         utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
@@ -89,7 +90,7 @@ class DataClassAssistContributor extends Object
           ToStringAssistContributor.writeToString(
             elementName: classElement.thisType.toString(),
             commentElementName: classElement.name,
-            finalFieldsElements: finalFieldsElements,
+            finalFieldsElements: fields,
             builder: builder,
           );
         }
@@ -109,7 +110,7 @@ class DataClassAssistContributor extends Object
       if (dataClassAnnotation.hashAndEquals) {
         void writerHashCode(DartEditBuilder builder) {
           HashAndEqualsAssistContributor.writeHashCode(
-            finalFieldsElements: finalFieldsElements,
+            fields: fields,
             builder: builder,
           );
         }
@@ -117,7 +118,7 @@ class DataClassAssistContributor extends Object
         void writerEquals(DartEditBuilder builder) {
           HashAndEqualsAssistContributor.writeEquals(
             className: classElement.thisType.toString(),
-            finalFieldsElements: finalFieldsElements,
+            fields: fields,
             builder: builder,
           );
         }
@@ -154,7 +155,7 @@ class DataClassAssistContributor extends Object
           CopyWithAssistContributor.writeCopyWith(
             className: classElement.thisType.toString(),
             commentClassName: classElement.name,
-            finalFieldsElements: finalFieldsElements,
+            fields: fields,
             builder: builder,
           );
         }
@@ -177,7 +178,6 @@ class DataClassAssistContributor extends Object
             targetFileRelativePath: relativeFilePath,
             pluginOptions: pluginOptions,
             classElement: classElement,
-            finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
@@ -200,7 +200,6 @@ class DataClassAssistContributor extends Object
             targetFileRelativePath: relativeFilePath,
             pluginOptions: pluginOptions,
             classElement: classElement,
-            finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }

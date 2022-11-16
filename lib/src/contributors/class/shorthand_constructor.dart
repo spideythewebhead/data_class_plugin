@@ -41,12 +41,19 @@ class ShorthandConstructorAssistContributor extends Object
       return;
     }
 
-    final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForConstructor(null);
+    String? initializerList;
+    for (final ClassMember member in classNode.members) {
+      if (member is ConstructorDeclaration &&
+          member.name?.lexeme == null &&
+          member.initializers.isNotEmpty) {
+        initializerList = member.initializers.join(', ');
+        break;
+      }
+    }
 
-    final List<FieldElement> finalFieldsElements = classElement.fields.where((FieldElement field) {
-      return field.isFinal && field.isPublic && !field.hasInitializer;
-    }).toList(growable: false);
+    final ClassElement classElement = classNode.declaredElement!;
+    final SourceRange? constructorSourceRange =
+        classNode.members.getSourceRangeForConstructor(null);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
@@ -55,14 +62,14 @@ class ShorthandConstructorAssistContributor extends Object
         void writerConstructor(DartEditBuilder builder) {
           _writeConstructor(
             classElement: classElement,
-            finalFieldsElements: finalFieldsElements,
             builder: builder,
+            initializerList: initializerList,
           );
         }
 
-        if (copyWithSourceRange != null) {
+        if (constructorSourceRange != null) {
           fileEditBuilder.addReplacement(
-            copyWithSourceRange,
+            constructorSourceRange,
             writerConstructor,
           );
         } else {
@@ -81,36 +88,70 @@ class ShorthandConstructorAssistContributor extends Object
 
   void _writeConstructor({
     required final ClassElement classElement,
-    required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
+    final String? initializerList,
   }) {
-    final ConstructorElement? constructor =
-        classElement.constructors.firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
-    final bool isConstructor = constructor?.isConst ?? true;
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final bool isConst = defaultConstructor?.isConst ?? true;
 
     builder
       ..writeln()
       ..writeln('/// Shorthand constructor')
-      ..writeln('${isConstructor ? 'const' : ''} ${classElement.name}({');
+      ..writeln('${isConst ? 'const' : ''} ${classElement.name}({');
 
-    for (final FieldElement field in finalFieldsElements) {
-      final ParameterElement? existingParameter =
-          constructor?.parameters.firstWhereOrNull((ParameterElement param) {
-        return param.isNamed && param.name == field.name;
-      });
+    void writeConstructorFieldsWithPrefix(String prefix, List<VariableElement> fields) {
+      for (final VariableElement field in fields) {
+        final ParameterElement? existingParameter =
+            defaultConstructor?.parameters.firstWhereOrNull((ParameterElement param) {
+          return param.isNamed && param.name == field.name;
+        });
 
-      String paramInitialization = '';
-      if (existingParameter != null && existingParameter.hasDefaultValue) {
-        paramInitialization = ' = ${existingParameter.defaultValueCode}';
+        String paramInitialization = '';
+        if (existingParameter != null && existingParameter.hasDefaultValue) {
+          paramInitialization = '= ${existingParameter.defaultValueCode}';
+        }
+
+        if (!field.type.isNullable && paramInitialization.isEmpty) {
+          builder.write('required ');
+        }
+
+        builder.writeln('$prefix${field.name} $paramInitialization,');
       }
-
-      if (!field.type.isNullable && paramInitialization.isEmpty) {
-        builder.write('required');
-      }
-
-      builder.writeln(' this.${field.name} $paramInitialization,');
     }
 
-    builder.writeln('});');
+    final Set<String> superClassFinalFields = Set<String>.of(
+      defaultConstructor?.dataClassSuperFields
+              .map((ParameterElement field) => field.name)
+              .toList(growable: false) ??
+          const <String>[],
+    );
+
+    writeConstructorFieldsWithPrefix('super.', <FieldElement>[
+      // we need to exclude all the super fields that are already declared in the constructor
+      for (final FieldElement field in classElement.chainSuperClassDataClassFinalFields)
+        if (!superClassFinalFields.contains(field.name)) field
+    ]);
+
+    if (defaultConstructor != null) {
+      // keep existing declartions of super.*
+      for (final ParameterElement param in defaultConstructor.dataClassSuperFields) {
+        builder
+          ..write(param.isRequired ? 'required ' : '')
+          ..write('super.${param.name} ')
+          ..write(param.hasDefaultValue ? '= ${param.defaultValueCode}' : '')
+          ..writeln(',');
+        continue;
+      }
+    }
+
+    writeConstructorFieldsWithPrefix('this.', classElement.dataClassFinalFields);
+
+    builder.write('})');
+
+    if (initializerList != null) {
+      builder.write(': $initializerList');
+    }
+
+    builder.writeln(';');
   }
 }
