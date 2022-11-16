@@ -4,6 +4,21 @@ import 'package:meta/meta_meta.dart';
 typedef FromJsonConverter<T> = T Function(Map<String, dynamic> json);
 typedef ToJsonConverter<T> = Object? Function(T value);
 
+/// Adding the [JsonKey] annotation to a field makes it customizable
+/// when generating fromJson/toJson methods
+///
+/// Available features
+///
+/// [name] Replaces the field's access name on json
+///
+/// [fromJson] Custom converter from json value to object
+///
+/// [toJson] Custom converter from json value to object
+///
+/// [ignore] Ignores adding the field in the from/to json methods
+///
+/// [nameConvention] Transforms the variable name into one of the [nameJsonKeyNameConventionConvention] typing cases
+
 @Target(<TargetKind>{
   TargetKind.field,
   TargetKind.parameter,
