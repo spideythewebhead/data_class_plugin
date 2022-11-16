@@ -6,6 +6,14 @@
   hashAndEquals: false,
 )
 class KebabCaseTest {
+  /// Shorthand constructor
+  KebabCaseTest({
+    required this.thisVariableWillBeKebabCase,
+    required this.thisvariablewillnotbekebabcase,
+    required this.thisIsAVariable,
+    required this.aNumber11Variable,
+  });
+
   final String thisVariableWillBeKebabCase;
   final String thisvariablewillnotbekebabcase;
   final String thisIsAVariable;
