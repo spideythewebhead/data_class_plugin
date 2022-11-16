@@ -1,6 +1,6 @@
 import 'package:meta/meta_meta.dart';
 
-/// Adding this annotation to class enables it to create common data class functionality
+/// Adding this annotation to a class enables it to create common data class functionality
 ///
 /// Available methods are
 ///
