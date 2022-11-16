@@ -49,10 +49,6 @@ class CopyWithAssistContributor extends Object
 
     final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
 
-    final List<FieldElement> finalFieldsElements = classElement.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic && !field.hasInitializer)
-        .toList(growable: false);
-
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
       filePath,
@@ -60,7 +56,10 @@ class CopyWithAssistContributor extends Object
         void writerCopyWith(DartEditBuilder builder) {
           writeCopyWith(
             className: classElement.name,
-            finalFieldsElements: finalFieldsElements,
+            fields: <VariableElement>[
+              ...classElement.dataClassFinalFields,
+              ...classElement.chainSuperClassDataClassFinalFields,
+            ],
             builder: builder,
           );
         }
@@ -83,7 +82,7 @@ class CopyWithAssistContributor extends Object
 
   static void writeCopyWith({
     required final String className,
-    required final List<VariableElement> finalFieldsElements,
+    required final List<VariableElement> fields,
     required final DartEditBuilder builder,
     final String? commentClassName,
   }) {
@@ -93,9 +92,9 @@ class CopyWithAssistContributor extends Object
           '/// Creates a new instance of [${commentClassName ?? className}] with optional new values')
       ..writeln('$className copyWith(');
 
-    if (finalFieldsElements.isNotEmpty) {
+    if (fields.isNotEmpty) {
       builder.write('{');
-      for (final VariableElement field in finalFieldsElements) {
+      for (final VariableElement field in fields) {
         final String typeStringValue = field.type.typeStringValue();
         final bool isNullable = typeStringValue.endsWith('?');
         builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
@@ -107,7 +106,7 @@ class CopyWithAssistContributor extends Object
       ..writeln(') {')
       ..writeln('return $className(');
 
-    for (final VariableElement field in finalFieldsElements) {
+    for (final VariableElement field in fields) {
       builder.writeln('${field.name}: ${field.name} ?? this.${field.name},');
     }
 

@@ -61,10 +61,6 @@ class ToJsonAssistContributor extends Object
 
     final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
 
-    final List<FieldElement> finalFieldsElements = classElement.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic)
-        .toList(growable: false);
-
     final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
         utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
 
@@ -77,7 +73,6 @@ class ToJsonAssistContributor extends Object
             targetFileRelativePath: relativeFilePath,
             pluginOptions: pluginOptions,
             classElement: classElement,
-            finalFieldsElements: finalFieldsElements,
             builder: builder,
           );
         }
@@ -102,7 +97,6 @@ class ToJsonAssistContributor extends Object
     required final String targetFileRelativePath,
     required final DataClassPluginOptions pluginOptions,
     required final ClassElement classElement,
-    required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
@@ -111,7 +105,10 @@ class ToJsonAssistContributor extends Object
       ..writeln('Map<String, dynamic> toJson() {')
       ..writeln('return <String, dynamic>{');
 
-    for (final FieldElement field in finalFieldsElements) {
+    for (final VariableElement field in <VariableElement>[
+      ...classElement.dataClassFinalFields,
+      ...classElement.chainSuperClassDataClassFinalFields,
+    ]) {
       final ElementAnnotation? jsonKeyAnnotation = field.metadata
           .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
       final JsonKeyInternal jsonKey = JsonKeyInternal //
