@@ -1,4 +1,5 @@
 version: 2
+enable-beta-ecosystems: true
 
 updates:
   - package-ecosystem: "github-actions"
@@ -10,13 +11,16 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    versioning-strategy: increase
 
   - package-ecosystem: "pub"
     directory: "/example"
     schedule:
       interval: "weekly"
+    versioning-strategy: increase
 
   - package-ecosystem: "pub"
     directory: "/tools/analyzer_plugin"
     schedule:
       interval: "weekly"
+    versioning-strategy: increase
