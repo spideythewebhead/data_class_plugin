@@ -173,6 +173,13 @@ extension StringX on String {
       return match.group(1)!.toUpperCase();
     });
   }
+
+  /// Escape $ with \$
+  String escapeDollarSign() {
+    return replaceAllMapped('\$', (Match match) {
+      return '\\${match.group(0)}';
+    });
+  }
 }
 
 extension ClassElementX on ClassElement {

@@ -1,7 +1,6 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
-import 'package:data_class_plugin/src/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/visitors/visitors.dart';
 
 mixin AstVisitorMixin on AssistContributor {
@@ -29,17 +28,6 @@ mixin EnumAstVisitorMixin on AssistContributor {
     );
     assistRequest.result.unit.visitChildren(visitor);
     return visitor.enumNode;
-  }
-}
-
-mixin DataClassPluginOptionsMixin on AssistContributor {
-  DataClassPluginOptions? _cache;
-
-  Future<DataClassPluginOptions> loadDataClassPluginOptions(String path) async {
-    if (_cache != null) {
-      return _cache!;
-    }
-    return _cache = await DataClassPluginOptions.fromFile(path);
   }
 }
 

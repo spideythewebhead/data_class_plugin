@@ -1,3 +1,5 @@
+import 'dart:io' as io show File;
+
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -17,11 +19,7 @@ import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class FromJsonAssistContributor extends Object
-    with
-        AssistContributorMixin,
-        ClassAstVisitorMixin,
-        DataClassPluginOptionsMixin,
-        RelativeFilePathMixin
+    with AssistContributorMixin, ClassAstVisitorMixin, RelativeFilePathMixin
     implements AssistContributor {
   FromJsonAssistContributor(this.targetFilePath);
 
@@ -62,8 +60,9 @@ class FromJsonAssistContributor extends Object
     final SourceRange? fromJsonSourceRange =
         classNode.members.getSourceRangeForConstructor('fromJson');
 
-    final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
-        utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
+    final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile((io.File(
+      utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path),
+    )));
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
@@ -127,7 +126,7 @@ class FromJsonAssistContributor extends Object
       final String fieldName = field.name;
       final DartType fieldType = field.type;
       final String jsonFieldName =
-          "json['${jsonKey.name ?? jsonKeyNameConvention.transform(fieldName)}']";
+          "json['${jsonKey.name ?? jsonKeyNameConvention.transform(fieldName.escapeDollarSign())}']";
       final ConstructorElement? defaultConstructor = classElement.constructors
           .firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
       final String? defaultValueString = defaultConstructor?.parameters

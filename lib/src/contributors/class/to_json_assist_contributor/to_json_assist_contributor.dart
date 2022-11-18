@@ -1,3 +1,5 @@
+import 'dart:io' as io show File;
+
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -17,11 +19,7 @@ import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class ToJsonAssistContributor extends Object
-    with
-        AssistContributorMixin,
-        ClassAstVisitorMixin,
-        DataClassPluginOptionsMixin,
-        RelativeFilePathMixin
+    with AssistContributorMixin, ClassAstVisitorMixin, RelativeFilePathMixin
     implements AssistContributor {
   ToJsonAssistContributor(this.targetFilePath);
 
@@ -61,8 +59,9 @@ class ToJsonAssistContributor extends Object
 
     final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
 
-    final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
-        utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
+    final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile((io.File(
+      utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path),
+    )));
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
@@ -124,7 +123,8 @@ class ToJsonAssistContributor extends Object
         pluginOptions: pluginOptions,
       );
 
-      builder.write("'${jsonKey.name ?? jsonKeyNameConvention.transform(field.name)}': ");
+      builder.write(
+          "'${jsonKey.name ?? jsonKeyNameConvention.transform(field.name.escapeDollarSign())}': ");
 
       if (jsonKey.toJson != null) {
         builder
