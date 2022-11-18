@@ -118,6 +118,22 @@ json:
     <camel_case | snake_case | snake_case | pascal_case>:
       - "a/glob/here"
       - "another/glob/here"
+
+# Precedence: DataClass annotation > data.option > default value
+data_class:
+  options_config:
+    # For each of the provided methods you can provide a configuration
+    # The configuration can be an enabled or disabled field that contains a list of globs
+    # Default values for each options
+    # copy_with, hash_and_equals, to_string (true), from_json, to_json (false)
+    <copy_with | hash_and_equals | to_string | from_json | to_json>:
+      default: boolean
+      enabled:
+        - "a/glob/here"
+        - "another/glob/here"
+      disabled:
+        - "a/glob/here"
+        - "another/glob/here"
 ```
 
 ### Notes

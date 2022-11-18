@@ -1,3 +1,5 @@
+import 'dart:io' as io show File;
+
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -16,11 +18,7 @@ import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class DataClassAssistContributor extends Object
-    with
-        AssistContributorMixin,
-        ClassAstVisitorMixin,
-        DataClassPluginOptionsMixin,
-        RelativeFilePathMixin
+    with AssistContributorMixin, ClassAstVisitorMixin, RelativeFilePathMixin
     implements AssistContributor {
   DataClassAssistContributor(this.targetFilePath);
 
@@ -79,8 +77,9 @@ class DataClassAssistContributor extends Object
       ...classElement.chainSuperClassDataClassFinalFields,
     ];
 
-    final DataClassPluginOptions pluginOptions = await loadDataClassPluginOptions(
-        utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path));
+    final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile((io.File(
+      utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path),
+    )));
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
@@ -104,7 +103,8 @@ class DataClassAssistContributor extends Object
         );
       }
 
-      if (dataClassAnnotation.$toString) {
+      if (dataClassAnnotation.$toString ??
+          pluginOptions.dataClass.effectiveToString(relativeFilePath)) {
         void writerToString(DartEditBuilder builder) {
           ToStringAssistContributor.writeToString(
             elementName: classElement.thisType.toString(),
@@ -129,7 +129,8 @@ class DataClassAssistContributor extends Object
         fileEditBuilder.addDeletion(toStringSourceRange);
       }
 
-      if (dataClassAnnotation.hashAndEquals) {
+      if (dataClassAnnotation.hashAndEquals ??
+          pluginOptions.dataClass.effectiveHashAndEquals(relativeFilePath)) {
         void writerHashCode(DartEditBuilder builder) {
           HashAndEqualsAssistContributor.writeHashCode(
             fields: fields,
@@ -172,7 +173,8 @@ class DataClassAssistContributor extends Object
         }
       }
 
-      if (dataClassAnnotation.copyWith) {
+      if (dataClassAnnotation.copyWith ??
+          pluginOptions.dataClass.effectiveCopyWith(relativeFilePath)) {
         void writerCopyWith(DartEditBuilder builder) {
           CopyWithAssistContributor.writeCopyWith(
             className: classElement.thisType.toString(),
@@ -194,7 +196,7 @@ class DataClassAssistContributor extends Object
         fileEditBuilder.addDeletion(copyWithSourceRange);
       }
 
-      if (dataClassAnnotation.toJson) {
+      if (dataClassAnnotation.toJson ?? pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
         void writerToJson(DartEditBuilder builder) {
           ToJsonAssistContributor.writeToJson(
             targetFileRelativePath: relativeFilePath,
@@ -216,7 +218,8 @@ class DataClassAssistContributor extends Object
         fileEditBuilder.addDeletion(toJsonSourceRange);
       }
 
-      if (dataClassAnnotation.fromJson) {
+      if (dataClassAnnotation.fromJson ??
+          pluginOptions.dataClass.effectiveFromJson(relativeFilePath)) {
         void writerFromJson(DartEditBuilder builder) {
           FromJsonAssistContributor.writeFromJson(
             targetFileRelativePath: relativeFilePath,

@@ -12,19 +12,19 @@ class DataClassInternal {
     required this.toJson,
   });
 
-  final bool copyWith;
-  final bool hashAndEquals;
-  final bool $toString;
-  final bool fromJson;
-  final bool toJson;
+  final bool? copyWith;
+  final bool? hashAndEquals;
+  final bool? $toString;
+  final bool? fromJson;
+  final bool? toJson;
 
   factory DataClassInternal.fromDartObject(DartObject? object) {
     return DataClassInternal(
-      copyWith: object?.getField('copyWith')?.toBoolValue() ?? true,
-      hashAndEquals: object?.getField('hashAndEquals')?.toBoolValue() ?? true,
-      $toString: object?.getField('\$toString')?.toBoolValue() ?? true,
-      fromJson: object?.getField('fromJson')?.toBoolValue() ?? false,
-      toJson: object?.getField('toJson')?.toBoolValue() ?? false,
+      copyWith: object?.getField('copyWith')?.toBoolValue(),
+      hashAndEquals: object?.getField('hashAndEquals')?.toBoolValue(),
+      $toString: object?.getField('\$toString')?.toBoolValue(),
+      fromJson: object?.getField('fromJson')?.toBoolValue(),
+      toJson: object?.getField('toJson')?.toBoolValue(),
     );
   }
 }

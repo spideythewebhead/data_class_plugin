@@ -119,7 +119,15 @@ class ToStringAssistContributor extends Object
       ..writeln("return '''$elementName(");
 
     for (final VariableElement field in finalFieldsElements) {
-      builder.writeln('  <${field.name}= \$${field.name}>,');
+      builder.write('  <${field.name.escapeDollarSign()}= \$');
+
+      if (field.name.contains('\$')) {
+        builder.write('{${field.name}}');
+      } else {
+        builder.write(field.name);
+      }
+
+      builder.writeln('>,');
     }
 
     builder

@@ -7,3 +7,19 @@ json:
       - "test/contributors/class/**/*_pascal_case.dart"
     snake_case:
       - "test/contributors/class/**/*_snake_case.dart"
+      - "lib/src/data_class_plugin_options.dart"
+
+data_class:
+  options_config:
+    copy_with:
+      disabled:
+        - "lib/src/data_class_plugin_options.dart"
+    hash_and_equals:
+      disabled:
+        - "lib/src/data_class_plugin_options.dart"
+    from_json:
+      enabled:
+        - "lib/src/data_class_plugin_options.dart"
+    to_json:
+      disabled:
+        - "lib/src/data_class_plugin_options.dart"
