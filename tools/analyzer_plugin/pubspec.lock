@@ -7,14 +7,14 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "49.0.0"
+    version: "50.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "5.2.0"
   analyzer_plugin:
     dependency: transitive
     description:
@@ -69,7 +69,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "1c24a1ea578e558126edd466ab84af449f5e407e"
+      resolved-ref: "85db78f3230b782b7f61b7508face1c85ee78c90"
       url: "https://github.com/spideythewebhead/dart_data_class_plugin.git"
     source: git
     version: "0.0.1"
@@ -86,7 +86,7 @@ packages:
       name: glob
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   meta:
     dependency: transitive
     description:
