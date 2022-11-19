@@ -1,0 +1,1 @@
+See [Example](https://github.com/spideythewebhead/dart_data_class_plugin/tree/main/example/lib) folder
