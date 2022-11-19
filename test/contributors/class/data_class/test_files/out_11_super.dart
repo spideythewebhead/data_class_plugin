@@ -11,10 +11,12 @@ class AdminUser extends User {
   /// Returns a string with the properties of [AdminUser]
   @override
   String toString() {
-    return '''AdminUser(
-  <username= $username>,
-  <id= $id>,
-)''';
+    String value = 'AdminUser{<optimized out>}';
+    assert(() {
+      value = 'AdminUser@<$hexIdentity>{username: $username, id: $id}';
+      return true;
+    }());
+    return value;
   }
 
   /// Returns a hash code based on [this] properties

@@ -1,3 +1,5 @@
+import 'package:data_class_plugin/data_class_plugin.dart';
+
 enum Colors {
   red('#FF0000', 0.5),
   green('#008000', 0.7),
@@ -15,9 +17,11 @@ enum Colors {
   /// Returns a string with the properties of [Colors]
   @override
   String toString() {
-    return '''Colors.$name(
-  <hex= $hex>,
-  <opacity= $opacity>,
-)''';
+    String value = 'Colors{<optimized out>}';
+    assert(() {
+      value = 'Colors.$name@<$hexIdentity>{hex: $hex, opacity: $opacity}';
+      return true;
+    }());
+    return value;
   }
 }

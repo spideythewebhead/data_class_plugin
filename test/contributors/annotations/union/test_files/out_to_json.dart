@@ -60,6 +60,32 @@ class AsyncResult<T> {
   Map<String, dynamic> toJson();
 }
 
+class AsyncResultData<T> extends AsyncResult<T> {
+  const AsyncResultData({
+    required this.data,
+  }) : super._();
+
+  final T data;
+
+  /// Converts [AsyncResultData] to a [Map] json
+  @override
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'data': jsonConverterRegistrant.find(T).toJson(data),
+    };
+  }
+}
+
+class AsyncResultLoading<T> extends AsyncResult<T> {
+  const AsyncResultLoading() : super._();
+
+  /// Converts [AsyncResultLoading] to a [Map] json
+  @override
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{};
+  }
+}
+
 class AsyncResultError<T> extends AsyncResult<T> {
   const AsyncResultError({
     required this.error,
@@ -75,32 +101,6 @@ class AsyncResultError<T> extends AsyncResult<T> {
     return <String, dynamic>{
       'error': jsonConverterRegistrant.find(Object).toJson(error),
       'stackTrace': jsonConverterRegistrant.find(StackTrace).toJson(stackTrace),
-    };
-  }
-}
-
-class AsyncResultLoading<T> extends AsyncResult<T> {
-  const AsyncResultLoading() : super._();
-
-  /// Converts [AsyncResultLoading] to a [Map] json
-  @override
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{};
-  }
-}
-
-class AsyncResultData<T> extends AsyncResult<T> {
-  const AsyncResultData({
-    required this.data,
-  }) : super._();
-
-  final T data;
-
-  /// Converts [AsyncResultData] to a [Map] json
-  @override
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'data': jsonConverterRegistrant.find(T).toJson(data),
     };
   }
 }

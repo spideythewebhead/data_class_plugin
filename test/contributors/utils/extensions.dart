@@ -97,11 +97,14 @@ extension on List<PrioritizedSourceChange> {
     final List<String> replacements = <String>[];
     for (final PrioritizedSourceChange assist in this) {
       for (final SourceFileEdit edit in assist.change.edits) {
-        for (final SourceEdit e in edit.edits) {
+        for (final SourceEdit e in edit.edits
+          // keep the order of the change based of the offset
+          // same offset must keep the order of appearance
+          ..sort((SourceEdit a, SourceEdit b) => a.offset - b.offset)) {
           replacements.add(e.replacement);
         }
       }
     }
-    return replacements.reversed.join('\n\n');
+    return replacements.join('\n\n');
   }
 }

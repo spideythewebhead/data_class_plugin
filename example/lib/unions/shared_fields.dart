@@ -105,11 +105,12 @@ class UserNormal extends User {
   /// Returns a string with the properties of [UserNormal]
   @override
   String toString() {
-    return '''UserNormal(
-  <id= $id>,
-  <username= $username>,
-  <email= $email>,
-)''';
+    String value = 'UserNormal{<optimized out>}';
+    assert(() {
+      value = 'UserNormal@<$hexIdentity>{id: $id, username: $username, email: $email}';
+      return true;
+    }());
+    return value;
   }
 }
 
@@ -162,10 +163,11 @@ class UserAdmin extends User {
   /// Returns a string with the properties of [UserAdmin]
   @override
   String toString() {
-    return '''UserAdmin(
-  <id= $id>,
-  <username= $username>,
-  <email= $email>,
-)''';
+    String value = 'UserAdmin{<optimized out>}';
+    assert(() {
+      value = 'UserAdmin@<$hexIdentity>{id: $id, username: $username, email: $email}';
+      return true;
+    }());
+    return value;
   }
 }

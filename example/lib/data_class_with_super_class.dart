@@ -23,6 +23,17 @@ class User extends Person {
   @JsonKey(name: '_username')
   final String username;
   final String id;
+
+  /// Returns a string with the properties of [User]
+  @override
+  String toString() {
+    String value = 'User{<optimized out>}';
+    assert(() {
+      value = 'User@<$hexIdentity>{username: $username, id: $id, name: $name, age: $age}';
+      return true;
+    }());
+    return value;
+  }
 }
 
 @DataClass()
@@ -41,13 +52,13 @@ class Admin extends User {
   /// Returns a string with the properties of [Admin]
   @override
   String toString() {
-    return '''Admin(
-  <permissions= $permissions>,
-  <username= $username>,
-  <id= $id>,
-  <name= $name>,
-  <age= $age>,
-)''';
+    String value = 'Admin{<optimized out>}';
+    assert(() {
+      value =
+          'Admin@<$hexIdentity>{permissions: $permissions, username: $username, id: $id, name: $name, age: $age}';
+      return true;
+    }());
+    return value;
   }
 
   /// Returns a hash code based on [this] properties

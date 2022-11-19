@@ -54,63 +54,6 @@ abstract class User {
   }
 }
 
-class UserAdmin extends User {
-  const UserAdmin({
-    required this.id,
-    required this.username,
-    this.email,
-  }) : super._();
-
-  @override
-  final String id;
-  @override
-  final String username;
-  @override
-  final String? email;
-
-  /// Creates a new instance of [UserAdmin] with optional new values
-  UserAdmin copyWith({
-    final String? id,
-    final String? username,
-    final String? email,
-  }) {
-    return UserAdmin(
-      id: id ?? this.id,
-      username: username ?? this.username,
-      email: email ?? this.email,
-    );
-  }
-
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      id,
-      username,
-      email,
-    ]);
-  }
-
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is UserAdmin && id == other.id && username == other.username && email == other.email;
-  }
-
-  /// Returns a string with the properties of [UserAdmin]
-  @override
-  String toString() {
-    return '''UserAdmin(
-  <id= $id>,
-  <username= $username>,
-  <email= $email>,
-)''';
-  }
-}
-
 class UserNormal extends User {
   const UserNormal({
     required this.id,
@@ -160,10 +103,69 @@ class UserNormal extends User {
   /// Returns a string with the properties of [UserNormal]
   @override
   String toString() {
-    return '''UserNormal(
-  <id= $id>,
-  <username= $username>,
-  <email= $email>,
-)''';
+    String value = 'UserNormal{<optimized out>}';
+    assert(() {
+      value = 'UserNormal@<$hexIdentity>{id: $id, username: $username, email: $email}';
+      return true;
+    }());
+    return value;
+  }
+}
+
+class UserAdmin extends User {
+  const UserAdmin({
+    required this.id,
+    required this.username,
+    this.email,
+  }) : super._();
+
+  @override
+  final String id;
+  @override
+  final String username;
+  @override
+  final String? email;
+
+  /// Creates a new instance of [UserAdmin] with optional new values
+  UserAdmin copyWith({
+    final String? id,
+    final String? username,
+    final String? email,
+  }) {
+    return UserAdmin(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+    );
+  }
+
+  /// Returns a hash code based on [this] properties
+  @override
+  int get hashCode {
+    return Object.hashAll(<Object?>[
+      runtimeType,
+      id,
+      username,
+      email,
+    ]);
+  }
+
+  /// Compares [this] with [other] on identity, class type, and properties
+  /// *with deep comparison on collections*
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is UserAdmin && id == other.id && username == other.username && email == other.email;
+  }
+
+  /// Returns a string with the properties of [UserAdmin]
+  @override
+  String toString() {
+    String value = 'UserAdmin{<optimized out>}';
+    assert(() {
+      value = 'UserAdmin@<$hexIdentity>{id: $id, username: $username, email: $email}';
+      return true;
+    }());
+    return value;
   }
 }

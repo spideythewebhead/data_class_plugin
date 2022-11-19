@@ -94,9 +94,12 @@ class AsyncResultData<T> extends AsyncResult<T> {
   /// Returns a string with the properties of [AsyncResultData]
   @override
   String toString() {
-    return '''AsyncResultData<T>(
-  <data= $data>,
-)''';
+    String value = 'AsyncResultData{<optimized out>}';
+    assert(() {
+      value = 'AsyncResultData<$T>@<$hexIdentity>{data: $data}';
+      return true;
+    }());
+    return value;
   }
 }
 
@@ -126,8 +129,12 @@ class AsyncResultLoading<T> extends AsyncResult<T> {
   /// Returns a string with the properties of [AsyncResultLoading]
   @override
   String toString() {
-    return '''AsyncResultLoading<T>(
-)''';
+    String value = 'AsyncResultLoading{<optimized out>}';
+    assert(() {
+      value = 'AsyncResultLoading<$T>@<$hexIdentity>{}';
+      return true;
+    }());
+    return value;
   }
 }
 
@@ -172,9 +179,11 @@ class AsyncResultError<T> extends AsyncResult<T> {
   /// Returns a string with the properties of [AsyncResultError]
   @override
   String toString() {
-    return '''AsyncResultError<T>(
-  <error= $error>,
-  <stackTrace= $stackTrace>,
-)''';
+    String value = 'AsyncResultError{<optimized out>}';
+    assert(() {
+      value = 'AsyncResultError<$T>@<$hexIdentity>{error: $error, stackTrace: $stackTrace}';
+      return true;
+    }());
+    return value;
   }
 }

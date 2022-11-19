@@ -10,12 +10,15 @@ class LatLng {
   final double lat;
   final double lng;
 
+  /// Returns a string with the properties of [LatLng]
   @override
   String toString() {
-    return """LatLng(
-<lat= $lat>,
-<lng= $lng>,
-)""";
+    String value = 'LatLng{<optimized out>}';
+    assert(() {
+      value = 'LatLng@<$hexIdentity>{lat: $lat, lng: $lng}';
+      return true;
+    }());
+    return value;
   }
 }
 
@@ -65,13 +68,15 @@ class MyClass {
     };
   }
 
+  /// Returns a string with the properties of [MyClass]
   @override
   String toString() {
-    return """MyClass(
-<datetime= $datetime>,
-<uri= $uri>,
-<latLng= $latLng>,
-)""";
+    String value = 'MyClass{<optimized out>}';
+    assert(() {
+      value = 'MyClass@<$hexIdentity>{datetime: $datetime, uri: $uri, latLng: $latLng}';
+      return true;
+    }());
+    return value;
   }
 }
 
