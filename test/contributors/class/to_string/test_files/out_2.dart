@@ -11,8 +11,11 @@ class ToStringTest {
   /// Returns a string with the properties of [ToStringTest]
   @override
   String toString() {
-    return '''ToStringTest(
-  <intValue= $intValue>,
-)''';
+    String value = 'ToStringTest{<optimized out>}';
+    assert(() {
+      value = 'ToStringTest@<$hexIdentity>{intValue: $intValue}';
+      return true;
+    }());
+    return value;
   }
 }

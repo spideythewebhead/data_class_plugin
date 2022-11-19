@@ -483,9 +483,10 @@ class UnionAssistContributor extends Object
       );
 
       ToStringAssistContributor.writeToString(
-        elementName: '$redirectedCtor',
+        className: '$redirectedCtor'.prefixGenericArgumentsWithDollarSign(),
+        optimizedName: redirectedCtor.name,
         commentElementName: redirectedCtor.name,
-        finalFieldsElements: constructorElement.parameters,
+        fields: constructorElement.parameters,
         builder: builder,
       );
     }

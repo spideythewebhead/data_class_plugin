@@ -107,9 +107,11 @@ class DataClassAssistContributor extends Object
           pluginOptions.dataClass.effectiveToString(relativeFilePath)) {
         void writerToString(DartEditBuilder builder) {
           ToStringAssistContributor.writeToString(
-            elementName: classElement.thisType.toString(),
+            className:
+                classElement.thisType.typeStringValue().prefixGenericArgumentsWithDollarSign(),
+            optimizedName: classElement.name,
             commentElementName: classElement.name,
-            finalFieldsElements: fields,
+            fields: fields,
             builder: builder,
           );
         }

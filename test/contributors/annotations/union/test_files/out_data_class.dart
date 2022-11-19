@@ -57,6 +57,85 @@ class AsyncResult<T> {
   }
 }
 
+class AsyncResultData<T> extends AsyncResult<T> {
+  const AsyncResultData({
+    required this.data,
+  }) : super._();
+
+  final T data;
+
+  /// Creates a new instance of [AsyncResultData] with optional new values
+  AsyncResultData<T> copyWith({
+    final T? data,
+  }) {
+    return AsyncResultData<T>(
+      data: data ?? this.data,
+    );
+  }
+
+  /// Returns a hash code based on [this] properties
+  @override
+  int get hashCode {
+    return Object.hashAll(<Object?>[
+      runtimeType,
+      data,
+    ]);
+  }
+
+  /// Compares [this] with [other] on identity, class type, and properties
+  /// *with deep comparison on collections*
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) || other is AsyncResultData<T> && data == other.data;
+  }
+
+  /// Returns a string with the properties of [AsyncResultData]
+  @override
+  String toString() {
+    String value = 'AsyncResultData{<optimized out>}';
+    assert(() {
+      value = 'AsyncResultData<$T>@<$hexIdentity>{data: $data}';
+      return true;
+    }());
+    return value;
+  }
+}
+
+class AsyncResultLoading<T> extends AsyncResult<T> {
+  const AsyncResultLoading() : super._();
+
+  /// Creates a new instance of [AsyncResultLoading] with optional new values
+  AsyncResultLoading<T> copyWith() {
+    return AsyncResultLoading<T>();
+  }
+
+  /// Returns a hash code based on [this] properties
+  @override
+  int get hashCode {
+    return Object.hashAll(<Object?>[
+      runtimeType,
+    ]);
+  }
+
+  /// Compares [this] with [other] on identity, class type, and properties
+  /// *with deep comparison on collections*
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) || other is AsyncResultLoading<T>;
+  }
+
+  /// Returns a string with the properties of [AsyncResultLoading]
+  @override
+  String toString() {
+    String value = 'AsyncResultLoading{<optimized out>}';
+    assert(() {
+      value = 'AsyncResultLoading<$T>@<$hexIdentity>{}';
+      return true;
+    }());
+    return value;
+  }
+}
+
 class AsyncResultError<T> extends AsyncResult<T> {
   const AsyncResultError({
     required this.error,
@@ -98,81 +177,11 @@ class AsyncResultError<T> extends AsyncResult<T> {
   /// Returns a string with the properties of [AsyncResultError]
   @override
   String toString() {
-    return '''AsyncResultError<T>(
-  <error= $error>,
-  <stackTrace= $stackTrace>,
-)''';
-  }
-}
-
-class AsyncResultLoading<T> extends AsyncResult<T> {
-  const AsyncResultLoading() : super._();
-
-  /// Creates a new instance of [AsyncResultLoading] with optional new values
-  AsyncResultLoading<T> copyWith() {
-    return AsyncResultLoading<T>();
-  }
-
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-    ]);
-  }
-
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is AsyncResultLoading<T>;
-  }
-
-  /// Returns a string with the properties of [AsyncResultLoading]
-  @override
-  String toString() {
-    return '''AsyncResultLoading<T>(
-)''';
-  }
-}
-
-class AsyncResultData<T> extends AsyncResult<T> {
-  const AsyncResultData({
-    required this.data,
-  }) : super._();
-
-  final T data;
-
-  /// Creates a new instance of [AsyncResultData] with optional new values
-  AsyncResultData<T> copyWith({
-    final T? data,
-  }) {
-    return AsyncResultData<T>(
-      data: data ?? this.data,
-    );
-  }
-
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      data,
-    ]);
-  }
-
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is AsyncResultData<T> && data == other.data;
-  }
-
-  /// Returns a string with the properties of [AsyncResultData]
-  @override
-  String toString() {
-    return '''AsyncResultData<T>(
-  <data= $data>,
-)''';
+    String value = 'AsyncResultError{<optimized out>}';
+    assert(() {
+      value = 'AsyncResultError<$T>@<$hexIdentity>{error: $error, stackTrace: $stackTrace}';
+      return true;
+    }());
+    return value;
   }
 }

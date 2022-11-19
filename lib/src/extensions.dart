@@ -51,7 +51,7 @@ extension DartTypeX on DartType {
           final DartType typeArg = type.typeArguments[i];
           visit(typeArg);
           if (1 + i != type.typeArguments.length) {
-            buffer.write(',');
+            buffer.write(', ');
           }
         }
 
@@ -180,9 +180,18 @@ extension StringX on String {
       return '\\${match.group(0)}';
     });
   }
+
+  String prefixGenericArgumentsWithDollarSign() {
+    return replaceAllMapped(
+      RegExp(r'(?<=(<|,\s*))(\w+)'),
+      (Match match) {
+        return '\$${match.group(2)}';
+      },
+    );
+  }
 }
 
-extension ClassElementX on ClassElement {
+extension InterfaceElementX on InterfaceElement {
   ConstructorElement? get defaultConstructor {
     return constructors.firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
   }

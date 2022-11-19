@@ -66,9 +66,10 @@ class ToStringAssistContributor extends Object
 
     final SourceRange? toStringSourceRange = classMembers.getSourceRangeForMethod('toString');
 
-    final List<FieldElement> finalFieldsElements = element.fields
-        .where((FieldElement field) => field.isFinal && field.isPublic)
-        .toList(growable: false);
+    final List<VariableElement> fields = <VariableElement>[
+      ...element.dataClassFinalFields,
+      ...element.chainSuperClassDataClassFinalFields,
+    ];
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
@@ -81,9 +82,10 @@ class ToStringAssistContributor extends Object
           }
 
           writeToString(
-            elementName: elementName,
+            className: elementName,
+            optimizedName: element.name,
             commentElementName: element.name,
-            finalFieldsElements: finalFieldsElements,
+            fields: fields,
             builder: builder,
           );
         }
@@ -105,21 +107,23 @@ class ToStringAssistContributor extends Object
   }
 
   static void writeToString({
-    required final String elementName,
-    required final List<VariableElement> finalFieldsElements,
+    required final String className,
+    required final String optimizedName,
+    required final List<VariableElement> fields,
     required final DartEditBuilder builder,
     final String? commentElementName,
   }) {
     builder
       ..writeln()
-      ..writeln(
-          '/// Returns a string with the properties of [${commentElementName ?? elementName}]')
+      ..writeln('/// Returns a string with the properties of [${commentElementName ?? className}]')
       ..writeln('@override')
       ..writeln('String toString() {')
-      ..writeln("return '''$elementName(");
+      ..writeln("String value = '$optimizedName{<optimized out>}';")
+      ..writeln('assert(() {')
+      ..write("value = '$className@<\$hexIdentity>{");
 
-    for (final VariableElement field in finalFieldsElements) {
-      builder.write('  <${field.name.escapeDollarSign()}= \$');
+    for (final VariableElement field in fields) {
+      builder.write('${field.name.escapeDollarSign()}: \$');
 
       if (field.name.contains('\$')) {
         builder.write('{${field.name}}');
@@ -127,11 +131,16 @@ class ToStringAssistContributor extends Object
         builder.write(field.name);
       }
 
-      builder.writeln('>,');
+      if (field != fields.last) {
+        builder.write(', ');
+      }
     }
 
     builder
-      ..writeln(")''';")
+      ..writeln("}';")
+      ..writeln('return true;')
+      ..writeln('}());')
+      ..writeln('return value;')
       ..writeln('}');
   }
 }

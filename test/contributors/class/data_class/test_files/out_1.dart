@@ -12,7 +12,11 @@ class ToStringTest {
   /// Returns a string with the properties of [ToStringTest]
   @override
   String toString() {
-    return '''ToStringTest(
-)''';
+    String value = 'ToStringTest{<optimized out>}';
+    assert(() {
+      value = 'ToStringTest@<$hexIdentity>{}';
+      return true;
+    }());
+    return value;
   }
 }

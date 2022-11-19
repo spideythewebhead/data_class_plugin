@@ -13,8 +13,11 @@ enum Colors {
   /// Returns a string with the properties of [Colors]
   @override
   String toString() {
-    return '''Colors.$name(
-  <hex= $hex>,
-)''';
+    String value = 'Colors{<optimized out>}';
+    assert(() {
+      value = 'Colors.$name@<$hexIdentity>{hex: $hex}';
+      return true;
+    }());
+    return value;
   }
 }
