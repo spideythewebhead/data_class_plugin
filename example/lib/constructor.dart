@@ -1,4 +1,5 @@
 class Ctor {
+  /// Shorthand constructor
   const Ctor({
     required this.a,
     this.b,
