@@ -44,7 +44,7 @@ class ToStringAssistContributor extends Object
     }
 
     final EnumDeclaration? enumNode = findEnumDeclaration();
-    if (enumNode != null && enumNode.members.isNotEmpty && enumNode.declaredElement != null) {
+    if (enumNode != null && enumNode.declaredElement != null) {
       await _generateToString(
         node: enumNode,
         element: enumNode.declaredElement!,
