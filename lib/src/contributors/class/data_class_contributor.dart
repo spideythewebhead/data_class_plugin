@@ -180,6 +180,7 @@ class DataClassAssistContributor extends Object
         void writerCopyWith(DartEditBuilder builder) {
           CopyWithAssistContributor.writeCopyWith(
             className: classElement.thisType.toString(),
+            classElement: classElement,
             commentClassName: classElement.name,
             fields: fields,
             builder: builder,

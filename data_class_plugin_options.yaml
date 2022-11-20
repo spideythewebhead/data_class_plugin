@@ -1,12 +1,14 @@
 json:
   # key_name_conventions glob match takes precedence over key_name_convention
   key_name_conventions:
+    camel_case:
+      - "test/contributors/annotations/**/*camel_case.dart"
     kebab_case:
-      - "test/contributors/class/**/*_kebab_case.dart"
+      - "test/contributors/annotations/**/*_kebab_case.dart"
     pascal_case:
-      - "test/contributors/class/**/*_pascal_case.dart"
+      - "test/contributors/annotations/**/*_pascal_case.dart"
     snake_case:
-      - "test/contributors/class/**/*_snake_case.dart"
+      - "test/contributors/annotations/**/*_snake_case.dart"
       - "lib/src/data_class_plugin_options.dart"
 
 data_class:
