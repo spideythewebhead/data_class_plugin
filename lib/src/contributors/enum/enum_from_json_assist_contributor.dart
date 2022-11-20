@@ -37,7 +37,7 @@ class EnumFromJsonAssistContributor extends Object
 
   Future<void> _generateFromJson() async {
     final EnumDeclaration? enumNode = findEnumDeclaration();
-    if (enumNode == null || enumNode.members.isEmpty || enumNode.declaredElement == null) {
+    if (enumNode == null || enumNode.declaredElement == null) {
       return;
     }
 

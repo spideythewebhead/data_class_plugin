@@ -37,10 +37,7 @@ class EnumConstructorAssistContributor extends Object
 
   Future<void> _generateConstructor() async {
     final EnumDeclaration? enumNode = findEnumDeclaration();
-    if (enumNode == null ||
-        enumNode.members.isEmpty ||
-        enumNode.declaredElement == null ||
-        enumNode.semicolon == null) {
+    if (enumNode == null || enumNode.declaredElement == null || enumNode.semicolon == null) {
       return;
     }
 
