@@ -79,7 +79,7 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
    1. **Windows/Linux:** Alt + Enter
    1. **MacOS:** ⌘ + Enter
 
-<img src="assets/screenshots/010.png" width="400">
+<img src="https://github.com/spideythewebhead/data_class_plugin/blob/main/assets/screenshots/010.png" width="400">
 
 Available methods are:
 
@@ -144,7 +144,7 @@ _This configuration can be overriden in `data_class_plugin_options.yaml`, see [C
 
 Adding this annotation to a class enables it to create union types.
 
-<img src="assets/screenshots/009.png" width="450">
+<img src="https://github.com/spideythewebhead/data_class_plugin/blob/main/assets/screenshots/009.png" width="450">
 
 Available union annotation toggles are:
 
@@ -209,7 +209,7 @@ enum Category {
 }
 ```
 
-<img src="assets/screenshots/007.png" width="400">
+<img src="https://github.com/spideythewebhead/data_class_plugin/blob/main/assets/screenshots/007.png" width="400">
 
 ## Configuration
 
