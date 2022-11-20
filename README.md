@@ -1,4 +1,4 @@
-# Dart Data Class Plugin
+# Data Class Plugin
 
 [![CI Workflow](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml)
 
