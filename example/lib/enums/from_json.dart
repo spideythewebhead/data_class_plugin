@@ -1,4 +1,5 @@
 // fromJson uses .name of the enum
+
 enum Category1 {
   science,
   sports,
