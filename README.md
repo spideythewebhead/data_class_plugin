@@ -1,10 +1,10 @@
 # Data Class Plugin
 
 [![CI Workflow](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml)
+![Pub Version](https://img.shields.io/pub/v/data_class_plugin)
 
 <!---
-![Pub Version](https://img.shields.io/pub/v/dart_data_class_plugin)
-![Pub Publisher](https://img.shields.io/pub/publisher/dart_data_class_plugin)
+![Pub Publisher](https://img.shields.io/pub/publisher/data_class_plugin)
 -->
 
 **Data Class Plugin** is a tool that uses Dart's Analyzer to generate code on-the-fly.
