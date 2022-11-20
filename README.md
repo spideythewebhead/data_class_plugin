@@ -18,10 +18,7 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
 1. In your project's pubspec.yaml add on `dependencies` the following
    ```yaml
    dependencies:
-     data_class_plugin:
-       git:
-         url: https://github.com/spideythewebhead/dart_data_class_plugin.git
-         ref: main
+     data_class_plugin: ^0.0.1
    ```
 1. Update your `analysis_options.yaml` _(in case you don't have it, just create a new one)_
 
@@ -213,7 +210,28 @@ enum Category {
 
 ## Configuration
 
-To create a custom configuration you need to add a file named `data_class_plugin_options.yaml` in the root folder of the project.
+You can customize the generated code produced by **Data Class Plugin**.
+
+#### Configuration file
+
+To create a custom configuration you need to add a file named `data_class_plugin_options.yaml` in the root folder of your project.
+
+#### Available options
+
+1. `json`
+   
+   Set the default naming convention for json keys.
+
+   You can also override the default naming convention for the specified directories.
+
+   > Supported naming conventions: `camelCase`, `snake_case`, `kebab-case` & `PascalCase`.
+
+2. `data_class`
+
+   Set the default values for the provided methods of the `@DataClass` annotation, 
+   by specifying the directories where they will be enabled or disabled.
+
+#### Configuration examples
 
 ```yaml
 json:
@@ -268,6 +286,9 @@ data_class:
 >}
 >```
 
+## Examples
+You can find a variety of examples in the [Example](https://github.com/spideythewebhead/dart_data_class_plugin/tree/main/example/lib) folder.
+
 ## Development
 
 In order to see your changes in the plugin you need to modify `tools/analyzer_plugin/pubspec.yaml` and add the following section
@@ -278,4 +299,9 @@ dependency_overrides:
     path: /absolute/path/to/root_project
 ```
 
-And restart the analysis server (in case that fails run pub_get.sh)
+And restart the analysis server _(in case that fails run pub_get.sh)_.
+
+## Known Issues
+
+1. When using IntelliJ/Android Studio the `$toString` parameter of the **@DataClass** annotation is not visible in the Suggestions list.
+   However, you can still use it by typing it.
