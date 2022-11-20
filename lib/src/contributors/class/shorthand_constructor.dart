@@ -40,7 +40,8 @@ class ShorthandConstructorAssistContributor extends Object
     if (classNode == null ||
         classNode.members.isEmpty ||
         classNode.declaredElement == null ||
-        classNode.declaredElement!.hasDataClassAnnotation) {
+        classNode.declaredElement!.hasDataClassAnnotation ||
+        classNode.declaredElement!.hasUnionAnnotation) {
       return;
     }
 

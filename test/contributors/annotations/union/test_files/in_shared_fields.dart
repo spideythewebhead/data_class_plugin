@@ -6,8 +6,6 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   toJson: false,
 )
 abstract class User {
-  const User._();
-
   const factory User.normal({
     required String id,
     required String username,
