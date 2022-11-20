@@ -9,7 +9,4 @@ environment:
   sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
-  data_class_plugin:
-    git:
-      url: https://github.com/spideythewebhead/dart_data_class_plugin.git
-      ref: main
+  data_class_plugin: ^0.0.1
