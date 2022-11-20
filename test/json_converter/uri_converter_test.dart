@@ -1,8 +1,15 @@
 import 'dart:convert';
 
-import 'package:data_class_plugin/src/json_converter/json_converter.dart';
+import 'package:data_class_plugin/data_class_plugin.dart';
 import 'package:test/test.dart';
 
+@DataClass(
+  copyWith: false,
+  $toString: false,
+  hashAndEquals: false,
+  fromJson: true,
+  toJson: true,
+)
 class _TestModel {
   /// Shorthand constructor
   _TestModel({
@@ -12,7 +19,7 @@ class _TestModel {
   final Uri uri;
 
   /// Creates an instance of [_TestModel] from [json]
-  factory _TestModel.fromJson(Map<String, dynamic> json) {
+  factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
       uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri']) as Uri,
     );

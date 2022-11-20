@@ -18,7 +18,7 @@ class User {
   final String username;
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<dynamic, dynamic> json) {
     return User(
       id: json['id'] as String,
       username: json['username'] as String,

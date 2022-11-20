@@ -18,7 +18,7 @@ class User {
   final String thisIsADifferentVariable;
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<dynamic, dynamic> json) {
     return User(
       thisIsAVariable: json['ThisIsAVariable'] as String,
       thisIsADifferentVariable: json['ThisIsADifferentVariable'] as String,

@@ -30,7 +30,7 @@ class TestClass {
   final bool g;
 
   /// Creates an instance of [TestClass] from [json]
-  factory TestClass.fromJson(Map<String, dynamic> json) {
+  factory TestClass.fromJson(Map<dynamic, dynamic> json) {
     return TestClass(
       a: json['a'] as int,
       b: json['b'] as String,

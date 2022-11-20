@@ -57,7 +57,7 @@ class AsyncResult<T> {
   }
 
   /// Creates an instance of [AsyncResult] from [json]
-  AsyncResult<T> fromJson(Map<String, dynamic> json) {
+  AsyncResult<T> fromJson(Map<dynamic, dynamic> json) {
 // TODO: Implement
     throw UnimplementedError();
   }
@@ -71,7 +71,7 @@ class AsyncResultData<T> extends AsyncResult<T> {
   final T data;
 
   /// Creates an instance of [AsyncResultData] from [json]
-  factory AsyncResultData.fromJson(Map<String, dynamic> json) {
+  factory AsyncResultData.fromJson(Map<dynamic, dynamic> json) {
     return AsyncResultData<T>(
       data: jsonConverterRegistrant.find(T).fromJson(json['data']) as T,
     );
@@ -82,7 +82,7 @@ class AsyncResultLoading<T> extends AsyncResult<T> {
   const AsyncResultLoading() : super._();
 
   /// Creates an instance of [AsyncResultLoading] from [json]
-  factory AsyncResultLoading.fromJson(Map<String, dynamic> json) {
+  factory AsyncResultLoading.fromJson(Map<dynamic, dynamic> json) {
     return AsyncResultLoading<T>();
   }
 }
@@ -97,7 +97,7 @@ class AsyncResultError<T> extends AsyncResult<T> {
   final StackTrace? stackTrace;
 
   /// Creates an instance of [AsyncResultError] from [json]
-  factory AsyncResultError.fromJson(Map<String, dynamic> json) {
+  factory AsyncResultError.fromJson(Map<dynamic, dynamic> json) {
     return AsyncResultError<T>(
       error: jsonConverterRegistrant.find(Object).fromJson(json['error']) as Object,
       stackTrace: json['stackTrace'] == null

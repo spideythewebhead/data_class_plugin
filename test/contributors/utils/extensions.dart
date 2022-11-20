@@ -84,8 +84,8 @@ extension InOutFilesList on List<InOutFilesPair> {
             : collector.firstReplacement.dartFormat();
 
         expect(
-          expected,
-          equals(actual),
+          actual,
+          equals(expected),
         );
       });
     }

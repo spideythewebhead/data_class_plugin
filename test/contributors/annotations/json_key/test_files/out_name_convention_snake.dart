@@ -22,7 +22,7 @@ class User {
   }
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<dynamic, dynamic> json) {
     return User(
       thisIsATestVariable: json['this_is_a_test_variable'] as String,
     );

@@ -37,7 +37,7 @@ import 'package:meta/meta_meta.dart';
 /// If no value is provided (default), then false is assumed
 ///
 /// ```dart
-/// factory YourClass.fromJson(Map<String, dynamic> json)
+/// factory YourClass.fromJson(Map<dynamic, dynamic> json)
 /// ```
 ///
 /// [toJson] Generates a function that coverts this instance to a Map

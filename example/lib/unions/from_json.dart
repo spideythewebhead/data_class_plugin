@@ -59,7 +59,7 @@ abstract class Response {
   }
 
   /// Creates an instance of [Response] from [json]
-  Response fromJson(Map<String, dynamic> json) {
+  Response fromJson(Map<dynamic, dynamic> json) {
 // TODO: Implement
     throw UnimplementedError();
   }
@@ -73,7 +73,7 @@ class Ok extends Response {
   final int data;
 
   /// Creates an instance of [Ok] from [json]
-  factory Ok.fromJson(Map<String, dynamic> json) {
+  factory Ok.fromJson(Map<dynamic, dynamic> json) {
     return Ok(
       data: json['data'] as int,
     );
@@ -84,7 +84,7 @@ class Unauthorized extends Response {
   const Unauthorized() : super._();
 
   /// Creates an instance of [Unauthorized] from [json]
-  factory Unauthorized.fromJson(Map<String, dynamic> json) {
+  factory Unauthorized.fromJson(Map<dynamic, dynamic> json) {
     return Unauthorized();
   }
 }
@@ -99,7 +99,7 @@ class Error extends Response {
   final StackTrace? stackTrace;
 
   /// Creates an instance of [Error] from [json]
-  factory Error.fromJson(Map<String, dynamic> json) {
+  factory Error.fromJson(Map<dynamic, dynamic> json) {
     return Error(
       type: jsonConverterRegistrant.find(Object).fromJson(json['type']) as Object,
     );

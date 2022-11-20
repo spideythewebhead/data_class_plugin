@@ -20,7 +20,7 @@ class CamelCaseTest {
   final String aNumber11Variable;
 
   /// Creates an instance of [CamelCaseTest] from [json]
-  factory CamelCaseTest.fromJson(Map<String, dynamic> json) {
+  factory CamelCaseTest.fromJson(Map<dynamic, dynamic> json) {
     return CamelCaseTest(
       thisVariableWillBeCamelCase: json['thisVariableWillBeCamelCase'] as String,
       thisvariablewillnotbecamelcase: json['thisvariablewillnotbecamelcase'] as String,
