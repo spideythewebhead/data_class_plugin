@@ -67,11 +67,9 @@ packages:
   data_class_plugin:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: e81c53e94dd6a34c44c290f0c43d48076de9eaf3
-      url: "https://github.com/spideythewebhead/dart_data_class_plugin.git"
-    source: git
+      name: data_class_plugin
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.0.1"
   file:
     dependency: transitive
