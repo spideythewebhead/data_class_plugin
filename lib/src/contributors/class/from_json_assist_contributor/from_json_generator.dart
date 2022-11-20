@@ -167,7 +167,7 @@ class FromJsonGenerator {
     final String loopVariableName = 'e$depthIndex';
     builder
       ..writeln(
-          'for (final MapEntry<String, dynamic> $loopVariableName in ($parentVariableName as ${type.element!.name}<String, dynamic>).entries)')
+          'for (final MapEntry<dynamic, dynamic> $loopVariableName in ($parentVariableName as ${type.element!.name}<dynamic, dynamic>).entries)')
       ..write('$loopVariableName.key: ');
 
     run(

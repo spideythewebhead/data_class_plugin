@@ -13,7 +13,7 @@ class FromJsonTest {
   final List<Enumeration> d;
 
   /// Creates an instance of [FromJsonTest] from [json]
-  factory FromJsonTest.fromJson(Map<String, dynamic> json) {
+  factory FromJsonTest.fromJson(Map<dynamic, dynamic> json) {
     return FromJsonTest(
       a: <DateTime>[
         for (final dynamic i0 in (json['a'] as List<dynamic>))

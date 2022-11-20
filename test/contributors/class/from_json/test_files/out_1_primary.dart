@@ -17,7 +17,7 @@ class FromJsonTest {
   final bool g;
 
   /// Creates an instance of [FromJsonTest] from [json]
-  factory FromJsonTest.fromJson(Map<String, dynamic> json) {
+  factory FromJsonTest.fromJson(Map<dynamic, dynamic> json) {
     return FromJsonTest(
       a: json['a'] as int,
       b: json['b'] as String,

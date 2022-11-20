@@ -20,7 +20,7 @@ class PascalCaseTest {
   final String aNumber11Variable;
 
   /// Creates an instance of [PascalCaseTest] from [json]
-  factory PascalCaseTest.fromJson(Map<String, dynamic> json) {
+  factory PascalCaseTest.fromJson(Map<dynamic, dynamic> json) {
     return PascalCaseTest(
       thisVariableWillBePascalCase: json['ThisVariableWillBePascalCase'] as String,
       onewordvariable: json['Onewordvariable'] as String,

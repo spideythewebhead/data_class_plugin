@@ -20,7 +20,7 @@ class KebabCaseTest {
   final String aNumber11Variable;
 
   /// Creates an instance of [KebabCaseTest] from [json]
-  factory KebabCaseTest.fromJson(Map<String, dynamic> json) {
+  factory KebabCaseTest.fromJson(Map<dynamic, dynamic> json) {
     return KebabCaseTest(
       thisVariableWillBeKebabCase: json['this-variable-will-be-kebab-case'] as String,
       thisvariablewillnotbekebabcase: json['thisvariablewillnotbekebabcase'] as String,

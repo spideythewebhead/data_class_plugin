@@ -1,6 +1,13 @@
-import 'package:data_class_plugin/src/json_converter/json_converter.dart';
+import 'package:data_class_plugin/data_class_plugin.dart';
 import 'package:test/test.dart';
 
+@DataClass(
+  $toString: false,
+  copyWith: false,
+  hashAndEquals: true,
+  fromJson: true,
+  toJson: true,
+)
 class _TestModel {
   /// Shorthand constructor
   _TestModel({
@@ -10,7 +17,7 @@ class _TestModel {
   final DateTime dateTime;
 
   /// Creates an instance of [_TestModel] from [json]
-  factory _TestModel.fromJson(Map<String, dynamic> json) {
+  factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
       dateTime: jsonConverterRegistrant.find(DateTime).fromJson(json['dateTime']) as DateTime,
     );
@@ -27,6 +34,7 @@ class _TestModel {
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
+      runtimeType,
       dateTime,
     ]);
   }

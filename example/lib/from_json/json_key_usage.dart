@@ -10,6 +10,7 @@ const String _appId = 'app_id';
   $toString: false,
 )
 class User {
+  /// Shorthand constructor
   User({
     required this.id,
     required this.username,
@@ -27,12 +28,12 @@ class User {
   // fields with initial values are ignored
   final int isSpecial = 0;
 
-  static String _usernameConverter(Map<String, dynamic> json) {
+  static String _usernameConverter(Map<dynamic, dynamic> json) {
     return json['username'] ?? json['uname'];
   }
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<dynamic, dynamic> json) {
     return User(
       id: json['_id'] as String,
       username: User._usernameConverter(json),

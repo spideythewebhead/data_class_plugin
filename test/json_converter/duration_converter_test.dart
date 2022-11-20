@@ -3,6 +3,13 @@ import 'dart:convert';
 import 'package:data_class_plugin/data_class_plugin.dart';
 import 'package:test/test.dart';
 
+@DataClass(
+  $toString: false,
+  copyWith: false,
+  hashAndEquals: false,
+  fromJson: true,
+  toJson: true,
+)
 class _TestModel {
   /// Shorthand constructor
   _TestModel({
@@ -12,7 +19,7 @@ class _TestModel {
   final Duration duration;
 
   /// Creates an instance of [_TestModel] from [json]
-  factory _TestModel.fromJson(Map<String, dynamic> json) {
+  factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
       duration: jsonConverterRegistrant.find(Duration).fromJson(json['duration']) as Duration,
     );

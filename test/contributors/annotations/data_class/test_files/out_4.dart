@@ -10,7 +10,7 @@ class FromJsonTest {
   FromJsonTest();
 
   /// Creates an instance of [FromJsonTest] from [json]
-  factory FromJsonTest.fromJson(Map<String, dynamic> json) {
+  factory FromJsonTest.fromJson(Map<dynamic, dynamic> json) {
     return FromJsonTest();
   }
 }

@@ -125,7 +125,7 @@ Available methods are:
    _If no value is provided (default), then **false** is assumed_
 
    ```dart
-   factory MyClass.fromJson(Map<String, dynamic> json) { ... }
+   factory MyClass.fromJson(Map<dynamic, dynamic> json) { ... }
    ```
 
 5. **toJson**

@@ -20,7 +20,7 @@ class SnakeCaseTest {
   final String aNumber11Variable;
 
   /// Creates an instance of [SnakeCaseTest] from [json]
-  factory SnakeCaseTest.fromJson(Map<String, dynamic> json) {
+  factory SnakeCaseTest.fromJson(Map<dynamic, dynamic> json) {
     return SnakeCaseTest(
       thisVariableWillBeSnakeCase: json['this_variable_will_be_snake_case'] as String,
       onewordvariable: json['onewordvariable'] as String,

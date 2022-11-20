@@ -378,7 +378,7 @@ class UnionAssistContributor extends Object
       builder
         ..writeln()
         ..writeln('/// Creates an instance of [${redirectedCtor.name}] from [json]')
-        ..writeln('factory ${redirectedCtor.name}.fromJson(Map<String, dynamic> json) {')
+        ..writeln('factory ${redirectedCtor.name}.fromJson(Map<dynamic, dynamic> json) {')
         ..writeln('return $redirectedCtor(');
 
       for (final ParameterElement param in constructorElement.parameters) {
@@ -598,7 +598,7 @@ class UnionAssistContributor extends Object
   }) {
     builder
       ..writeln('/// Creates an instance of [${classElement.name}] from [json]')
-      ..writeln('${classElement.thisType} fromJson(Map<String, dynamic> json) {')
+      ..writeln('${classElement.thisType} fromJson(Map<dynamic, dynamic> json) {')
       ..writeln('// TODO: Implement')
       ..writeln('throw UnimplementedError();')
       ..writeln('}');

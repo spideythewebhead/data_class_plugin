@@ -1,7 +1,7 @@
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:meta/meta_meta.dart';
 
-typedef FromJsonConverter<T> = T Function(Map<String, dynamic> json);
+typedef FromJsonConverter<T> = T Function(Map<dynamic, dynamic> json);
 typedef ToJsonConverter<T> = Object? Function(T value);
 
 /// Adding the [JsonKey] annotation to a field makes it customizable
@@ -46,7 +46,7 @@ class JsonKey<T> {
   /// The function provided must be a top level or a static class function
   ///
   /// ```dart
-  /// String customFromJson(Map<String, dynamic> json) {
+  /// String customFromJson(Map<dynamic, dynamic> json) {
   ///   return json['id'] ?? json['_id'] ?? '';
   /// }
   ///

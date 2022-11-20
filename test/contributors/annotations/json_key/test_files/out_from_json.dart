@@ -17,12 +17,12 @@ class User {
   @JsonKey<String>(fromJson: _usernameConverter)
   final String username;
 
-  static String _usernameConverter(Map<String, dynamic> json) {
+  static String _usernameConverter(Map<dynamic, dynamic> json) {
     return json['username'] ?? json['uname'];
   }
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<dynamic, dynamic> json) {
     return User(
       id: json['id'] as String,
       username: User._usernameConverter(json),

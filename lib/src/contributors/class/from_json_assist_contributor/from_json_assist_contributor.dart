@@ -110,7 +110,7 @@ class FromJsonAssistContributor extends Object
     builder
       ..writeln()
       ..writeln('/// Creates an instance of [$className] from [json]')
-      ..writeln('factory $className.fromJson(Map<String, dynamic> json) {');
+      ..writeln('factory $className.fromJson(Map<dynamic, dynamic> json) {');
 
     if (isConst && fields.isEmpty) {
       builder

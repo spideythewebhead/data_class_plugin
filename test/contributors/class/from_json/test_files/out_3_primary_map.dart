@@ -17,30 +17,30 @@ class FromJsonTest {
   final Map<String, bool> g;
 
   /// Creates an instance of [FromJsonTest] from [json]
-  factory FromJsonTest.fromJson(Map<String, dynamic> json) {
+  factory FromJsonTest.fromJson(Map<dynamic, dynamic> json) {
     return FromJsonTest(
       a: <String, int>{
-        for (final MapEntry<String, dynamic> e0 in (json['a'] as Map<String, dynamic>).entries)
+        for (final MapEntry<dynamic, dynamic> e0 in (json['a'] as Map<dynamic, dynamic>).entries)
           e0.key: e0.value as int,
       },
       b: <String, String>{
-        for (final MapEntry<String, dynamic> e0 in (json['b'] as Map<String, dynamic>).entries)
+        for (final MapEntry<dynamic, dynamic> e0 in (json['b'] as Map<dynamic, dynamic>).entries)
           e0.key: e0.value as String,
       },
       c: <String, String?>{
-        for (final MapEntry<String, dynamic> e0 in (json['c'] as Map<String, dynamic>).entries)
+        for (final MapEntry<dynamic, dynamic> e0 in (json['c'] as Map<dynamic, dynamic>).entries)
           e0.key: e0.value == null ? null : e0.value as String,
       },
       d: <String, double>{
-        for (final MapEntry<String, dynamic> e0 in (json['d'] as Map<String, dynamic>).entries)
+        for (final MapEntry<dynamic, dynamic> e0 in (json['d'] as Map<dynamic, dynamic>).entries)
           e0.key: e0.value as double,
       },
       e: <String, num>{
-        for (final MapEntry<String, dynamic> e0 in (json['e'] as Map<String, dynamic>).entries)
+        for (final MapEntry<dynamic, dynamic> e0 in (json['e'] as Map<dynamic, dynamic>).entries)
           e0.key: e0.value as num,
       },
       g: <String, bool>{
-        for (final MapEntry<String, dynamic> e0 in (json['g'] as Map<String, dynamic>).entries)
+        for (final MapEntry<dynamic, dynamic> e0 in (json['g'] as Map<dynamic, dynamic>).entries)
           e0.key: e0.value as bool,
       },
     );

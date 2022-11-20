@@ -38,7 +38,15 @@ class LatLngConverter implements JsonConverter<LatLng, String> {
   }
 }
 
+@DataClass(
+  $toString: false,
+  copyWith: false,
+  hashAndEquals: false,
+  fromJson: true,
+  toJson: true,
+)
 class MyClass {
+  /// Shorthand constructor
   MyClass({
     required this.datetime,
     required this.uri,
@@ -51,7 +59,7 @@ class MyClass {
   final LatLng latLng;
 
   /// Creates an instance of [MyClass] from [json]
-  factory MyClass.fromJson(Map<String, dynamic> json) {
+  factory MyClass.fromJson(Map<dynamic, dynamic> json) {
     return MyClass(
       datetime: jsonConverterRegistrant.find(DateTime).fromJson(json['datetime']) as DateTime,
       uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri']) as Uri,
@@ -66,17 +74,6 @@ class MyClass {
       'uri': jsonConverterRegistrant.find(Uri).toJson(uri),
       'latLng': jsonConverterRegistrant.find(LatLng).toJson(latLng),
     };
-  }
-
-  /// Returns a string with the properties of [MyClass]
-  @override
-  String toString() {
-    String value = 'MyClass{<optimized out>}';
-    assert(() {
-      value = 'MyClass@<$hexIdentity>{datetime: $datetime, uri: $uri, latLng: $latLng}';
-      return true;
-    }());
-    return value;
   }
 }
 
