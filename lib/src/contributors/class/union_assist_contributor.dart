@@ -466,6 +466,7 @@ class UnionAssistContributor extends Object
     if (unionInternalAnnotation.dataClass) {
       CopyWithAssistContributor.writeCopyWith(
         className: '$redirectedCtor',
+        classElement: classElement,
         commentClassName: redirectedCtor.name,
         fields: constructorElement.parameters,
         builder: builder,

@@ -99,16 +99,29 @@ class FromJsonAssistContributor extends Object
     required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
-    builder
-      ..writeln()
-      ..writeln('/// Creates an instance of [${classElement.name}] from [json]')
-      ..writeln('factory ${classElement.name}.fromJson(Map<String, dynamic> json) {')
-      ..writeln('return ${classElement.name}(');
-
-    for (final VariableElement field in <VariableElement>[
+    final String className = classElement.name;
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final bool isConst = defaultConstructor?.isConst ?? false;
+    final List<VariableElement> fields = <VariableElement>[
       ...classElement.dataClassFinalFields,
       ...classElement.chainSuperClassDataClassFinalFields,
-    ]) {
+    ];
+
+    builder
+      ..writeln()
+      ..writeln('/// Creates an instance of [$className] from [json]')
+      ..writeln('factory $className.fromJson(Map<String, dynamic> json) {');
+
+    if (isConst && fields.isEmpty) {
+      builder
+        ..writeln('return const $className();')
+        ..writeln('}');
+      return;
+    }
+
+    builder.writeln('return $className(');
+
+    for (final VariableElement field in fields) {
       final ElementAnnotation? jsonKeyAnnotation = field.metadata
           .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
       final JsonKeyInternal jsonKey = JsonKeyInternal //

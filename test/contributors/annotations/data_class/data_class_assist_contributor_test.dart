@@ -13,7 +13,7 @@ final String _contributorsPath = path.join(
   io.Directory.current.path,
   'test',
   'contributors',
-  'class',
+  'annotations',
   'data_class',
 );
 

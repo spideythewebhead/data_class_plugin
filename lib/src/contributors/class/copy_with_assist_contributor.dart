@@ -56,6 +56,7 @@ class CopyWithAssistContributor extends Object
         void writerCopyWith(DartEditBuilder builder) {
           writeCopyWith(
             className: classElement.name,
+            classElement: classElement,
             fields: <VariableElement>[
               ...classElement.dataClassFinalFields,
               ...classElement.chainSuperClassDataClassFinalFields,
@@ -82,10 +83,14 @@ class CopyWithAssistContributor extends Object
 
   static void writeCopyWith({
     required final String className,
+    required final ClassElement classElement,
     required final List<VariableElement> fields,
     required final DartEditBuilder builder,
     final String? commentClassName,
   }) {
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final bool isConst = defaultConstructor?.isConst ?? false;
+
     builder
       ..writeln()
       ..writeln(
@@ -101,10 +106,17 @@ class CopyWithAssistContributor extends Object
       }
       builder.write('}');
     }
+    builder.writeln(') {');
 
-    builder
-      ..writeln(') {')
-      ..writeln('return $className(');
+    if (isConst && fields.isEmpty) {
+      builder
+        ..writeln('    // ignore: prefer_const_constructors')
+        ..writeln('return $className();')
+        ..writeln('}');
+      return;
+    }
+
+    builder.writeln('return $className(');
 
     for (final VariableElement field in fields) {
       builder.writeln('${field.name}: ${field.name} ?? this.${field.name},');
