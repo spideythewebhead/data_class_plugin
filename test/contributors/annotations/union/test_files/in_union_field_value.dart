@@ -17,8 +17,6 @@ class User {
   toJson: false,
 )
 class UnionWithDefaultValues {
-  const UnionWithDefaultValues._();
-
   const factory UnionWithDefaultValues.impl({
     @UnionFieldValue<User>(User.none) User value,
     @UnionFieldValue<String>('') String value2,

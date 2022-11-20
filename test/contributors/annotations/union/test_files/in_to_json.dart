@@ -6,8 +6,6 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   toJson: true,
 )
 class AsyncResult<T> {
-  const AsyncResult._();
-
   const factory AsyncResult.data({
     required T data,
   }) = AsyncResultData<T>;

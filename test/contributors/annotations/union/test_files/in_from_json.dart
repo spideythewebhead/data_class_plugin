@@ -5,17 +5,15 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   fromJson: true,
   toJson: false,
 )
-class AsyncResult<T> {
-  const AsyncResult._();
+class Response {
+  const factory Response.ok({
+    required int data,
+  }) = ResponseOk;
 
-  const factory AsyncResult.data({
-    required T data,
-  }) = AsyncResultData<T>;
+  const factory Response.unauthorized() = ResponseUnauthorized;
 
-  const factory AsyncResult.loading() = AsyncResultLoading<T>;
-
-  const factory AsyncResult.error({
-    required Object error,
-    StackTrace? stackTrace,
-  }) = AsyncResultError<T>;
+  const factory Response.error({
+    required Object type,
+    @JsonKey(ignore: true) StackTrace? stackTrace,
+  }) = ResponseError;
 }

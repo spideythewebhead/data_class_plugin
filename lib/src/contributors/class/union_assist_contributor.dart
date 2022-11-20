@@ -85,6 +85,12 @@ class UnionAssistContributor extends Object
           fileEditBuilder: fileEditBuilder,
         );
 
+        _generateGenerativeConstructor(
+          classNode: classNode,
+          classElement: classElement,
+          fileEditBuilder: fileEditBuilder,
+        );
+
         if (unionInternalAnnotation.fromJson) {
           _generateFromJsonFunction(
             classNode: classNode,
@@ -107,12 +113,6 @@ class UnionAssistContributor extends Object
           redirectedConstructors: redirectedConstructorsVisitor.result,
           fileEditBuilder: fileEditBuilder,
           unionInternalAnnotation: unionInternalAnnotation,
-        );
-
-        _generateGenerativeConstructor(
-          classNode: classNode,
-          classElement: classElement,
-          fileEditBuilder: fileEditBuilder,
         );
 
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
@@ -189,7 +189,7 @@ class UnionAssistContributor extends Object
     required final UnionInternal unionInternalAnnotation,
   }) {
     for (final ConstructorElement ctor in classElement.constructors.reversed) {
-      if (!ctor.isFactory || ctor.name.isEmpty) {
+      if (!ctor.isFactory || ctor.name.isEmpty || ctor.name == 'fromJson') {
         continue;
       }
 
@@ -264,11 +264,11 @@ class UnionAssistContributor extends Object
     required final ClassElement classElement,
     required final DartFileEditBuilder fileEditBuilder,
   }) {
-    final SourceRange? sourceRange = classNode.members.getSourceRangeForMethod('fromJson');
+    final SourceRange? sourceRange = classNode.members.getSourceRangeForConstructor('fromJson');
 
     if (sourceRange == null) {
       fileEditBuilder.addInsertion(
-        classNode.rightBracket.offset,
+        1 + classNode.leftBracket.offset,
         (DartEditBuilder builder) =>
             _writeFromJsonFunction(classElement: classElement, builder: builder),
       );
@@ -598,8 +598,7 @@ class UnionAssistContributor extends Object
   }) {
     builder
       ..writeln('/// Creates an instance of [${classElement.name}] from [json]')
-      ..writeln('${classElement.thisType} fromJson(Map<dynamic, dynamic> json) {')
-      ..writeln('// TODO: Implement')
+      ..writeln('factory ${classElement.name}.fromJson(Map<dynamic, dynamic> json) {')
       ..writeln('throw UnimplementedError();')
       ..writeln('}');
   }

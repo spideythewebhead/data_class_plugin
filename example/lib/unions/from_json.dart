@@ -5,34 +5,46 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   fromJson: true,
   toJson: false,
 )
-abstract class Response {
+class Response {
   const Response._();
+
+  /// Creates an instance of [Response] from [json]
+  factory Response.fromJson(Map<dynamic, dynamic> json) {
+    switch (json['status']) {
+      case 'ok':
+        return ResponseOk.fromJson(json);
+      case 'unauthorized':
+        return ResponseUnauthorized.fromJson(json);
+      default:
+        return ResponseError.fromJson(json);
+    }
+  }
 
   const factory Response.ok({
     required int data,
-  }) = Ok;
+  }) = ResponseOk;
 
-  const factory Response.unauthorized() = Unauthorized;
+  const factory Response.unauthorized() = ResponseUnauthorized;
 
   const factory Response.error({
     required Object type,
     @JsonKey(ignore: true) StackTrace? stackTrace,
-  }) = Error;
+  }) = ResponseError;
 
   /// Executes one of the provided callbacks based on a type match
   R when<R>({
-    required R Function(Ok value) ok,
-    required R Function(Unauthorized value) unauthorized,
-    required R Function(Error value) error,
+    required R Function(ResponseOk value) ok,
+    required R Function(ResponseUnauthorized value) unauthorized,
+    required R Function(ResponseError value) error,
   }) {
-    if (this is Ok) {
-      return ok(this as Ok);
+    if (this is ResponseOk) {
+      return ok(this as ResponseOk);
     }
-    if (this is Unauthorized) {
-      return unauthorized(this as Unauthorized);
+    if (this is ResponseUnauthorized) {
+      return unauthorized(this as ResponseUnauthorized);
     }
-    if (this is Error) {
-      return error(this as Error);
+    if (this is ResponseError) {
+      return error(this as ResponseError);
     }
     throw UnimplementedError('Unknown instance of $this used in when(..)');
   }
@@ -41,56 +53,50 @@ abstract class Response {
   ///
   /// If no match is found [orElse] is executed
   R maybeWhen<R>({
-    R Function(Ok value)? ok,
-    R Function(Unauthorized value)? unauthorized,
-    R Function(Error value)? error,
+    R Function(ResponseOk value)? ok,
+    R Function(ResponseUnauthorized value)? unauthorized,
+    R Function(ResponseError value)? error,
     required R Function() orElse,
   }) {
-    if (this is Ok) {
-      return ok?.call(this as Ok) ?? orElse();
+    if (this is ResponseOk) {
+      return ok?.call(this as ResponseOk) ?? orElse();
     }
-    if (this is Unauthorized) {
-      return unauthorized?.call(this as Unauthorized) ?? orElse();
+    if (this is ResponseUnauthorized) {
+      return unauthorized?.call(this as ResponseUnauthorized) ?? orElse();
     }
-    if (this is Error) {
-      return error?.call(this as Error) ?? orElse();
+    if (this is ResponseError) {
+      return error?.call(this as ResponseError) ?? orElse();
     }
     throw UnimplementedError('Unknown instance of $this used in maybeWhen(..)');
   }
-
-  /// Creates an instance of [Response] from [json]
-  Response fromJson(Map<dynamic, dynamic> json) {
-// TODO: Implement
-    throw UnimplementedError();
-  }
 }
 
-class Ok extends Response {
-  const Ok({
+class ResponseOk extends Response {
+  const ResponseOk({
     required this.data,
   }) : super._();
 
   final int data;
 
-  /// Creates an instance of [Ok] from [json]
-  factory Ok.fromJson(Map<dynamic, dynamic> json) {
-    return Ok(
+  /// Creates an instance of [ResponseOk] from [json]
+  factory ResponseOk.fromJson(Map<dynamic, dynamic> json) {
+    return ResponseOk(
       data: json['data'] as int,
     );
   }
 }
 
-class Unauthorized extends Response {
-  const Unauthorized() : super._();
+class ResponseUnauthorized extends Response {
+  const ResponseUnauthorized() : super._();
 
-  /// Creates an instance of [Unauthorized] from [json]
-  factory Unauthorized.fromJson(Map<dynamic, dynamic> json) {
-    return Unauthorized();
+  /// Creates an instance of [ResponseUnauthorized] from [json]
+  factory ResponseUnauthorized.fromJson(Map<dynamic, dynamic> json) {
+    return ResponseUnauthorized();
   }
 }
 
-class Error extends Response {
-  const Error({
+class ResponseError extends Response {
+  const ResponseError({
     required this.type,
     this.stackTrace,
   }) : super._();
@@ -98,9 +104,9 @@ class Error extends Response {
   final Object type;
   final StackTrace? stackTrace;
 
-  /// Creates an instance of [Error] from [json]
-  factory Error.fromJson(Map<dynamic, dynamic> json) {
-    return Error(
+  /// Creates an instance of [ResponseError] from [json]
+  factory ResponseError.fromJson(Map<dynamic, dynamic> json) {
+    return ResponseError(
       type: jsonConverterRegistrant.find(Object).fromJson(json['type']) as Object,
     );
   }

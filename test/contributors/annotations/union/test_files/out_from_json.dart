@@ -3,34 +3,39 @@
   fromJson: true,
   toJson: false,
 )
-class AsyncResult<T> {
-  const AsyncResult._();
+class Response {
+  const Response._();
 
-  const factory AsyncResult.data({
-    required T data,
-  }) = AsyncResultData<T>;
+  /// Creates an instance of [Response] from [json]
+  factory Response.fromJson(Map<dynamic, dynamic> json) {
+    throw UnimplementedError();
+  }
 
-  const factory AsyncResult.loading() = AsyncResultLoading<T>;
+  const factory Response.ok({
+    required int data,
+  }) = ResponseOk;
 
-  const factory AsyncResult.error({
-    required Object error,
-    StackTrace? stackTrace,
-  }) = AsyncResultError<T>;
+  const factory Response.unauthorized() = ResponseUnauthorized;
+
+  const factory Response.error({
+    required Object type,
+    @JsonKey(ignore: true) StackTrace? stackTrace,
+  }) = ResponseError;
 
   /// Executes one of the provided callbacks based on a type match
   R when<R>({
-    required R Function(AsyncResultData<T> value) data,
-    required R Function(AsyncResultLoading<T> value) loading,
-    required R Function(AsyncResultError<T> value) error,
+    required R Function(ResponseOk value) ok,
+    required R Function(ResponseUnauthorized value) unauthorized,
+    required R Function(ResponseError value) error,
   }) {
-    if (this is AsyncResultData<T>) {
-      return data(this as AsyncResultData<T>);
+    if (this is ResponseOk) {
+      return ok(this as ResponseOk);
     }
-    if (this is AsyncResultLoading<T>) {
-      return loading(this as AsyncResultLoading<T>);
+    if (this is ResponseUnauthorized) {
+      return unauthorized(this as ResponseUnauthorized);
     }
-    if (this is AsyncResultError<T>) {
-      return error(this as AsyncResultError<T>);
+    if (this is ResponseError) {
+      return error(this as ResponseError);
     }
     throw UnimplementedError('Unknown instance of $this used in when(..)');
   }
@@ -39,70 +44,61 @@ class AsyncResult<T> {
   ///
   /// If no match is found [orElse] is executed
   R maybeWhen<R>({
-    R Function(AsyncResultData<T> value)? data,
-    R Function(AsyncResultLoading<T> value)? loading,
-    R Function(AsyncResultError<T> value)? error,
+    R Function(ResponseOk value)? ok,
+    R Function(ResponseUnauthorized value)? unauthorized,
+    R Function(ResponseError value)? error,
     required R Function() orElse,
   }) {
-    if (this is AsyncResultData<T>) {
-      return data?.call(this as AsyncResultData<T>) ?? orElse();
+    if (this is ResponseOk) {
+      return ok?.call(this as ResponseOk) ?? orElse();
     }
-    if (this is AsyncResultLoading<T>) {
-      return loading?.call(this as AsyncResultLoading<T>) ?? orElse();
+    if (this is ResponseUnauthorized) {
+      return unauthorized?.call(this as ResponseUnauthorized) ?? orElse();
     }
-    if (this is AsyncResultError<T>) {
-      return error?.call(this as AsyncResultError<T>) ?? orElse();
+    if (this is ResponseError) {
+      return error?.call(this as ResponseError) ?? orElse();
     }
     throw UnimplementedError('Unknown instance of $this used in maybeWhen(..)');
   }
-
-  /// Creates an instance of [AsyncResult] from [json]
-  AsyncResult<T> fromJson(Map<dynamic, dynamic> json) {
-// TODO: Implement
-    throw UnimplementedError();
-  }
 }
 
-class AsyncResultData<T> extends AsyncResult<T> {
-  const AsyncResultData({
+class ResponseOk extends Response {
+  const ResponseOk({
     required this.data,
   }) : super._();
 
-  final T data;
+  final int data;
 
-  /// Creates an instance of [AsyncResultData] from [json]
-  factory AsyncResultData.fromJson(Map<dynamic, dynamic> json) {
-    return AsyncResultData<T>(
-      data: jsonConverterRegistrant.find(T).fromJson(json['data']) as T,
+  /// Creates an instance of [ResponseOk] from [json]
+  factory ResponseOk.fromJson(Map<dynamic, dynamic> json) {
+    return ResponseOk(
+      data: json['data'] as int,
     );
   }
 }
 
-class AsyncResultLoading<T> extends AsyncResult<T> {
-  const AsyncResultLoading() : super._();
+class ResponseUnauthorized extends Response {
+  const ResponseUnauthorized() : super._();
 
-  /// Creates an instance of [AsyncResultLoading] from [json]
-  factory AsyncResultLoading.fromJson(Map<dynamic, dynamic> json) {
-    return AsyncResultLoading<T>();
+  /// Creates an instance of [ResponseUnauthorized] from [json]
+  factory ResponseUnauthorized.fromJson(Map<dynamic, dynamic> json) {
+    return ResponseUnauthorized();
   }
 }
 
-class AsyncResultError<T> extends AsyncResult<T> {
-  const AsyncResultError({
-    required this.error,
+class ResponseError extends Response {
+  const ResponseError({
+    required this.type,
     this.stackTrace,
   }) : super._();
 
-  final Object error;
+  final Object type;
   final StackTrace? stackTrace;
 
-  /// Creates an instance of [AsyncResultError] from [json]
-  factory AsyncResultError.fromJson(Map<dynamic, dynamic> json) {
-    return AsyncResultError<T>(
-      error: jsonConverterRegistrant.find(Object).fromJson(json['error']) as Object,
-      stackTrace: json['stackTrace'] == null
-          ? null
-          : jsonConverterRegistrant.find(StackTrace).fromJson(json['stackTrace']) as StackTrace,
+  /// Creates an instance of [ResponseError] from [json]
+  factory ResponseError.fromJson(Map<dynamic, dynamic> json) {
+    return ResponseError(
+      type: jsonConverterRegistrant.find(Object).fromJson(json['type']) as Object,
     );
   }
 }
