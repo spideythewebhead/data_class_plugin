@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:core';
 
 import 'package:analyzer/dart/ast/ast.dart';
@@ -38,7 +39,9 @@ extension DartTypeX on DartType {
         alias == null;
   }
 
-  String typeStringValue() {
+  String typeStringValue({
+    required List<LibraryImportElement> enclosingImports,
+  }) {
     final StringBuffer buffer = StringBuffer();
 
     void visit(DartType type) {
@@ -63,7 +66,20 @@ extension DartTypeX on DartType {
         return;
       }
 
-      buffer.write(type.element!.name);
+      String qualifiedName = type.element!.name!;
+
+      // adds any potential prefixes on the class name
+      // e.g
+      // import 'user.dart' as u;
+      // List<u.User>
+      for (final LibraryImportElement import in enclosingImports) {
+        if (import.prefix != null && import.importedLibrary?.id == type.element!.library?.id) {
+          qualifiedName = '${import.prefix!.element.name}.$qualifiedName';
+          break;
+        }
+      }
+
+      buffer.write(qualifiedName);
       if (type.isNullable) {
         buffer.write('?');
       }
@@ -90,6 +106,34 @@ extension ElementAnnotationX on ElementAnnotation {
   bool get isDataClassAnnotation {
     return element?.displayName == 'DataClass';
   }
+
+  bool get isDefaultValueAnnotation {
+    return element?.displayName == 'DefaultValue';
+  }
+}
+
+extension AnnotationX on Annotation {
+  String get _rawName => name.name;
+
+  bool get isJsonKeyAnnotation {
+    return _rawName == 'JsonKey';
+  }
+
+  bool get isUnionAnnotation {
+    return _rawName == 'Union';
+  }
+
+  bool get isUnionFieldValueAnnotation {
+    return _rawName == 'UnionFieldValue';
+  }
+
+  bool get isDataClassAnnotation {
+    return _rawName == 'DataClass';
+  }
+
+  bool get isDefaultValueAnnotation {
+    return _rawName == 'DefaultValue';
+  }
 }
 
 extension IterableX<T> on Iterable<T> {
@@ -101,7 +145,17 @@ extension IterableX<T> on Iterable<T> {
     }
   }
 
-  T? get firstOrNull => isEmpty ? null : elementAt(0);
+  T? lastWhereOrNull(bool Function(T element) test) {
+    try {
+      return lastWhere(test);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  T? get firstOrNull => isEmpty ? null : first;
+
+  T? get lastOrNull => isEmpty ? null : last;
 }
 
 extension ExecutableElementX<T> on ExecutableElement {
@@ -157,13 +211,39 @@ extension ElementX on Element {
             .firstWhereOrNull((ElementAnnotation annotation) => annotation.isDataClassAnnotation) !=
         null;
   }
+
+  bool get hasDefaultValueAnnotation {
+    return metadata.firstWhereOrNull(
+            (ElementAnnotation annotation) => annotation.isDefaultValueAnnotation) !=
+        null;
+  }
 }
 
 extension ClassDeclarationX on ClassDeclaration {
   bool get hasDataClassAnnotation {
-    return metadata
-            .firstWhereOrNull((Annotation annotation) => annotation.name.name == 'DataClass') !=
-        null;
+    return null !=
+        metadata.firstWhereOrNull((Annotation annotation) => annotation.isDataClassAnnotation);
+  }
+
+  bool get hasUnionClassAnnotation {
+    return null !=
+        metadata.firstWhereOrNull((Annotation annotation) => annotation.isUnionAnnotation);
+  }
+
+  bool hasMethod(String methodName) {
+    return null !=
+        members.firstWhereOrNull((ClassMember member) {
+          return member is MethodDeclaration && member.name.lexeme == methodName;
+        });
+  }
+
+  bool hasFactory(String factoryName) {
+    return null !=
+        members.firstWhereOrNull((ClassMember member) {
+          return member is ConstructorDeclaration &&
+              member.factoryKeyword != null &&
+              member.name?.lexeme == factoryName;
+        });
   }
 }
 
@@ -188,6 +268,13 @@ extension StringX on String {
         return '\$${match.group(2)}';
       },
     );
+  }
+
+  String wrapWithAngleBracketsIfNotEmpty() {
+    if (isEmpty) {
+      return this;
+    }
+    return '<$this>';
   }
 }
 
@@ -228,5 +315,13 @@ extension ConstructorElementX on ConstructorElement {
 extension InterfaceTypeX on InterfaceType {
   ClassElement? get classElement {
     return element is ClassElement ? element as ClassElement : null;
+  }
+}
+
+extension CompleterX<T> on Completer<T> {
+  void safeComplete([T? value]) {
+    if (!isCompleted) {
+      complete(value);
+    }
   }
 }

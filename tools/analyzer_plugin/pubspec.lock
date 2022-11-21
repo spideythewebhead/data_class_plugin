@@ -67,10 +67,10 @@ packages:
   data_class_plugin:
     dependency: "direct main"
     description:
-      name: data_class_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.1"
+      path: "/home/paradox11/projects/data_class_plugin"
+      relative: false
+    source: path
+    version: "0.0.2"
   file:
     dependency: transitive
     description:
@@ -113,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.27.7"
   source_span:
     dependency: transitive
     description:
@@ -147,7 +154,7 @@ packages:
       name: watcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   yaml:
     dependency: transitive
     description:

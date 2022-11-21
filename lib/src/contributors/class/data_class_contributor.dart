@@ -1,5 +1,3 @@
-import 'dart:io' as io show File;
-
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -9,10 +7,8 @@ import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
+import 'package:data_class_plugin/src/common/utils.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
-import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
-import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
-import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
@@ -71,98 +67,137 @@ class DataClassAssistContributor extends Object
     final SourceRange? fromJsonSourceRange =
         classNode.members.getSourceRangeForConstructor('fromJson');
     final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
+    final SourceRange? privateConsturctorSourceRange =
+        classNode.members.getSourceRangeForConstructor('_');
 
-    final List<VariableElement> fields = <VariableElement>[
-      ...classElement.dataClassFinalFields,
-      ...classElement.chainSuperClassDataClassFinalFields,
-    ];
+    final List<FieldElement> fields = classElement.fields.where((FieldElement field) {
+      return field.getter != null &&
+          field.getter!.name != 'hashCode' &&
+          field.getter!.isGetter &&
+          field.getter!.isAbstract;
+    }).toList(growable: false);
 
-    final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile((io.File(
-      utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path),
-    )));
+    final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile(
+      getDataClassPluginOptionsFile(session.analysisContext.contextRoot.root.path),
+    );
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
-      void writerConstructor(DartEditBuilder builder) {
-        ShorthandConstructorAssistContributor.writeConstructor(
+      if (!classElement.isAbstract) {
+        fileEditBuilder.addInsertion(
+          classNode.classKeyword.offset,
+          (DartEditBuilder builder) {
+            builder.write('abstract ');
+          },
+        );
+      }
+
+      addPartDirective(
+        classElement: classElement,
+        directives: assistRequest.result.unit.directives,
+        fileEditBuilder: fileEditBuilder,
+        targetFilePath: targetFilePath,
+      );
+
+      void createPrivateConstructor(DartEditBuilder builder) {
+        _createPrivateConstructor(
           classElement: classElement,
           builder: builder,
-          members: classNode.members,
+        );
+      }
+
+      if (privateConsturctorSourceRange != null) {
+        fileEditBuilder.addReplacement(
+          privateConsturctorSourceRange,
+          createPrivateConstructor,
+        );
+      } else {
+        fileEditBuilder.addInsertion(
+          classNode.leftBracket.offset + 1,
+          createPrivateConstructor,
+        );
+      }
+
+      void createFactoryConstructor(DartEditBuilder builder) {
+        _createFactoryConstructor(
+          classElement: classElement,
+          builder: builder,
+          fields: fields,
         );
       }
 
       if (constructorSourceRange != null) {
         fileEditBuilder.addReplacement(
           constructorSourceRange,
-          writerConstructor,
+          createFactoryConstructor,
         );
       } else {
         fileEditBuilder.addInsertion(
           classNode.leftBracket.offset + 1,
-          writerConstructor,
+          createFactoryConstructor,
         );
       }
 
-      if (dataClassAnnotation.$toString ??
-          pluginOptions.dataClass.effectiveToString(relativeFilePath)) {
-        void writerToString(DartEditBuilder builder) {
-          ToStringAssistContributor.writeToString(
-            className:
-                classElement.thisType.typeStringValue().prefixGenericArgumentsWithDollarSign(),
-            optimizedName: classElement.name,
-            commentElementName: classElement.name,
+      if (dataClassAnnotation.fromJson ??
+          pluginOptions.dataClass.effectiveFromJson(relativeFilePath)) {
+        void createFromJson(DartEditBuilder builder) {
+          _createFromJson(
+            classElement: classElement,
+            builder: builder,
+          );
+        }
+
+        if (fromJsonSourceRange != null) {
+          fileEditBuilder.addReplacement(fromJsonSourceRange, createFromJson);
+        } else {
+          fileEditBuilder.addInsertion(
+            classNode.rightBracket.offset,
+            createFromJson,
+          );
+        }
+      } else if (fromJsonSourceRange != null) {
+        fileEditBuilder.addDeletion(fromJsonSourceRange);
+      }
+
+      if (dataClassAnnotation.copyWith ??
+          pluginOptions.dataClass.effectiveCopyWith(relativeFilePath)) {
+        void createCopyWith(DartEditBuilder builder) {
+          _createCopyWith(
+            classElement: classElement,
             fields: fields,
             builder: builder,
           );
         }
 
-        if (toStringSourceRange != null) {
-          fileEditBuilder.addReplacement(
-            toStringSourceRange,
-            writerToString,
-          );
+        if (copyWithSourceRange != null) {
+          fileEditBuilder.addReplacement(copyWithSourceRange, createCopyWith);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerToString,
+            createCopyWith,
           );
         }
-      } else if (toStringSourceRange != null) {
-        fileEditBuilder.addDeletion(toStringSourceRange);
+      } else if (copyWithSourceRange != null) {
+        fileEditBuilder.addDeletion(copyWithSourceRange);
       }
 
       if (dataClassAnnotation.hashAndEquals ??
           pluginOptions.dataClass.effectiveHashAndEquals(relativeFilePath)) {
-        void writerHashCode(DartEditBuilder builder) {
-          HashAndEqualsAssistContributor.writeHashCode(
-            fields: fields,
-            builder: builder,
-          );
-        }
-
-        void writerEquals(DartEditBuilder builder) {
-          HashAndEqualsAssistContributor.writeEquals(
-            className: classElement.thisType.toString(),
-            fields: fields,
-            builder: builder,
-          );
-        }
-
         if (hashCodeSourceRange != null) {
-          fileEditBuilder.addReplacement(hashCodeSourceRange, writerHashCode);
+          fileEditBuilder.addReplacement(hashCodeSourceRange, _createHash);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerHashCode,
+            _createHash,
           );
         }
 
         if (equalsSourceRange != null) {
-          fileEditBuilder.addReplacement(equalsSourceRange, writerEquals);
+          fileEditBuilder.addReplacement(equalsSourceRange, _createEquals);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerEquals,
+            _createEquals,
           );
         }
       } else {
@@ -175,78 +210,167 @@ class DataClassAssistContributor extends Object
         }
       }
 
-      if (dataClassAnnotation.copyWith ??
-          pluginOptions.dataClass.effectiveCopyWith(relativeFilePath)) {
-        void writerCopyWith(DartEditBuilder builder) {
-          CopyWithAssistContributor.writeCopyWith(
-            className: classElement.thisType.toString(),
-            classElement: classElement,
-            commentClassName: classElement.name,
-            fields: fields,
-            builder: builder,
+      if (dataClassAnnotation.$toString ??
+          pluginOptions.dataClass.effectiveToString(relativeFilePath)) {
+        if (toStringSourceRange != null) {
+          fileEditBuilder.addReplacement(
+            toStringSourceRange,
+            _createToString,
           );
-        }
-
-        if (copyWithSourceRange != null) {
-          fileEditBuilder.addReplacement(copyWithSourceRange, writerCopyWith);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerCopyWith,
+            _createToString,
           );
         }
-      } else if (copyWithSourceRange != null) {
-        fileEditBuilder.addDeletion(copyWithSourceRange);
+      } else if (toStringSourceRange != null) {
+        fileEditBuilder.addDeletion(toStringSourceRange);
       }
 
       if (dataClassAnnotation.toJson ?? pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
-        void writerToJson(DartEditBuilder builder) {
-          ToJsonAssistContributor.writeToJson(
-            targetFileRelativePath: relativeFilePath,
-            pluginOptions: pluginOptions,
-            classElement: classElement,
+        void createToJson(DartEditBuilder builder) {
+          _createToJson(
+            className: classElement.name,
             builder: builder,
           );
         }
 
         if (toJsonSourceRange != null) {
-          fileEditBuilder.addReplacement(toJsonSourceRange, writerToJson);
+          fileEditBuilder.addReplacement(toJsonSourceRange, createToJson);
         } else {
           fileEditBuilder.addInsertion(
             classNode.rightBracket.offset,
-            writerToJson,
+            createToJson,
           );
         }
       } else if (toJsonSourceRange != null) {
         fileEditBuilder.addDeletion(toJsonSourceRange);
       }
 
-      if (dataClassAnnotation.fromJson ??
-          pluginOptions.dataClass.effectiveFromJson(relativeFilePath)) {
-        void writerFromJson(DartEditBuilder builder) {
-          FromJsonAssistContributor.writeFromJson(
-            targetFileRelativePath: relativeFilePath,
-            pluginOptions: pluginOptions,
-            classElement: classElement,
-            builder: builder,
-          );
-        }
-
-        if (fromJsonSourceRange != null) {
-          fileEditBuilder.addReplacement(fromJsonSourceRange, writerFromJson);
-        } else {
-          fileEditBuilder.addInsertion(
-            classNode.rightBracket.offset,
-            writerFromJson,
-          );
-        }
-      } else if (fromJsonSourceRange != null) {
-        fileEditBuilder.addDeletion(fromJsonSourceRange);
-      }
-
       fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
     });
 
     addAssist(AvailableAssists.dataClass, changeBuilder);
+  }
+
+  void _createPrivateConstructor({
+    required final ClassElement classElement,
+    required final DartEditBuilder builder,
+  }) {
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final bool isConst = defaultConstructor?.isConst ?? true;
+    builder
+      ..writeln()
+      ..writeln('${isConst ? 'const' : ''} ${classElement.name}._();')
+      ..writeln();
+  }
+
+  void _createFactoryConstructor({
+    required final ClassElement classElement,
+    required final DartEditBuilder builder,
+    required List<FieldElement> fields,
+  }) {
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final String optionalTypeParameters =
+        classElement.typeParameters.join(', ').wrapWithAngleBracketsIfNotEmpty();
+    final bool isConst = defaultConstructor?.isConst ?? true;
+
+    builder
+      ..writeln()
+      ..writeln('/// Default constructor')
+      ..writeln('${isConst ? 'const' : ''} factory ${classElement.name}(');
+
+    if (fields.isNotEmpty) {
+      builder.write('{');
+
+      for (final FieldElement field in fields) {
+        if (!(field.type.isDynamic ||
+            field.type.isNullable ||
+            field.getter!.hasDefaultValueAnnotation)) {
+          builder.write('required');
+        }
+
+        builder
+          ..write(
+              ' ${field.type.typeStringValue(enclosingImports: classElement.library.libraryImports)}')
+          ..writeln(' ${field.name},');
+      }
+
+      builder.write('}');
+    }
+
+    builder.writeln(') = _\$${classElement.name}Impl$optionalTypeParameters;');
+  }
+
+  void _createCopyWith({
+    required final ClassElement classElement,
+    required final List<VariableElement> fields,
+    required final DartEditBuilder builder,
+  }) {
+    builder
+      ..writeln()
+      ..writeln('/// Creates a new instance of [${classElement.name}] with optional new values')
+      ..writeln('${classElement.thisType} copyWith(');
+
+    if (fields.isNotEmpty) {
+      builder.write('{');
+
+      for (final VariableElement field in fields) {
+        final String typeStringValue =
+            field.type.typeStringValue(enclosingImports: classElement.library.libraryImports);
+        final bool isNullable = typeStringValue.endsWith('?');
+        builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
+      }
+
+      builder.write('}');
+    }
+
+    builder.writeln(');');
+  }
+
+  void _createHash(DartEditBuilder builder) {
+    builder
+      ..writeln('/// Returns a hash code based on [this] properties')
+      ..writeln('@override')
+      ..writeln('int get hashCode;');
+  }
+
+  void _createEquals(DartEditBuilder builder) {
+    builder
+      ..writeln('/// Compares [this] with [other] on identity, class type, and properties')
+      ..writeln('/// *with deep comparison on collections*')
+      ..writeln('@override')
+      ..writeln('bool operator ==(Object? other);');
+  }
+
+  void _createToString(DartEditBuilder builder) {
+    builder
+      ..writeln()
+      ..writeln('@override')
+      ..writeln('String toString();');
+  }
+
+  void _createFromJson({
+    required final ClassElement classElement,
+    required final DartEditBuilder builder,
+  }) {
+    final String className = classElement.name;
+    final String optionalTypeParameters =
+        classElement.typeParameters.join(', ').wrapWithAngleBracketsIfNotEmpty();
+    builder
+      ..writeln()
+      ..writeln('/// Creates an instance of [$className] from [json]')
+      ..writeln(
+          'factory $className.fromJson(Map<dynamic, dynamic> json) = _\$${className}Impl$optionalTypeParameters.fromJson;');
+  }
+
+  void _createToJson({
+    required final String className,
+    required final DartEditBuilder builder,
+  }) {
+    builder
+      ..writeln()
+      ..writeln('/// Converts [$className] to a [Map] json')
+      ..writeln('Map<String, dynamic> toJson();');
   }
 }

@@ -1,5 +1,7 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
+part 'simple_usage.gen.dart';
+
 @DataClass(
   fromJson: true,
   toJson: false,
@@ -7,21 +9,18 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   hashAndEquals: false,
   $toString: false,
 )
-class User {
-  /// Shorthand constructor
-  User({
-    required this.id,
-    required this.username,
-  });
+abstract class User {
+  User._();
 
-  final String id;
-  final String username;
+  /// Default constructor
+  factory User({
+    required String id,
+    required String username,
+  }) = _$UserImpl;
+
+  String get id;
+  String get username;
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<dynamic, dynamic> json) {
-    return User(
-      id: json['id'] as String,
-      username: json['username'] as String,
-    );
-  }
+  factory User.fromJson(Map<dynamic, dynamic> json) = _$UserImpl.fromJson;
 }

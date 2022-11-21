@@ -1,5 +1,7 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
+part 'json_key_usage.gen.dart';
+
 @DataClass(
   toJson: true,
   fromJson: false,
@@ -7,26 +9,23 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   hashAndEquals: false,
   $toString: false,
 )
-class User {
-  /// Shorthand constructor
-  User({
-    required this.id,
-    required this.username,
-  });
+abstract class User {
+  User._();
 
-  @JsonKey<String>(toJson: _toIdMapper)
-  final String id;
-  final String username;
+  /// Default constructor
+  factory User({
+    required String id,
+    required String username,
+  }) = _$UserImpl;
+
+  @JsonKey<String>(toJson: User._toIdMapper)
+  String get id;
+  String get username;
 
   static String _toIdMapper(dynamic id) {
     return '__${id}__';
   }
 
   /// Converts [User] to a [Map] json
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'id': User._toIdMapper(id),
-      'username': username,
-    };
-  }
+  Map<String, dynamic> toJson();
 }

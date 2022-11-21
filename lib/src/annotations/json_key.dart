@@ -20,8 +20,7 @@ typedef ToJsonConverter<T> = Object? Function(T value);
 /// [nameConvention] Transforms the variable name into one of the [nameJsonKeyNameConventionConvention] typing cases
 
 @Target(<TargetKind>{
-  TargetKind.field,
-  TargetKind.parameter,
+  TargetKind.getter,
 })
 class JsonKey<T> {
   const JsonKey({

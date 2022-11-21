@@ -1,9 +1,6 @@
 import 'package:analyzer/dart/constant/value.dart';
-import 'package:data_class_plugin/src/annotations/data_class.dart';
 
-@DataClass()
 class DataClassInternal {
-  /// Shorthand constructor
   const DataClassInternal({
     required this.copyWith,
     required this.hashAndEquals,

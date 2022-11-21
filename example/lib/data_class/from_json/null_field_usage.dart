@@ -1,5 +1,7 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
+part 'null_field_usage.gen.dart';
+
 @DataClass(
   fromJson: true,
   toJson: false,
@@ -7,18 +9,16 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   hashAndEquals: false,
   $toString: false,
 )
-class User {
-  /// Shorthand constructor
-  User({
-    this.avatarUrl,
-  });
+abstract class User {
+  User._();
 
-  final String? avatarUrl;
+  /// Default constructor
+  factory User({
+    String? avatarUrl,
+  }) = _$UserImpl;
+
+  String? get avatarUrl;
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<dynamic, dynamic> json) {
-    return User(
-      avatarUrl: json['avatarUrl'] == null ? null : json['avatarUrl'] as String,
-    );
-  }
+  factory User.fromJson(Map<dynamic, dynamic> json) = _$UserImpl.fromJson;
 }

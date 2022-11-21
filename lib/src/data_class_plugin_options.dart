@@ -1,22 +1,30 @@
-import 'dart:io' as io show File;
+import 'dart:io' show File;
 
 import 'package:data_class_plugin/data_class_plugin.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:glob/glob.dart';
 import 'package:yaml/yaml.dart';
 
+part 'data_class_plugin_options.gen.dart';
+
 @DataClass()
-class DataClassPluginOptions {
-  /// Shorthand constructor
-  const DataClassPluginOptions({
-    this.json = const JsonOptions(),
-    this.dataClass = const DataClassOptions(),
-  });
+abstract class DataClassPluginOptions {
+  const DataClassPluginOptions._();
 
-  final JsonOptions json;
-  final DataClassOptions dataClass;
+  /// Default constructor
+  const factory DataClassPluginOptions({
+    JsonOptions json,
+    DataClassOptions dataClass,
+  }) = _$DataClassPluginOptionsImpl;
 
-  static Future<DataClassPluginOptions> fromFile(io.File file) async {
+  @DefaultValue(JsonOptions())
+  JsonOptions get json;
+
+  @JsonKey(name: 'data_class')
+  @DefaultValue(DataClassOptions())
+  DataClassOptions get dataClass;
+
+  static Future<DataClassPluginOptions> fromFile(File file) async {
     try {
       final YamlMap yaml = await file.readAsString().then((String value) => loadYaml(value));
       return DataClassPluginOptions.fromJson(yaml);
@@ -26,91 +34,52 @@ class DataClassPluginOptions {
   }
 
   /// Creates an instance of [DataClassPluginOptions] from [json]
-  factory DataClassPluginOptions.fromJson(Map<dynamic, dynamic> json) {
-    return DataClassPluginOptions(
-      json: json['json'] == null ? const JsonOptions() : JsonOptions.fromJson(json['json']),
-      dataClass: json['data_class'] == null
-          ? const DataClassOptions()
-          : DataClassOptions.fromJson(json['data_class']),
-    );
-  }
+  factory DataClassPluginOptions.fromJson(Map<dynamic, dynamic> json) =
+      _$DataClassPluginOptionsImpl.fromJson;
 
-  /// Returns a string with the properties of [DataClassPluginOptions]
   @override
-  String toString() {
-    String value = 'DataClassPluginOptions{<optimized out>}';
-    assert(() {
-      value = 'DataClassPluginOptions@<$hexIdentity>{json: $json, dataClass: $dataClass}';
-      return true;
-    }());
-    return value;
-  }
+  String toString();
 }
 
 @DataClass()
-class JsonOptions {
-  /// Shorthand constructor
-  const JsonOptions({
-    this.keyNameConvention,
-    this.nameConventionGlobs = const <String, List<String>>{},
-  });
+abstract class JsonOptions {
+  const JsonOptions._();
 
-  final String? keyNameConvention;
+  /// Default constructor
+  const factory JsonOptions({
+    String? keyNameConvention,
+    Map<String, List<String>> nameConventionGlobs,
+  }) = _$JsonOptionsImpl;
+
+  @JsonKey(name: 'key_name_convention')
+  String? get keyNameConvention;
 
   @JsonKey(name: 'key_name_conventions')
-  final Map<String, List<String>> nameConventionGlobs;
+  @DefaultValue(<String, List<String>>{})
+  Map<String, List<String>> get nameConventionGlobs;
 
   /// Creates an instance of [JsonOptions] from [json]
-  factory JsonOptions.fromJson(Map<dynamic, dynamic> json) {
-    return JsonOptions(
-      keyNameConvention:
-          json['key_name_convention'] == null ? null : json['key_name_convention'] as String,
-      nameConventionGlobs: json['key_name_conventions'] == null
-          ? const <String, List<String>>{}
-          : <String, List<String>>{
-              for (final MapEntry<dynamic, dynamic> e0
-                  in (json['key_name_conventions'] as Map<dynamic, dynamic>).entries)
-                e0.key: <String>[
-                  for (final dynamic i1 in (e0.value as List<dynamic>)) i1 as String,
-                ],
-            },
-    );
-  }
+  factory JsonOptions.fromJson(Map<dynamic, dynamic> json) = _$JsonOptionsImpl.fromJson;
 
-  /// Returns a string with the properties of [JsonOptions]
   @override
-  String toString() {
-    String value = 'JsonOptions{<optimized out>}';
-    assert(() {
-      value =
-          'JsonOptions@<$hexIdentity>{keyNameConvention: $keyNameConvention, nameConventionGlobs: $nameConventionGlobs}';
-      return true;
-    }());
-    return value;
-  }
+  String toString();
 }
 
 @DataClass()
-class DataClassOptions {
-  /// Shorthand constructor
-  const DataClassOptions({
-    this.optionsConfig = const <String, DataClassOptionConfig>{},
-  });
+abstract class DataClassOptions {
+  const DataClassOptions._();
 
-  final Map<String, DataClassOptionConfig> optionsConfig;
+  /// Default constructor
+  const factory DataClassOptions({
+    Map<String, DataClassOptionConfig> optionsConfig,
+  }) = _$DataClassOptionsImpl;
+
+  @JsonKey(name: 'options_config')
+  @DefaultValue(<String, DataClassOptionConfig>{})
+  Map<String, DataClassOptionConfig> get optionsConfig;
 
   /// Creates an instance of [DataClassOptions] from [json]
-  factory DataClassOptions.fromJson(Map<dynamic, dynamic> json) {
-    return DataClassOptions(
-      optionsConfig: json['options_config'] == null
-          ? const <String, DataClassOptionConfig>{}
-          : <String, DataClassOptionConfig>{
-              for (final MapEntry<dynamic, dynamic> e0
-                  in (json['options_config'] as Map<dynamic, dynamic>).entries)
-                e0.key: DataClassOptionConfig.fromJson(e0.value),
-            },
-    );
-  }
+  factory DataClassOptions.fromJson(Map<dynamic, dynamic> json) = _$DataClassOptionsImpl.fromJson;
 
   bool? _hasGlobMatch(String option, String filePath) {
     final String? isEnabled = optionsConfig[option]
@@ -156,58 +125,34 @@ class DataClassOptions {
     return _hasGlobMatch('to_json', filePath) ?? optionsConfig['to_json']?.defaultValue ?? false;
   }
 
-  /// Returns a string with the properties of [DataClassOptions]
   @override
-  String toString() {
-    String value = 'DataClassOptions{<optimized out>}';
-    assert(() {
-      value = 'DataClassOptions@<$hexIdentity>{optionsConfig: $optionsConfig}';
-      return true;
-    }());
-    return value;
-  }
+  String toString();
 }
 
 @DataClass()
-class DataClassOptionConfig {
-  /// Shorthand constructor
-  const DataClassOptionConfig({
-    this.defaultValue,
-    this.enabled = const <String>[],
-    this.disabled = const <String>[],
-  });
+abstract class DataClassOptionConfig {
+  const DataClassOptionConfig._();
+
+  /// Default constructor
+  const factory DataClassOptionConfig({
+    bool? defaultValue,
+    List<String> enabled,
+    List<String> disabled,
+  }) = _$DataClassOptionConfigImpl;
 
   @JsonKey(name: 'default')
-  final bool? defaultValue;
-  final List<String> enabled;
-  final List<String> disabled;
+  bool? get defaultValue;
+
+  @DefaultValue(<String>[])
+  List<String> get enabled;
+
+  @DefaultValue(<String>[])
+  List<String> get disabled;
 
   /// Creates an instance of [DataClassOptionConfig] from [json]
-  factory DataClassOptionConfig.fromJson(Map<dynamic, dynamic> json) {
-    return DataClassOptionConfig(
-      defaultValue: json['default'] == null ? null : json['default'] as bool,
-      enabled: json['enabled'] == null
-          ? const <String>[]
-          : <String>[
-              for (final dynamic i0 in (json['enabled'] as List<dynamic>)) i0 as String,
-            ],
-      disabled: json['disabled'] == null
-          ? const <String>[]
-          : <String>[
-              for (final dynamic i0 in (json['disabled'] as List<dynamic>)) i0 as String,
-            ],
-    );
-  }
+  factory DataClassOptionConfig.fromJson(Map<dynamic, dynamic> json) =
+      _$DataClassOptionConfigImpl.fromJson;
 
-  /// Returns a string with the properties of [DataClassOptionConfig]
   @override
-  String toString() {
-    String value = 'DataClassOptionConfig{<optimized out>}';
-    assert(() {
-      value =
-          'DataClassOptionConfig@<$hexIdentity>{defaultValue: $defaultValue, enabled: $enabled, disabled: $disabled}';
-      return true;
-    }());
-    return value;
-  }
+  String toString();
 }

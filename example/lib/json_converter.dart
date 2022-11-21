@@ -1,5 +1,7 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
+part 'json_converter.gen.dart';
+
 // Assume this is in external package
 class LatLng {
   LatLng({
@@ -45,36 +47,26 @@ class LatLngConverter implements JsonConverter<LatLng, String> {
   fromJson: true,
   toJson: true,
 )
-class MyClass {
-  /// Shorthand constructor
-  MyClass({
-    required this.datetime,
-    required this.uri,
-    required this.latLng,
-  });
+abstract class MyClass {
+  MyClass._();
+
+  /// Default constructor
+  factory MyClass({
+    required DateTime datetime,
+    required Uri uri,
+    required LatLng latLng,
+  }) = _$MyClassImpl;
 
   // DateTime and Uri are supported out of the box
-  final DateTime datetime;
-  final Uri uri;
-  final LatLng latLng;
+  DateTime get datetime;
+  Uri get uri;
+  LatLng get latLng;
 
   /// Creates an instance of [MyClass] from [json]
-  factory MyClass.fromJson(Map<dynamic, dynamic> json) {
-    return MyClass(
-      datetime: jsonConverterRegistrant.find(DateTime).fromJson(json['datetime']) as DateTime,
-      uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri']) as Uri,
-      latLng: jsonConverterRegistrant.find(LatLng).fromJson(json['latLng']) as LatLng,
-    );
-  }
+  factory MyClass.fromJson(Map<dynamic, dynamic> json) = _$MyClassImpl.fromJson;
 
   /// Converts [MyClass] to a [Map] json
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'datetime': jsonConverterRegistrant.find(DateTime).toJson(datetime),
-      'uri': jsonConverterRegistrant.find(Uri).toJson(uri),
-      'latLng': jsonConverterRegistrant.find(LatLng).toJson(latLng),
-    };
-  }
+  Map<String, dynamic> toJson();
 }
 
 void main() {

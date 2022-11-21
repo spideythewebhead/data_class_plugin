@@ -1,6 +1,6 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
-const String _appId = 'app_id';
+part 'json_key_usage.gen.dart';
 
 @DataClass(
   fromJson: true,
@@ -9,21 +9,20 @@ const String _appId = 'app_id';
   hashAndEquals: false,
   $toString: false,
 )
-class User {
-  /// Shorthand constructor
-  User({
-    required this.id,
-    required this.username,
-  }) : appId = _appId;
+abstract class User {
+  User._();
+
+  /// Default constructor
+  factory User({
+    required String id,
+    required String username,
+  }) = _$UserImpl;
 
   @JsonKey<String>(name: '_id')
-  final String id;
+  String get id;
 
-  @JsonKey<String>(fromJson: _usernameConverter)
-  final String username;
-
-  @JsonKey<String>(ignore: true)
-  final String appId;
+  @JsonKey<String>(fromJson: User._usernameConverter)
+  String get username;
 
   // fields with initial values are ignored
   final int isSpecial = 0;
@@ -33,10 +32,5 @@ class User {
   }
 
   /// Creates an instance of [User] from [json]
-  factory User.fromJson(Map<dynamic, dynamic> json) {
-    return User(
-      id: json['_id'] as String,
-      username: User._usernameConverter(json),
-    );
-  }
+  factory User.fromJson(Map<dynamic, dynamic> json) = _$UserImpl.fromJson;
 }

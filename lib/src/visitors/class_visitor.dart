@@ -1,7 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
-
-typedef ClassDeclarationNodeMatcher = bool Function(ClassDeclaration node);
+import 'package:data_class_plugin/src/typedefs.dart';
 
 class ClassAstVisitor extends RecursiveAstVisitor<void> {
   ClassAstVisitor({
