@@ -1,19 +1,42 @@
 # Data Class Plugin
 
 [![CI Workflow](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/spideythewebhead/dart_data_class_plugin/actions/workflows/ci.yml)
-![Pub Version](https://img.shields.io/pub/v/data_class_plugin)
+[![Pub Version](https://img.shields.io/pub/v/data_class_plugin?color=blue&logo=dart)](https://pub.dev/packages/data_class_plugin)
 
 <!---
-![Pub Publisher](https://img.shields.io/pub/publisher/data_class_plugin)
+[![Pub Points](https://img.shields.io/pub/points/data_class_plugin?color=blue&logo=dart)](https://pub.dev/packages/data_class_plugin)
+[![Pub Publisher](https://img.shields.io/pub/publisher/data_class_plugin)](https://github.com/spideythewebhead)
 -->
 
-**Data Class Plugin** is a tool that uses Dart's Analyzer to generate code on-the-fly.
+**Data Class Plugin** is a tool that uses the Dart Analysis Server to generate code on-the-fly.
+
+---
+
+### Table of contents
+
+- [How it works](#How it works)
+- [Installation](#Installation)
+- [Generate the code you want](#Generate the code you want!)
+   - [DataClass Annotation](#DataClass Annotation)
+   - [Union Annotation](#Union Annotation)
+   - [Enums](#Enums)
+- [Configuration](#Configuration)
+   - [Configuration file](#Configuration file)
+   - [Available options](#Available options)
+   - [Configuration examples](#Configuration examples)
+- [Notes](#Notes)
+- [Examples](#Examples)
+- [Development](#Development)
+- [Known Issues](#Known Issues)
+
+---
 
 ## How it works
 
-This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [analyzer plugin](https://pub.dev/packages/analyzer_plugin) to get access on the source code and provide actions based on that.
+**Data Class Plugin** uses the [analyzer](https://pub.dev/packages/analyzer) system and [analyzer plugin](https://pub.dev/packages/analyzer_plugin) 
+to get access on the source code, parse it and provide actions based on that.
 
-## How to install
+## Installation
 
 1. In your project's pubspec.yaml add on `dependencies` the following
    ```yaml
@@ -76,7 +99,7 @@ This plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [a
    1. **Windows/Linux:** Alt + Enter
    1. **MacOS:** ⌘ + Enter
 
-<img src="https://github.com/spideythewebhead/data_class_plugin/blob/main/assets/screenshots/010.png" width="400">
+<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/010.png" width="400">
 
 Available methods are:
 
@@ -119,7 +142,7 @@ Available methods are:
 
    Generates a factory constructor that creates a new instance from a Map.
 
-   _If no value is provided (default), then **false** is assumed_
+   _If no value is provided (default), then **false** is assumed._
 
    ```dart
    factory MyClass.fromJson(Map<dynamic, dynamic> json) { ... }
@@ -135,13 +158,13 @@ Available methods are:
    Map<String, dynamic> toJson() { ... }
    ```
 
-_This configuration can be overriden in `data_class_plugin_options.yaml`, see [Configuration](#Configuration)_
+_This configuration can be overriden in `data_class_plugin_options.yaml`, see [Configuration](#Configuration)_.
 
 ### Union Annotation
 
 Adding this annotation to a class enables it to create union types.
 
-<img src="https://github.com/spideythewebhead/data_class_plugin/blob/main/assets/screenshots/009.png" width="450">
+<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/009.png" width="450">
 
 Available union annotation toggles are:
 
@@ -206,7 +229,7 @@ enum Category {
 }
 ```
 
-<img src="https://github.com/spideythewebhead/data_class_plugin/blob/main/assets/screenshots/007.png" width="400">
+<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/007.png" width="400">
 
 ## Configuration
 
@@ -291,7 +314,7 @@ You can find a variety of examples in the [Example](https://github.com/spideythe
 
 ## Development
 
-In order to see your changes in the plugin you need to modify `tools/analyzer_plugin/pubspec.yaml` and add the following section
+In order to see your changes in the plugin you need to modify `tools/analyzer_plugin/pubspec.yaml` and add the following section:
 
 ```yaml
 dependency_overrides:
