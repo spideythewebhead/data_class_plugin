@@ -10,6 +10,8 @@
 
 **Data Class Plugin** is a tool that uses the Dart Analysis Server to generate code on-the-fly.
 
+> This package is experimental and still under development, thus do not use it for applications in production.
+
 ---
 
 ### Table of contents
