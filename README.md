@@ -14,20 +14,20 @@
 
 ### Table of contents
 
-- [How it works](#How it works)
+- [How it works](#How-it-works)
 - [Installation](#Installation)
-- [Generate the code you want](#Generate the code you want!)
-   - [DataClass Annotation](#DataClass Annotation)
-   - [Union Annotation](#Union Annotation)
+- [Generate the code you want](#Generate-the-code-you-want)
+   - [DataClass Annotation](#DataClass-Annotation)
+   - [Union Annotation](#Union-Annotation)
    - [Enums](#Enums)
 - [Configuration](#Configuration)
-   - [Configuration file](#Configuration file)
-   - [Available options](#Available options)
-   - [Configuration examples](#Configuration examples)
+   - [Configuration file](#Configuration-file)
+   - [Available options](#Available-options)
+   - [Configuration examples](#Configuration-examples)
 - [Notes](#Notes)
 - [Examples](#Examples)
 - [Development](#Development)
-- [Known Issues](#Known Issues)
+- [Known Issues](#Known-Issues)
 
 ---
 
