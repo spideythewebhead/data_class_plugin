@@ -90,6 +90,10 @@ extension ElementAnnotationX on ElementAnnotation {
   bool get isDataClassAnnotation {
     return element?.displayName == 'DataClass';
   }
+
+  bool get isEnumAnnotation {
+    return element?.displayName == 'Enum';
+  }
 }
 
 extension IterableX<T> on Iterable<T> {
@@ -157,12 +161,25 @@ extension ElementX on Element {
             .firstWhereOrNull((ElementAnnotation annotation) => annotation.isDataClassAnnotation) !=
         null;
   }
+
+  bool get hasEnumAnnotation {
+    return metadata
+            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isEnumAnnotation) !=
+        null;
+  }
 }
 
 extension ClassDeclarationX on ClassDeclaration {
   bool get hasDataClassAnnotation {
     return metadata
             .firstWhereOrNull((Annotation annotation) => annotation.name.name == 'DataClass') !=
+        null;
+  }
+}
+
+extension EnumDeclarationX on EnumDeclaration {
+  bool get hasEnumAnnotation {
+    return metadata.firstWhereOrNull((Annotation annotation) => annotation.name.name == 'Enum') !=
         null;
   }
 }

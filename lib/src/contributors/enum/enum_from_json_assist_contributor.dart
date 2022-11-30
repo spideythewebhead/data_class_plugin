@@ -42,6 +42,10 @@ class EnumFromJsonAssistContributor extends Object
     }
 
     final EnumElement enumElement = enumNode.declaredElement!;
+    if (enumElement.hasEnumAnnotation) {
+      return;
+    }
+
     final SourceRange? fromJsonSourceRange =
         enumNode.members.getSourceRangeForConstructor('fromJson');
 
@@ -62,7 +66,7 @@ class EnumFromJsonAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerFromJson(DartEditBuilder builder) {
-          _writeFromJson(
+          writeFromJson(
             enumElement: enumElement,
             fieldElement: finalFieldsElements.firstOrNull,
             builder: builder,
@@ -85,7 +89,7 @@ class EnumFromJsonAssistContributor extends Object
     addAssist(AvailableAssists.fromJson, changeBuilder);
   }
 
-  void _writeFromJson({
+  static void writeFromJson({
     required final EnumElement enumElement,
     required final FieldElement? fieldElement,
     required final DartEditBuilder builder,
