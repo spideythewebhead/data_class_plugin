@@ -1,28 +1,8 @@
 import 'package:meta/meta_meta.dart';
 
-/// Adding this annotation to a class enables it to create common data class functionality
+/// Adding this annotation to an enum enables it to create common data class functionality
 ///
 /// Available methods are
-///
-/// [copyWith] Generates a new instance of the class with optionally provide new fields values
-///
-/// If no value is provided (default), then true is assumed
-///
-/// ```dart
-/// YourClass copyWith(...)
-/// ```
-///
-/// [hashAndEquals] Implements hashCode and equals methods
-///
-/// If no value is provided (default), then true is assumed
-///
-/// ```dart
-/// @override
-/// bool operator ==(Object other)
-///
-/// @override
-/// int get hashCode
-/// ```
 ///
 /// [$toString] Implements toString method
 ///
@@ -47,22 +27,14 @@ import 'package:meta/meta_meta.dart';
 /// ```dart
 /// Map<String, dynamic> toJson()
 /// ```
-@Target(<TargetKind>{TargetKind.classType})
-class DataClass {
+@Target(<TargetKind>{TargetKind.enumType})
+class Enum {
   /// Shorthand constructor
-  const DataClass({
-    this.copyWith,
-    this.hashAndEquals,
+  const Enum({
     this.$toString,
     this.fromJson,
     this.toJson,
   });
-
-  /// If no value is provided (default), then true is assumed
-  final bool? copyWith;
-
-  /// If no value is provided (default), then true is assumed
-  final bool? hashAndEquals;
 
   /// If no value is provided (default), then true is assumed
   final bool? $toString;

@@ -37,6 +37,7 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
       // HashAndEqualsAssistContributor(path),
 
       // Enum contributors
+      EnumAnnotationAssistContributor(path),
       EnumConstructorAssistContributor(path),
       EnumFromJsonAssistContributor(path),
       EnumToJsonAssistContributor(path),

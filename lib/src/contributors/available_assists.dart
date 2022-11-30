@@ -54,4 +54,10 @@ abstract class AvailableAssists {
     1000,
     'Generate constructor',
   );
+
+  static const AssistKind enumAnnotation = AssistKind(
+    'enumAnnotation',
+    1000,
+    'Generate enum',
+  );
 }

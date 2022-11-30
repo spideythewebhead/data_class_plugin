@@ -42,6 +42,10 @@ class EnumToJsonAssistContributor extends Object
     }
 
     final EnumElement enumElement = enumNode.declaredElement!;
+    if (enumElement.hasEnumAnnotation) {
+      return;
+    }
+
     final SourceRange? toJsonSourceRange = enumNode.members.getSourceRangeForMethod('toJson');
 
     final List<FieldElement> finalFieldsElements = enumElement.fields.where((FieldElement field) {
@@ -61,7 +65,7 @@ class EnumToJsonAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerToJson(DartEditBuilder builder) {
-          _writeToJson(
+          writeToJson(
             enumElement: enumElement,
             fieldElement: finalFieldsElements.firstOrNull,
             builder: builder,
@@ -84,7 +88,7 @@ class EnumToJsonAssistContributor extends Object
     addAssist(AvailableAssists.toJson, changeBuilder);
   }
 
-  void _writeToJson({
+  static void writeToJson({
     required final EnumElement enumElement,
     required final FieldElement? fieldElement,
     required final DartEditBuilder builder,

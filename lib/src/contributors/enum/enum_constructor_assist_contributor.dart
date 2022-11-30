@@ -42,6 +42,10 @@ class EnumConstructorAssistContributor extends Object
     }
 
     final EnumElement enumElement = enumNode.declaredElement!;
+    if (enumElement.hasEnumAnnotation) {
+      return;
+    }
+
     final SourceRange? copyWithSourceRange = enumNode.members.getSourceRangeForConstructor(null);
 
     final List<FieldElement> finalFieldsElements = enumElement.fields.where((FieldElement field) {
@@ -53,7 +57,7 @@ class EnumConstructorAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerConstructor(DartEditBuilder builder) {
-          _writeConstructor(
+          writeConstructor(
             enumElement: enumElement,
             finalFieldsElements: finalFieldsElements,
             builder: builder,
@@ -79,7 +83,7 @@ class EnumConstructorAssistContributor extends Object
     addAssist(AvailableAssists.enumConstructor, changeBuilder);
   }
 
-  void _writeConstructor({
+  static void writeConstructor({
     required final EnumElement enumElement,
     required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
