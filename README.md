@@ -16,20 +16,20 @@
 
 ### Table of contents
 
-- [How it works](#How-it-works)
-- [Installation](#Installation)
-- [Generate the code you want](#Generate-the-code-you-want)
-   - [DataClass Annotation](#DataClass-Annotation)
-   - [Union Annotation](#Union-Annotation)
-   - [Enums](#Enums)
-- [Configuration](#Configuration)
-   - [Configuration file](#Configuration-file)
-   - [Available options](#Available-options)
-   - [Configuration examples](#Configuration-examples)
-- [Notes](#Notes)
-- [Examples](#Examples)
-- [Development](#Development)
-- [Known Issues](#Known-Issues)
+- [How it works](#how-it-works)
+- [Installation](#installation)
+- [Generate the code you want](#generate-the-code-you-want)
+   - [DataClass Annotation](#dataclass-annotation)
+   - [Union Annotation](#union-annotation)
+   - [Enums](#enums)
+- [Configuration](#configuration)
+   - [Configuration file](#configuration-file)
+   - [Available options](#available-options)
+   - [Configuration examples](#configuration-examples)
+- [Notes](#notes)
+- [Examples](#examples)
+- [Development](#development)
+- [Known Issues](#known-issues)
 
 ---
 
@@ -312,7 +312,7 @@ data_class:
 >```
 
 ## Examples
-You can find a variety of examples in the [Example](https://github.com/spideythewebhead/dart_data_class_plugin/tree/main/example/lib) folder.
+You can find a variety of examples in the [Example](https://github.com/spideythewebhead/dart_data_class_plugin/tree/main/example/lib) folder and the source code from the Live Demo, as it was presented in the Flutter Greek Community, [here](https://github.com/spideythewebhead/fluttergr).
 
 ## Development
 
