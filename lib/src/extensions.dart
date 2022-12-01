@@ -1,10 +1,14 @@
 import 'dart:core';
+import 'dart:io' as io show File;
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:analyzer/file_system/file_system.dart';
 import 'package:analyzer/source/source_range.dart';
+import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
+import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
 extension DartTypeX on DartType {
   bool get isNullable {
@@ -245,5 +249,13 @@ extension ConstructorElementX on ConstructorElement {
 extension InterfaceTypeX on InterfaceType {
   ClassElement? get classElement {
     return element is ClassElement ? element as ClassElement : null;
+  }
+}
+
+extension FolderX on Folder {
+  Future<DataClassPluginOptions> getOptions() async {
+    return await DataClassPluginOptions.fromFile((io.File(
+      utils.getDataClassPluginOptionsPath(path),
+    )));
   }
 }

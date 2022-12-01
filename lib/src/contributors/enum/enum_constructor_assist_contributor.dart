@@ -11,11 +11,12 @@ import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class EnumConstructorAssistContributor extends Object
-    with AssistContributorMixin, EnumAstVisitorMixin
+    with AssistContributorMixin, EnumAstVisitorMixin, RelativeFilePathMixin
     implements AssistContributor {
-  EnumConstructorAssistContributor(this.filePath);
+  EnumConstructorAssistContributor(this.targetFilePath);
 
-  final String filePath;
+  @override
+  final String targetFilePath;
 
   @override
   late final DartAssistRequest assistRequest;
@@ -23,6 +24,7 @@ class EnumConstructorAssistContributor extends Object
   @override
   late final AssistCollector collector;
 
+  @override
   AnalysisSession get session => assistRequest.result.session;
 
   @override
@@ -54,7 +56,7 @@ class EnumConstructorAssistContributor extends Object
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
-      filePath,
+      targetFilePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerConstructor(DartEditBuilder builder) {
           writeConstructor(

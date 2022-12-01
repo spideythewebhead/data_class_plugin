@@ -9,19 +9,31 @@ json:
       - "test/contributors/annotations/**/*_pascal_case.dart"
     snake_case:
       - "test/contributors/annotations/**/*_snake_case.dart"
-      - "lib/src/data_class_plugin_options.dart"
+      - "lib/src/options/*.dart"
 
 data_class:
   options_config:
     copy_with:
       disabled:
-        - "lib/src/data_class_plugin_options.dart"
+        - "lib/src/options/*.dart"
     hash_and_equals:
       disabled:
-        - "lib/src/data_class_plugin_options.dart"
+        - "lib/src/options/*.dart"
     from_json:
       enabled:
-        - "lib/src/data_class_plugin_options.dart"
+        - "lib/src/options/*.dart"
     to_json:
       disabled:
-        - "lib/src/data_class_plugin_options.dart"
+        - "lib/src/options/*.dart"
+    to_string:
+      disabled:
+        - "lib/src/options/*.dart"
+
+enum:
+  options_config:
+    from_json:
+      default: false
+    to_json:
+      default: false
+    to_string:
+      default: false
