@@ -12,6 +12,7 @@ import 'package:data_class_plugin/src/contributors/common/to_string_assist_contr
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
+import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
 class EnumAnnotationAssistContributor extends Object
     with AssistContributorMixin, EnumAstVisitorMixin, RelativeFilePathMixin
@@ -54,6 +55,9 @@ class EnumAnnotationAssistContributor extends Object
       return;
     }
 
+    final DataClassPluginOptions pluginOptions =
+        await session.analysisContext.contextRoot.root.getOptions();
+
     final EnumInternal enumAnnotation = EnumInternal.fromDartObject(
       enumElement.metadata
           .firstWhere((ElementAnnotation annotation) => annotation.isEnumAnnotation)
@@ -88,7 +92,7 @@ class EnumAnnotationAssistContributor extends Object
         );
       }
 
-      if (enumAnnotation.$toString == true) {
+      if (enumAnnotation.$toString ?? pluginOptions.$enum.effectiveToString(relativeFilePath)) {
         void writerToString(DartEditBuilder builder) {
           ToStringAssistContributor.writeToString(
             className:
@@ -115,7 +119,7 @@ class EnumAnnotationAssistContributor extends Object
         fileEditBuilder.addDeletion(toStringSourceRange);
       }
 
-      if (enumAnnotation.toJson == true) {
+      if (enumAnnotation.toJson ?? pluginOptions.$enum.effectiveToJson(relativeFilePath)) {
         void writerToJson(DartEditBuilder builder) {
           EnumToJsonAssistContributor.writeToJson(
               enumElement: enumElement,
@@ -135,7 +139,7 @@ class EnumAnnotationAssistContributor extends Object
         fileEditBuilder.addDeletion(toJsonSourceRange);
       }
 
-      if (enumAnnotation.fromJson == true) {
+      if (enumAnnotation.fromJson ?? pluginOptions.$enum.effectiveFromJson(relativeFilePath)) {
         void writerFromJson(DartEditBuilder builder) {
           EnumFromJsonAssistContributor.writeFromJson(
               enumElement: enumElement,
@@ -155,14 +159,7 @@ class EnumAnnotationAssistContributor extends Object
         fileEditBuilder.addDeletion(fromJsonSourceRange);
       }
 
-      try {
-        fileEditBuilder.format(SourceRange(enumNode.offset, enumNode.length));
-      } catch (e, st) {
-        print('---------------- EXCEPTION ----------------');
-        print('Could not format range (${enumNode.offset} : ${enumNode.length})');
-        print('---------------- STACKTRACE ----------------');
-        print(st);
-      }
+      fileEditBuilder.format(SourceRange(enumNode.offset, enumNode.length));
     });
 
     addAssist(AvailableAssists.enumAnnotation, changeBuilder);

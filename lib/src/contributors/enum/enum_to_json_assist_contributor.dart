@@ -11,11 +11,12 @@ import 'package:data_class_plugin/src/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
 class EnumToJsonAssistContributor extends Object
-    with AssistContributorMixin, EnumAstVisitorMixin
+    with AssistContributorMixin, EnumAstVisitorMixin, RelativeFilePathMixin
     implements AssistContributor {
-  EnumToJsonAssistContributor(this.filePath);
+  EnumToJsonAssistContributor(this.targetFilePath);
 
-  final String filePath;
+  @override
+  final String targetFilePath;
 
   @override
   late final DartAssistRequest assistRequest;
@@ -23,6 +24,7 @@ class EnumToJsonAssistContributor extends Object
   @override
   late final AssistCollector collector;
 
+  @override
   AnalysisSession get session => assistRequest.result.session;
 
   @override
@@ -62,7 +64,7 @@ class EnumToJsonAssistContributor extends Object
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
-      filePath,
+      targetFilePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerToJson(DartEditBuilder builder) {
           writeToJson(

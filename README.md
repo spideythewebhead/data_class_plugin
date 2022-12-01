@@ -21,6 +21,7 @@
 - [Generate the code you want](#generate-the-code-you-want)
    - [DataClass Annotation](#dataclass-annotation)
    - [Union Annotation](#union-annotation)
+   - [Enum Annotation](#enum-annotation)
    - [Enums](#enums)
 - [Configuration](#configuration)
    - [Configuration file](#configuration-file)
@@ -101,6 +102,8 @@ to get access on the source code, parse it and provide actions based on that.
    1. **Windows/Linux:** Alt + Enter
    1. **MacOS:** ⌘ + Enter
 
+1. Select `Generate data class`
+
 <img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/010.png" width="400">
 
 Available methods are:
@@ -115,7 +118,7 @@ Available methods are:
    MyClass copyWith(...) { ... }
    ```
 
-2. **hashAndEquals**
+1. **hashAndEquals**
 
    Implements hashCode and equals methods.
 
@@ -129,7 +132,7 @@ Available methods are:
    int get hashCode { ... }
    ```
 
-3. **$toString**
+1. **$toString**
 
    Implements toString method.
 
@@ -140,7 +143,7 @@ Available methods are:
    String toString() { ... }
    ```
 
-4. **fromJson**
+1. **fromJson**
 
    Generates a factory constructor that creates a new instance from a Map.
 
@@ -150,7 +153,7 @@ Available methods are:
    factory MyClass.fromJson(Map<dynamic, dynamic> json) { ... }
    ```
 
-5. **toJson**
+1. **toJson**
 
    Generates a function that coverts this instance to a Map.
 
@@ -188,7 +191,75 @@ Available union annotation toggles are:
 
    _If no value is provided (default), then **true** is assumed._
 
+### Enum Annotation
+
+
+1. Create an enumeration with the last field closed by semicolon and annotate it with the `@Enum()` annotation.
+
+   ```dart
+   @Enum()
+   enum Category {
+      science,
+      sports;
+   }
+   ```
+
+1. Place the cursor anywhere inside the `Category` enum
+
+1. Run code actions on your IDE
+
+   VSCode
+
+   1. **Windows/Linux:** Ctrl + .
+   1. **MacOS:** ⌘ + .
+
+   Intellij
+
+   1. **Windows/Linux:** Alt + Enter
+   1. **MacOS:** ⌘ + Enter
+
+1. Select `Generate enum`
+
+<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/011.png" width="400">
+
+Available methods are:
+
+1. **$toString**
+
+   Implements toString method.
+
+   _If no value is provided (default), then **true** is assumed._
+
+   ```dart
+   @override
+   String toString() { ... }
+   ```
+
+1. **fromJson**
+
+   Generates a factory constructor that creates a new instance from a Map.
+
+   _If no value is provided (default), then **false** is assumed._
+
+   ```dart
+   factory MyClass.fromJson(Map<dynamic, dynamic> json) { ... }
+   ```
+
+1. **toJson**
+
+   Generates a function that coverts this instance to a Map.
+
+   _If no value is provided (default), then **false** is assumed._
+
+   ```dart
+   Map<String, dynamic> toJson() { ... }
+   ```
+
+_This configuration can be overriden in `data_class_plugin_options.yaml`, see [Configuration](#Configuration)_.
+
 ### Enums
+
+Even if you don't use the `@Enum()` annotation, you can still generate methods in enums.
 
 1. Create an enumeration with the last field closed by semicolon
 
@@ -251,9 +322,14 @@ To create a custom configuration you need to add a file named `data_class_plugin
 
    > Supported naming conventions: `camelCase`, `snake_case`, `kebab-case` & `PascalCase`.
 
-2. `data_class`
+1. `data_class`
 
    Set the default values for the provided methods of the `@DataClass` annotation, 
+   by specifying the directories where they will be enabled or disabled.
+
+1. `enum`
+
+   Set the default values for the provided methods of the `@Enum` annotation, 
    by specifying the directories where they will be enabled or disabled.
 
 #### Configuration examples
@@ -278,6 +354,21 @@ data_class:
     # Default values for each options
     # copy_with, hash_and_equals, to_string (true), from_json, to_json (false)
     <copy_with | hash_and_equals | to_string | from_json | to_json>:
+      default: boolean
+      enabled:
+        - "a/glob/here"
+        - "another/glob/here"
+      disabled:
+        - "a/glob/here"
+        - "another/glob/here"
+
+enum:
+  options_config:
+    # For each of the provided methods you can provide a configuration
+    # The configuration can be an enabled or disabled field that contains a list of globs
+    # Default values for each options
+    # to_string (false), from_json(false), to_json (false)
+    <to_string | from_json | to_json>:
       default: boolean
       enabled:
         - "a/glob/here"
