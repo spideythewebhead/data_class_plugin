@@ -1,6 +1,6 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
-import 'package:data_class_plugin/src/options/data_class_options_config.dart';
 import 'package:data_class_plugin/src/options/extensions.dart';
+import 'package:data_class_plugin/src/options/options_config.dart';
 
 @DataClass()
 class EnumOptions {
@@ -11,23 +11,14 @@ class EnumOptions {
 
   final Map<String, OptionConfig> optionsConfig;
 
-  bool effectiveToString(String filePath) {
-    return optionsConfig.hasGlobMatch('to_string', filePath) ??
-        optionsConfig['to_string']?.defaultValue ??
-        false;
-  }
+  bool effectiveToString(String filePath) =>
+      optionsConfig.effectiveToString(filePath: filePath, defaultValue: false);
 
-  bool effectiveFromJson(String filePath) {
-    return optionsConfig.hasGlobMatch('from_json', filePath) ??
-        optionsConfig['from_json']?.defaultValue ??
-        false;
-  }
+  bool effectiveFromJson(String filePath) =>
+      optionsConfig.effectiveFromJson(filePath: filePath, defaultValue: false);
 
-  bool effectiveToJson(String filePath) {
-    return optionsConfig.hasGlobMatch('to_json', filePath) ??
-        optionsConfig['to_json']?.defaultValue ??
-        false;
-  }
+  bool effectiveToJson(String filePath) =>
+      optionsConfig.effectiveToJson(filePath: filePath, defaultValue: false);
 
   /// Creates an instance of [EnumOptions] from [json]
   factory EnumOptions.fromJson(Map<dynamic, dynamic> json) {

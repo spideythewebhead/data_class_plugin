@@ -11,12 +11,14 @@ class DataClassPluginOptions {
     this.json = const JsonOptions(),
     this.dataClass = const DataClassOptions(),
     this.$enum = const EnumOptions(),
+    this.union = const UnionOptions(),
   });
 
   final JsonOptions json;
   final DataClassOptions dataClass;
   @JsonKey(name: 'enum')
   final EnumOptions $enum;
+  final UnionOptions union;
 
   static Future<DataClassPluginOptions> fromFile(io.File file) async {
     try {
@@ -35,6 +37,7 @@ class DataClassPluginOptions {
           ? const DataClassOptions()
           : DataClassOptions.fromJson(json['data_class']),
       $enum: json['enum'] == null ? const EnumOptions() : EnumOptions.fromJson(json['enum']),
+      union: json['union'] == null ? const UnionOptions() : UnionOptions.fromJson(json['union']),
     );
   }
 }

@@ -3,22 +3,16 @@ import 'package:data_class_plugin/src/options/extensions.dart';
 import 'package:data_class_plugin/src/options/options_config.dart';
 
 @DataClass()
-class DataClassOptions {
+class UnionOptions {
   /// Shorthand constructor
-  const DataClassOptions({
+  const UnionOptions({
     this.optionsConfig = const <String, OptionConfig>{},
   });
 
   final Map<String, OptionConfig> optionsConfig;
 
-  bool effectiveCopyWith(String filePath) =>
-      optionsConfig.effectiveCopyWith(filePath: filePath, defaultValue: true);
-
-  bool effectiveHashAndEquals(String filePath) =>
-      optionsConfig.effectiveHashAndEquals(filePath: filePath, defaultValue: true);
-
-  bool effectiveToString(String filePath) =>
-      optionsConfig.effectiveToString(filePath: filePath, defaultValue: true);
+  bool effectiveDataClass(String filePath) =>
+      optionsConfig.effectiveDataClass(filePath: filePath, defaultValue: true);
 
   bool effectiveFromJson(String filePath) =>
       optionsConfig.effectiveFromJson(filePath: filePath, defaultValue: false);
@@ -26,9 +20,9 @@ class DataClassOptions {
   bool effectiveToJson(String filePath) =>
       optionsConfig.effectiveToJson(filePath: filePath, defaultValue: false);
 
-  /// Creates an instance of [DataClassOptions] from [json]
-  factory DataClassOptions.fromJson(Map<dynamic, dynamic> json) {
-    return DataClassOptions(
+  /// Creates an instance of [UnionOptions] from [json]
+  factory UnionOptions.fromJson(Map<dynamic, dynamic> json) {
+    return UnionOptions(
       optionsConfig: json['options_config'] == null
           ? const <String, OptionConfig>{}
           : <String, OptionConfig>{

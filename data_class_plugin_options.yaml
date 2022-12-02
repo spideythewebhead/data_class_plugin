@@ -37,3 +37,15 @@ enum:
       default: false
     to_string:
       default: false
+
+union:
+  options_config:
+    data_class:
+      enabled:
+        - "test/contributors/annotations/union/test_files/*_from_options.dart"
+    from_json:
+      disabled:
+        - "test/contributors/annotations/union/test_files/*_from_options.dart"
+    to_json:
+      disabled:
+        - "test/contributors/annotations/union/test_files/*_from_options.dart"

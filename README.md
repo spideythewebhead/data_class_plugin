@@ -362,6 +362,21 @@ data_class:
         - "a/glob/here"
         - "another/glob/here"
 
+union:
+  options_config:
+    # For each of the provided methods you can provide a configuration
+    # The configuration can be an enabled or disabled field that contains a list of globs
+    # Default values for each options
+    # data_class (true), from_json(false), to_json (false)
+    <data_class | from_json | to_json>:
+      default: boolean
+      enabled:
+        - "a/glob/here"
+        - "another/glob/here"
+      disabled:
+        - "a/glob/here"
+        - "another/glob/here"
+
 enum:
   options_config:
     # For each of the provided methods you can provide a configuration
