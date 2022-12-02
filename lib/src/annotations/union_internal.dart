@@ -1,26 +1,21 @@
 import 'package:analyzer/dart/constant/value.dart';
 
 class UnionInternal {
-  /// Shorthand constructor
   const UnionInternal({
-    this.dataClass = true,
-    this.fromJson = true,
-    this.toJson = true,
+    required this.dataClass,
+    required this.fromJson,
+    required this.toJson,
   });
 
-  final bool dataClass;
-  final bool fromJson;
-  final bool toJson;
+  final bool? dataClass;
+  final bool? fromJson;
+  final bool? toJson;
 
   factory UnionInternal.fromDartObject(DartObject? object) {
-    if (object == null) {
-      return const UnionInternal();
-    }
-
     return UnionInternal(
-      dataClass: object.getField('dataClass')?.toBoolValue() ?? true,
-      fromJson: object.getField('fromJson')?.toBoolValue() ?? true,
-      toJson: object.getField('toJson')?.toBoolValue() ?? true,
+      dataClass: object?.getField('dataClass')?.toBoolValue(),
+      fromJson: object?.getField('fromJson')?.toBoolValue(),
+      toJson: object?.getField('toJson')?.toBoolValue(),
     );
   }
 }
