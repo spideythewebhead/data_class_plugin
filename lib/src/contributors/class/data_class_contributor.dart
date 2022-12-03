@@ -9,11 +9,12 @@ import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
+import 'package:data_class_plugin/src/constants.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
-import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
@@ -64,13 +65,18 @@ class DataClassAssistContributor extends Object
 
     final SourceRange? constructorSourceRange =
         classNode.members.getSourceRangeForConstructor(null);
-    final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
-    final SourceRange? equalsSourceRange = classNode.members.getSourceRangeForMethod('==');
-    final SourceRange? hashCodeSourceRange = classNode.members.getSourceRangeForMethod('hashCode');
-    final SourceRange? toStringSourceRange = classNode.members.getSourceRangeForMethod('toString');
+    final SourceRange? copyWithSourceRange =
+        classNode.members.getSourceRangeForMethod(DataClassMethods.copyWith.name);
+    final SourceRange? equalsSourceRange =
+        classNode.members.getSourceRangeForMethod(DataClassMethods.equals.name);
+    final SourceRange? hashCodeSourceRange =
+        classNode.members.getSourceRangeForMethod(DataClassMethods.hash.name);
+    final SourceRange? toStringSourceRange =
+        classNode.members.getSourceRangeForMethod(DataClassMethods.$toString.name);
     final SourceRange? fromJsonSourceRange =
-        classNode.members.getSourceRangeForConstructor('fromJson');
-    final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
+        classNode.members.getSourceRangeForConstructor(DataClassMethods.fromJson.name);
+    final SourceRange? toJsonSourceRange =
+        classNode.members.getSourceRangeForMethod(DataClassMethods.toJson.name);
 
     final List<VariableElement> fields = <VariableElement>[
       ...classElement.dataClassFinalFields,
