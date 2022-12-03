@@ -8,14 +8,14 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
+import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
-import 'package:data_class_plugin/src/constants.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
+import 'package:data_class_plugin/src/core/mixins.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
 class DataClassAssistContributor extends Object
@@ -66,17 +66,17 @@ class DataClassAssistContributor extends Object
     final SourceRange? constructorSourceRange =
         classNode.members.getSourceRangeForConstructor(null);
     final SourceRange? copyWithSourceRange =
-        classNode.members.getSourceRangeForMethod(DataClassMethods.copyWith.name);
+        classNode.members.getSourceRangeForMethod(DataClassAnnotationArgs.copyWith.name);
     final SourceRange? equalsSourceRange =
-        classNode.members.getSourceRangeForMethod(DataClassMethods.equals.name);
+        classNode.members.getSourceRangeForMethod(DataClassAnnotationArgs.equals.name);
     final SourceRange? hashCodeSourceRange =
-        classNode.members.getSourceRangeForMethod(DataClassMethods.hash.name);
+        classNode.members.getSourceRangeForMethod(DataClassAnnotationArgs.hash.name);
     final SourceRange? toStringSourceRange =
-        classNode.members.getSourceRangeForMethod(DataClassMethods.$toString.name);
+        classNode.members.getSourceRangeForMethod(DataClassAnnotationArgs.$toString.name);
     final SourceRange? fromJsonSourceRange =
-        classNode.members.getSourceRangeForConstructor(DataClassMethods.fromJson.name);
+        classNode.members.getSourceRangeForConstructor(DataClassAnnotationArgs.fromJson.name);
     final SourceRange? toJsonSourceRange =
-        classNode.members.getSourceRangeForMethod(DataClassMethods.toJson.name);
+        classNode.members.getSourceRangeForMethod(DataClassAnnotationArgs.toJson.name);
 
     final List<VariableElement> fields = <VariableElement>[
       ...classElement.dataClassFinalFields,

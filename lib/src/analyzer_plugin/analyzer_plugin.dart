@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:analyzer/dart/analysis/analysis_context.dart';
 import 'package:analyzer/file_system/file_system.dart' as analyzer;
 import 'package:analyzer_plugin/channel/channel.dart';
@@ -9,10 +11,11 @@ import 'package:data_class_plugin/src/contributors/class/class_contributors.dart
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 import 'package:data_class_plugin/src/linter/linter.dart';
-import 'package:data_class_plugin/src/logger.dart';
+import 'package:data_class_plugin/src/utils/logger/plugin_logger.dart';
 
 class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
-  DataClassPlugin(analyzer.ResourceProvider provider) : super(resourceProvider: provider);
+  DataClassPlugin(analyzer.ResourceProvider provider, this._logger)
+      : super(resourceProvider: provider);
 
   @override
   List<String> get fileGlobsToAnalyze => const <String>['*.dart'];
@@ -28,7 +31,7 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
   @override
   String get version => '1.0.0';
 
-  final Logger _logger = Logger();
+  final PluginLogger _logger;
   late final PluginLinter _linter;
 
   @override
@@ -38,6 +41,7 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
     _linter = PluginLinter(_logger);
 
     _logger.notification('Starting $displayName');
+    _logger.writeln();
   }
 
   @override
@@ -45,40 +49,16 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
     required AnalysisContext analysisContext,
     required String path,
   }) async {
-    // _logger.notification('Analyzing $path');
-
-    final bool willAnalyze = analysisContext.contextRoot.isAnalyzed(path);
-    // TODO: Fix file pattern matching
-    if (!willAnalyze || !path.endsWith('.dart')) {
-      return;
-    }
-
-    try {
-      await _linter.check(path, analysisContext);
-    } catch (e, st) {
-      _logger.error(e, st);
-    }
-  }
-
-  @override
-  Future<void> analyzeFiles({
-    required AnalysisContext analysisContext,
-    required List<String> paths,
-  }) async {
-    // _logger.notification('Analyzing ${paths.length} paths');
-    // for(final String path in paths){
-    //
-    // }
-
-    await super.analyzeFiles(
+    unawaited(checkLints(
       analysisContext: analysisContext,
-      paths: paths,
-    );
+      path: path,
+    ));
   }
 
   @override
   Future<PluginShutdownResult> handlePluginShutdown(PluginShutdownParams parameters) async {
     _logger.notification('Shutting down $displayName');
+    unawaited(_logger.dispose());
     return await super.handlePluginShutdown(parameters);
   }
 
@@ -89,10 +69,6 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
         // Class contributors
         ShorthandConstructorAssistContributor(path),
         DataClassAssistContributor(path),
-        // FromJsonAssistContributor(path),
-        // ToJsonAssistContributor(path),
-        // CopyWithAssistContributor(path),
-        // HashAndEqualsAssistContributor(path),
 
         // Enum contributors
         EnumAnnotationAssistContributor(path),
@@ -105,8 +81,20 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
         UnionAssistContributor(path),
       ];
     } catch (e, st) {
-      _logger.error(e, st);
+      _logger.exception(e, st);
       return <AssistContributor>[];
     }
+  }
+
+  Future<void> checkLints({
+    required AnalysisContext analysisContext,
+    required String path,
+  }) async {
+    // TODO: Fix file pattern matching
+    if (!analysisContext.contextRoot.isAnalyzed(path) || !path.endsWith('.dart')) {
+      return;
+    }
+
+    await _linter.check(path, analysisContext);
   }
 }

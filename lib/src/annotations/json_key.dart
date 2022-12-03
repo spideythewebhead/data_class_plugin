@@ -1,4 +1,4 @@
-import 'package:data_class_plugin/src/json_key_name_convention.dart';
+import 'package:data_class_plugin/src/utils/json_key_name_convention.dart';
 import 'package:meta/meta_meta.dart';
 
 typedef FromJsonConverter<T> = T Function(Map<dynamic, dynamic> json);

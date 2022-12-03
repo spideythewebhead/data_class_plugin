@@ -1,18 +1,15 @@
 import 'package:analyzer/dart/analysis/analysis_context.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/source/source_range.dart';
-import 'package:analyzer_plugin/protocol/protocol_common.dart' as protocol;
-import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
-import 'package:data_class_plugin/src/constants.dart';
+import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-import 'package:data_class_plugin/src/logger.dart';
+import 'package:data_class_plugin/src/linter/annotation_linter/annotation_linter.dart';
+import 'package:data_class_plugin/src/utils/logger/plugin_logger.dart';
 
 class PluginLinter {
   const PluginLinter(this._logger);
 
-  final Logger _logger;
+  final PluginLogger _logger;
 
   Future<void> check(
     final String path,
@@ -25,79 +22,60 @@ class PluginLinter {
     for (final CompilationUnitMember declaration in unitResult.unit.declarations) {
       final List<Annotation> annotations = declaration.metadata.annotations;
 
-      if (declaration.declaredElement == null) {
+      if (declaration.declaredElement == null || annotations.isEmpty) {
         return;
       }
 
       for (final Annotation annotation in annotations) {
-        final PluginAnnotations? pluginAnnotation = annotation.pluginAnnotation;
-        if (pluginAnnotation == null) {
+        final AnnotationTypes? type = annotation.pluginAnnotation;
+        if (type == null) {
           continue;
         }
 
-        final protocol.Location location = annotation.getLocation(
-          path: path,
-          unit: unitResult,
+        final PluginAnnotation pluginAnnotation = PluginAnnotation(
+          annotation: annotation,
+          type: type,
         );
 
-        _logger.hint(
-          path,
-          annotation.toString(),
-          location: location,
-          url: pluginAnnotation.url,
-          messages: <protocol.DiagnosticMessage>[
-            protocol.DiagnosticMessage(
-              pluginAnnotation.description,
-              location,
-            ),
-          ],
-        );
-
-        switch (pluginAnnotation) {
-          case PluginAnnotations.dataClass:
-            // checkDataClass(declaration as ClassDeclaration);
+        late final AnnotationLinter linter;
+        switch (type) {
+          case AnnotationTypes.dataClass:
+            linter = DataClassAnnotationLinter(
+              logger: _logger,
+              path: path,
+              unitResult: unitResult,
+              declaration: declaration,
+              pluginAnnotation: pluginAnnotation,
+            );
             break;
 
-          case PluginAnnotations.union:
-            checkUnion(path, analysisContext);
+          case AnnotationTypes.union:
+            linter = UnionAnnotationLinter(
+              logger: _logger,
+              path: path,
+              unitResult: unitResult,
+              declaration: declaration,
+              pluginAnnotation: pluginAnnotation,
+            );
             break;
 
-          case PluginAnnotations.enumeration:
-            checkEnum(path, analysisContext);
+          case AnnotationTypes.enumeration:
+            linter = EnumAnnotationLinter(
+              logger: _logger,
+              path: path,
+              unitResult: unitResult,
+              declaration: declaration,
+              pluginAnnotation: pluginAnnotation,
+            );
             break;
 
-          case PluginAnnotations.unionFieldValue:
-          case PluginAnnotations.jsonKey:
-            break;
+          case AnnotationTypes.unionFieldValue:
+          case AnnotationTypes.jsonKey:
+            continue;
         }
+
+        await linter.check();
       }
     }
   }
-
-  void checkDataClass(final ClassDeclaration declaration) {
-    final ClassElement element = declaration.declaredElement!;
-
-    final DataClassInternal dataClassAnnotation = DataClassInternal.fromDartObject(
-      element.metadata
-          .firstWhere((ElementAnnotation annotation) => annotation.isDataClassAnnotation)
-          .computeConstantValue(),
-    );
-
-    final SourceRange? constructorSourceRange =
-        declaration.members.getSourceRangeForConstructor(null);
-
-    if (constructorSourceRange == null) {
-      // TODO: Show warning
-    }
-
-    if (dataClassAnnotation.copyWith == true &&
-        // TODO: Check configuration for overrides
-        declaration.members.getSourceRangeForMethod(DataClassMethods.copyWith.name) == null) {
-      // TODO: Show error
-    }
-  }
-
-  void checkUnion(final String path, final AnalysisContext analysisContext) {}
-
-  void checkEnum(final String path, final AnalysisContext analysisContext) {}
 }

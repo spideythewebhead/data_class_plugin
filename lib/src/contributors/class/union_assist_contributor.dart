@@ -17,6 +17,7 @@ import 'package:data_class_plugin/src/contributors/class/from_json_assist_contri
 import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_generator.dart';
 import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
+import 'package:data_class_plugin/src/core/mixins.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';

@@ -1,4 +1,4 @@
-import 'package:data_class_plugin/src/deep_equality.dart';
+import 'package:data_class_plugin/src/utils/deep_equality.dart';
 import 'package:test/test.dart';
 
 class _NoEqualsOverride {
