@@ -21,7 +21,6 @@ void main() {
 
   group('Union annotation contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => UnionAssistContributor(path),
       offsetProvider: (CompilationUnit unit) {
         // we need the offset to be between a class declaration

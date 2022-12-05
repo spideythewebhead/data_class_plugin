@@ -19,7 +19,6 @@ void main() {
 
   group('hashAndEquals contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => HashAndEqualsAssistContributor(path),
     );
   });

@@ -19,7 +19,6 @@ void main() {
 
   group('enum fromJson contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => EnumFromJsonAssistContributor(path),
     );
   });
