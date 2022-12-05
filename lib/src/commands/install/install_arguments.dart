@@ -24,8 +24,16 @@ class InstallArguments extends ArgumentOption {
     defaultsTo: false,
   );
 
+  static const InstallArguments log = InstallArguments._(
+    name: 'log',
+    abbr: 'l',
+    help: 'Log messages to file.',
+    defaultsTo: false,
+  );
+
   static const List<InstallArguments> values = <InstallArguments>[
     path,
     recursive,
+    log,
   ];
 }
