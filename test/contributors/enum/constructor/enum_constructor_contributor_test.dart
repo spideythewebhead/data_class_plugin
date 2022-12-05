@@ -19,7 +19,6 @@ void main() {
 
   group('enum constructor contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => EnumConstructorAssistContributor(path),
     );
   });

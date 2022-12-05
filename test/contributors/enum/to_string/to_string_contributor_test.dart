@@ -19,7 +19,6 @@ void main() {
 
   group('enum toString contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => ToStringAssistContributor(path),
     );
   });

@@ -23,25 +23,19 @@ extension InOutFilesList on List<InOutFilesPair> {
   /// passed contributor for the the given file.
   Future<AssistCollectorTest> computeAssists({
     required final String path,
+    required AnalysisContext context,
     required final ContributorConstructor contributor,
     final OffsetProvider? offsetProvider,
   }) async {
-    final AnalysisContextCollection analysis = AnalysisContextCollection(
-      includedPaths: <String>[path],
-      resourceProvider: PhysicalResourceProvider.INSTANCE,
-    );
-
     final AssistContributor assistContributor = contributor(path);
     final AssistCollectorTest collector = AssistCollectorTest();
 
-    final ResolvedUnitResult resolvedUnitResult = await analysis
-        .contextFor(path)
-        .currentSession
+    final ResolvedUnitResult resolvedUnitResult = await context.currentSession
         .getResolvedUnit(path)
         .then((SomeResolvedUnitResult value) => value as ResolvedUnitResult);
 
     final CompilationUnit compilationUnit =
-        (analysis.contextFor(path).currentSession.getParsedUnit(path) as ParsedUnitResult).unit;
+        (context.currentSession.getParsedUnit(path) as ParsedUnitResult).unit;
 
     await assistContributor.computeAssists(
       DartAssistRequestTest(
@@ -58,16 +52,21 @@ extension InOutFilesList on List<InOutFilesPair> {
 
   /// Runs contributor tests found in 'test_files' folder
   void runContributorTests({
-    required final String contributorsPath,
     required final ContributorConstructor contributor,
     final OffsetProvider? offsetProvider,
   }) {
+    final AnalysisContextCollection analysis = AnalysisContextCollection(
+      includedPaths: map((InOutFilesPair e) => e.input.path).toList(growable: false),
+      resourceProvider: PhysicalResourceProvider.INSTANCE,
+    );
+
     for (final InOutFilesPair pair in this) {
       final String inPath = pair.input.path;
       final String outPath = pair.output.path;
 
       test('${path.basename(inPath)} -> ${path.basename(outPath)}', () async {
         final AssistCollectorTest collector = await computeAssists(
+          context: analysis.contextFor(inPath),
           path: inPath,
           contributor: contributor,
           offsetProvider: offsetProvider,

@@ -19,7 +19,6 @@ void main() {
 
   group('toString contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => ToStringAssistContributor(path),
     );
   });

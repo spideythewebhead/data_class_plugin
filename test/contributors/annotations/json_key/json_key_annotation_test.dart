@@ -21,7 +21,6 @@ void main() {
 
   group('JsonKey Annotation', () {
     testFiles.runContributorTests(
-      contributorsPath: _path,
       contributor: (String path) => DataClassAssistContributor(path),
       offsetProvider: (CompilationUnit unit) {
         // we need the offset to be between a class declaration

@@ -22,7 +22,6 @@ void main() {
 
   group('Enum annotation contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => EnumAnnotationAssistContributor(path),
       offsetProvider: (CompilationUnit unit) {
         // we need the offset to be between a class declaration

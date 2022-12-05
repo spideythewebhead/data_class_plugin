@@ -19,7 +19,6 @@ void main() {
 
   group('shorthandConstructor contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => ShorthandConstructorAssistContributor(path),
     );
   });

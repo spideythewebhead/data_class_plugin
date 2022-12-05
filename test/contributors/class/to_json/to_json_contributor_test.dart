@@ -19,7 +19,6 @@ void main() {
 
   group('toJson contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => ToJsonAssistContributor(path),
     );
   });

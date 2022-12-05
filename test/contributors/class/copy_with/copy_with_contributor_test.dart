@@ -19,7 +19,6 @@ void main() {
 
   group('copyWith contributor', () {
     testFiles.runContributorTests(
-      contributorsPath: _contributorsPath,
       contributor: (String path) => CopyWithAssistContributor(path),
     );
   });
