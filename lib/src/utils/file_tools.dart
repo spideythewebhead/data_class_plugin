@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:data_class_plugin/src/utils/shell_command.dart';
 import 'package:path/path.dart' as path;
 
 class FileTools {
@@ -67,39 +66,47 @@ class FileTools {
     final String path,
     final bool recursive,
   ) async {
-    late final ShellCommand command;
+    // late final ShellCommand command;
+    final List<String> paths = <String>[];
 
-    // TODO: Fix recursive
+    final Directory root = Directory(path);
+    final List<FileSystemEntity> files = root.listSync(recursive: recursive);
 
-    if (Platform.isWindows) {
-      command = ShellCommand(
-        executable: 'dir ',
-        arguments: <String>['/S', '/B', 'OG', file],
-        workingDirectory: path,
-      );
-    } else if (Platform.isLinux || Platform.isMacOS) {
-      command = ShellCommand(
-        executable: 'find',
-        arguments: <String>['..', '&&', 'find', '~+', '-type', 'f', '-name', file],
-        workingDirectory: path,
-      );
-    } else {
-      throw Exception('Not supported platform');
+    for (final FileSystemEntity o in files) {
+      if (o.isAbsolute && o.path.endsWith('.dart')) {
+        paths.add(o.absolute.path);
+      }
     }
 
-    print('${command.executable} ${command.arguments.join(' ')}');
-
-    final ProcessResult result = await command.run();
-    final List<String> paths = result //
-        .stdout
-        .toString()
-        .trim()
-        .replaceAll('\r', '')
-        .split('\n');
-
-    if (paths.length == 1 && paths[0].isEmpty) {
-      paths.clear();
-    }
+    // if (Platform.isWindows) {
+    //   command = ShellCommand(
+    //     executable: 'dir ',
+    //     arguments: <String>['/S', '/B', 'OG', file],
+    //     workingDirectory: path,
+    //   );
+    // } else if (Platform.isLinux || Platform.isMacOS) {
+    //   command = ShellCommand(
+    //     executable: 'cd',
+    //     arguments: <String>['..', '&&', 'find', '~+', '-type', 'f', '-name', '"$file"'],
+    //     workingDirectory: path,
+    //   );
+    // } else {
+    //   throw Exception('Not supported platform');
+    // }
+    //
+    // print('${command.executable} ${command.arguments.join(' ')}');
+    //
+    // final ProcessResult result = await command.run();
+    // final List<String> paths = result //
+    //     .stdout
+    //     .toString()
+    //     .trim()
+    //     .replaceAll('\r', '')
+    //     .split('\n');
+    //
+    // if (paths.length == 1 && paths[0].isEmpty) {
+    //   paths.clear();
+    // }
 
     return paths;
   }
