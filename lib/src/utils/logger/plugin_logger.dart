@@ -63,19 +63,17 @@ class PluginLogger extends Logger {
   void exception(
     final Object? error, [
     final StackTrace? st,
-    final bool isFatal = false,
+    final bool isFatal = true,
   ]) {
     final StackTrace stackTrace = st ?? Trace(<Frame>[Trace.current(1).frames[0]]);
 
     _consoleLogger.exception(error, stackTrace, isFatal);
     _fileLogger.exception(error, stackTrace, isFatal);
 
-    _channel!.sendNotification(
-      PluginErrorParams(
-        isFatal,
-        'An exception was thrown: $error',
-        stackTrace.toString(),
-      ).toNotification(),
+    _showErrorNotification(
+      'An exception was thrown: $error',
+      isFatal: isFatal,
+      stackTrace: stackTrace,
     );
   }
 
@@ -85,25 +83,35 @@ class PluginLogger extends Logger {
     // TODO: Replace PluginErrorParams
     // https://github.com/JetBrains/intellij-plugins/blob/master/Dart/resources/messages/DartBundle.properties
     //
-    _channel?.sendNotification(
+    // _channel?.sendNotification(
+    //   Notification(
+    //     'daemon.logMessage',
+    //     <String, Object>{
+    //       'level': 'info',
+    //       'title': 'Data Class Plugin',
+    //       'message': message,
+    //     },
+    //   ),
+    // );
+
+    _showErrorNotification(
+      message.toString(),
+      isFatal: false,
+    );
+  }
+
+  void _showErrorNotification(
+    final String error, {
+    final StackTrace? stackTrace,
+    final bool isFatal = true,
+  }) {
+    _channel!.sendNotification(
       PluginErrorParams(
-        false,
-        '$message',
-        '',
+        isFatal,
+        error,
+        stackTrace.toString(),
       ).toNotification(),
     );
-
-    // _channel!.sendNotification(
-    //   AnalysisErrorsParams('', <AnalysisError>[
-    //     AnalysisError(
-    //       AnalysisErrorSeverity.INFO,
-    //       AnalysisErrorType.HINT,
-    //       Location('', 0, 1, 1, 1),
-    //       '$message',
-    //       'code',
-    //     )
-    //   ]).toNotification(),
-    // );
   }
 
   void showAnalysisHint(
@@ -185,7 +193,7 @@ class PluginLogger extends Logger {
           type,
           defaultLocation,
           message,
-          code ?? 'data_class_plugin',
+          code ?? 'data_class_plugin_error',
           contextMessages: messages,
           url: url,
         )
@@ -194,24 +202,17 @@ class PluginLogger extends Logger {
   }
 
   @override
-  void logHeader(
-    final String title, {
-    final String? subtitle,
-    final LineStyle lineStyle = LineStyle.single,
-    final int lineLength = 50,
-  }) {
-    _consoleLogger.logHeader(
-      title,
-      subtitle: subtitle,
-      lineStyle: lineStyle,
-      lineLength: lineLength,
-    );
+  void logHeader(Header header) {
+    _consoleLogger.logHeader(header);
+    _fileLogger.logHeader(header);
+  }
 
-    _fileLogger.logHeader(
-      title,
-      subtitle: subtitle,
-      lineStyle: lineStyle,
-      lineLength: lineLength,
+  static Header pluginHeader() {
+    return Header(
+      title: 'Data Class Plugin',
+      subtitle: 'Code generation. Same, but different.',
+      lineStyle: LineStyle.double,
+      lineLength: 70,
     );
   }
 

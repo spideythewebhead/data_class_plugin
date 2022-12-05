@@ -1,4 +1,3 @@
-import 'package:data_class_plugin/src/utils/logger/ansi.dart';
 import 'package:data_class_plugin/src/utils/logger/logger.dart';
 
 class MockLogger extends Logger {
@@ -23,12 +22,7 @@ class MockLogger extends Logger {
   void info([Object? object]) {}
 
   @override
-  void logHeader(
-    String title, {
-    String? subtitle,
-    LineStyle lineStyle = LineStyle.single,
-    int lineLength = 50,
-  }) {}
+  void logHeader(Header header) {}
 
   @override
   void warning([Object? object]) {}

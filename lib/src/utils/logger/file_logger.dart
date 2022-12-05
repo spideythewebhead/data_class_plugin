@@ -4,6 +4,8 @@ import 'package:data_class_plugin/src/utils/logger/ansi.dart';
 import 'package:data_class_plugin/src/utils/logger/logger.dart';
 import 'package:path/path.dart';
 
+// --instrumentation-log-file=D:\workspace\Flutter\Packages\data_class_plugin\logs\analysis_server.log
+
 class FileLogger extends Logger {
   FileLogger() {
     final String logFilePath = _getFilePath();
@@ -72,22 +74,17 @@ class FileLogger extends Logger {
   }
 
   @override
-  void logHeader(
-    String title, {
-    String? subtitle,
-    LineStyle lineStyle = LineStyle.single,
-    int lineLength = 50,
-  }) {
+  void logHeader(Header header) {
     final String line = Ansi.horizontalLine(
-      length: lineLength,
-      style: lineStyle,
+      length: header.lineLength,
+      style: header.lineStyle,
     );
 
     writeln(line);
-    writeln(title.padLeft((title.length + lineLength) ~/ 2));
+    writeln(header.title.padLeft((header.title.length + header.lineLength) ~/ 2));
 
-    if (subtitle != null && subtitle.isNotEmpty) {
-      writeln(subtitle.padLeft((subtitle.length + lineLength) ~/ 2));
+    if (header.subtitle != null && header.subtitle!.isNotEmpty) {
+      writeln(header.subtitle!.padLeft((header.subtitle!.length + header.lineLength) ~/ 2));
     }
     writeln(line);
   }

@@ -14,6 +14,9 @@ class CliRunner extends CommandRunner<void> {
                   'generate dart code on the fly.'
               .bold(),
         ) {
+    // stdout.writeln(PluginLogger.pluginHeader());
+    // stdout.writeln();
+
     <BaseCommand>[
       InstallCommand(sink),
       AnalyzeCommand(sink),

@@ -97,7 +97,7 @@ class AnalyzeCommand extends BaseCommand {
 
       exitCode = 0;
     } catch (e, st) {
-      logger.error('Plugin analyzer failed after ${startedOn.getElapsedDuration()}');
+      logger.exception('Plugin analyzer failed after ${startedOn.getElapsedDuration()}');
       logger.exception(e, st);
       exitCode = -1;
     }

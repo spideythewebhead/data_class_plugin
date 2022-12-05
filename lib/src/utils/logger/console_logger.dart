@@ -63,27 +63,22 @@ class ConsoleLogger extends Logger {
   }
 
   @override
-  void logHeader(
-    final String title, {
-    final String? subtitle,
-    final LineStyle lineStyle = LineStyle.single,
-    final int lineLength = 50,
-  }) {
+  void logHeader(Header header) {
     final String line = Ansi.horizontalLine(
-      length: lineLength,
-      style: lineStyle,
+      length: header.lineLength,
+      style: header.lineStyle,
     ).bold();
 
     writeln(line);
     writeln(
-      title //
-          .padLeft((title.length + lineLength) ~/ 2)
+      header.title //
+          .padLeft((header.title.length + header.lineLength) ~/ 2)
           .blue()
           .bold(),
     );
 
-    if (subtitle != null && subtitle.isNotEmpty) {
-      writeln(subtitle.padLeft((subtitle.length + lineLength) ~/ 2));
+    if (header.subtitle != null && header.subtitle!.isNotEmpty) {
+      writeln(header.subtitle!.padLeft((header.subtitle!.length + header.lineLength) ~/ 2));
     }
     writeln(line);
   }

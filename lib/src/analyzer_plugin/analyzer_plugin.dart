@@ -58,7 +58,7 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
   @override
   Future<PluginShutdownResult> handlePluginShutdown(PluginShutdownParams parameters) async {
     _logger.notification('Shutting down $displayName');
-    unawaited(_logger.dispose());
+    await _logger.dispose();
     return await super.handlePluginShutdown(parameters);
   }
 
@@ -96,5 +96,10 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
     }
 
     await _linter.check(path, analysisContext);
+  }
+
+  @override
+  void onError(Object exception, StackTrace stackTrace) {
+    _logger.exception(exception, stackTrace);
   }
 }

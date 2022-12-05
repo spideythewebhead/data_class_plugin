@@ -20,12 +20,22 @@ abstract class Logger {
     final bool isFatal = false,
   ]);
 
-  void logHeader(
-    final String title, {
-    final String? subtitle,
-    final LineStyle lineStyle = LineStyle.single,
-    final int lineLength = 50,
-  });
+  void logHeader(Header header);
 
   Future<void> dispose();
+}
+
+class Header {
+  /// Shorthand constructor
+  Header({
+    required this.title,
+    this.subtitle,
+    this.lineStyle = LineStyle.single,
+    this.lineLength = 50,
+  });
+
+  final String title;
+  final String? subtitle;
+  final LineStyle lineStyle;
+  final int lineLength;
 }

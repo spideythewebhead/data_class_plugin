@@ -111,6 +111,7 @@ abstract class AnnotationLinter {
 
     if (hints.isEmpty && warnings.isEmpty && errors.isEmpty) {
       logger.writeln('✅ @${pluginAnnotation.type.name} [$name] is up-to-date');
+      showHints('@${pluginAnnotation.type.name} [$name] is up-to-date', hints);
     }
   }
 

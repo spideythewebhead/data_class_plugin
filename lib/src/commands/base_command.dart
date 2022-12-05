@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:data_class_plugin/src/utils/logger/ansi.dart';
 import 'package:data_class_plugin/src/utils/logger/plugin_logger.dart';
 
 abstract class BaseCommand extends Command<void> {
@@ -9,14 +8,7 @@ abstract class BaseCommand extends Command<void> {
   IOSink? get sink;
 
   Future<void> init() async {
-    logger.logHeader(
-      'Data Class Plugin',
-      subtitle: 'Code generation. Same, but different.',
-      lineStyle: LineStyle.double,
-      lineLength: 70,
-    );
-
-    logger.writeln();
+    logger.logHeader(PluginLogger.pluginHeader());
   }
 
   Future<void> execute();
