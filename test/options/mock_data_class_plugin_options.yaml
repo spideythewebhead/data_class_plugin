@@ -1,0 +1,41 @@
+json:
+  key_name_conventions:
+    camel_case:
+      - "test/contributors/annotations/**/*camel_case.dart"
+    kebab_case:
+      - "test/contributors/annotations/**/*_kebab_case.dart"
+    pascal_case:
+      - "test/contributors/annotations/**/*_pascal_case.dart"
+    snake_case:
+      - "test/contributors/annotations/**/*_snake_case.dart"
+
+data_class:
+  options_config:
+    copy_with:
+      default: false
+    hash_and_equals:
+      default: false
+    to_string:
+      default: false
+    from_json:
+      default: true
+    to_json:
+      default: true
+
+enum:
+  options_config:
+    to_string:
+      default: true
+    from_json:
+      default: true
+    to_json:
+      default: true
+
+union:
+  options_config:
+    data_class:
+      default: false
+    from_json:
+      default: true
+    to_json:
+      default: true
