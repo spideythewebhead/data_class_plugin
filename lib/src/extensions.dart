@@ -179,6 +179,11 @@ extension ClassDeclarationX on ClassDeclaration {
             .firstWhereOrNull((Annotation annotation) => annotation.name.name == 'DataClass') !=
         null;
   }
+
+  bool get hasUnionAnnotation {
+    return metadata.firstWhereOrNull((Annotation annotation) => annotation.name.name == 'Union') !=
+        null;
+  }
 }
 
 extension EnumDeclarationX on EnumDeclaration {
