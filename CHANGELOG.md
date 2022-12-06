@@ -1,3 +1,19 @@
+## 0.0.5
+
+- General
+  - Update the supported versions of analyzer and analyzer_plugin [(issue #143)](https://github.com/spideythewebhead/data_class_plugin/issues/143)
+- Annotations
+  - Create enum annotation [(issue #136)](https://github.com/spideythewebhead/data_class_plugin/issues/136)
+- Configuration
+  - Add options for enums [(issue #138)](https://github.com/spideythewebhead/data_class_plugin/issues/138)
+  - Add options for unions [(issue #139)](https://github.com/spideythewebhead/data_class_plugin/issues/139)
+- Update README.md [(issue #139)](https://github.com/spideythewebhead/data_class_plugin/issues/139)
+  - Fix issue with the table of contents links
+  - Link sample project from meetup
+- Testing
+  - Speed up contributor tests [(issue #145)](https://github.com/spideythewebhead/data_class_plugin/issues/145)
+  - Add missing tests [(issue #148)](https://github.com/spideythewebhead/data_class_plugin/issues/148)
+
 ## 0.0.4
 
 - Update README.md [(issue #130)](https://github.com/spideythewebhead/data_class_plugin/issues/130)
