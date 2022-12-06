@@ -19,7 +19,6 @@ import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/core/mixins.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/visitors/class_visitor.dart';
 import 'package:data_class_plugin/src/visitors/redirected_constructor_visitor.dart';

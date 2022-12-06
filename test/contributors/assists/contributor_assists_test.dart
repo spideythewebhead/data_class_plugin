@@ -8,6 +8,7 @@ import 'package:data_class_plugin/src/contributors/class/class_contributors.dart
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/utils/logger/plugin_logger.dart';
 import 'package:data_class_plugin/src/visitors/visitors.dart';
 import 'package:path/path.dart';
 
@@ -29,6 +30,7 @@ final String dataClassAnnotationPath = join(testFilesPath, 'data_class_annotatio
 void main() async {
   final DataClassPlugin plugin = DataClassPlugin(
     PhysicalResourceProvider.INSTANCE,
+    PluginLogger(),
   );
 
   final AnalysisContextCollection analysis = AnalysisContextCollection(
