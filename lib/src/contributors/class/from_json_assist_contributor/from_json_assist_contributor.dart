@@ -1,5 +1,3 @@
-import 'dart:io' as io show File;
-
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -13,7 +11,7 @@ import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_generator.dart';
 import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
-import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
@@ -60,9 +58,8 @@ class FromJsonAssistContributor extends Object
     final SourceRange? fromJsonSourceRange =
         classNode.members.getSourceRangeForConstructor('fromJson');
 
-    final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile((io.File(
-      utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path),
-    )));
+    final DataClassPluginOptions pluginOptions =
+        await session.analysisContext.contextRoot.root.getPluginOptions();
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(

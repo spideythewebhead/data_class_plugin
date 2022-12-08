@@ -10,7 +10,7 @@ import 'package:data_class_plugin/src/annotations/enum_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
-import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
@@ -56,7 +56,7 @@ class EnumAnnotationAssistContributor extends Object
     }
 
     final DataClassPluginOptions pluginOptions =
-        await session.analysisContext.contextRoot.root.getOptions();
+        await session.analysisContext.contextRoot.root.getPluginOptions();
 
     final EnumInternal enumAnnotation = EnumInternal.fromDartObject(
       enumElement.metadata

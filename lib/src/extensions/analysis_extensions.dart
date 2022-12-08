@@ -1,14 +1,11 @@
 import 'dart:core';
-import 'dart:io' as io show File;
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
-import 'package:analyzer/file_system/file_system.dart';
 import 'package:analyzer/source/source_range.dart';
-import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
-import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
+import 'package:data_class_plugin/src/extensions/core_extensions.dart';
 
 extension DartTypeX on DartType {
   bool get isNullable {
@@ -78,40 +75,6 @@ extension DartTypeX on DartType {
   }
 }
 
-extension ElementAnnotationX on ElementAnnotation {
-  bool get isJsonKeyAnnotation {
-    return element?.displayName == 'JsonKey';
-  }
-
-  bool get isUnionAnnotation {
-    return element?.displayName == 'Union';
-  }
-
-  bool get isUnionFieldValueAnnotation {
-    return element?.displayName == 'UnionFieldValue';
-  }
-
-  bool get isDataClassAnnotation {
-    return element?.displayName == 'DataClass';
-  }
-
-  bool get isEnumAnnotation {
-    return element?.displayName == 'Enum';
-  }
-}
-
-extension IterableX<T> on Iterable<T> {
-  T? firstWhereOrNull(bool Function(T element) test) {
-    try {
-      return firstWhere(test);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  T? get firstOrNull => isEmpty ? null : elementAt(0);
-}
-
 extension ExecutableElementX<T> on ExecutableElement {
   String fullyQualifiedName({
     required List<LibraryImportElement> enclosingImports,
@@ -153,70 +116,6 @@ extension NodeListX on NodeList<ClassMember> {
   }
 }
 
-extension ElementX on Element {
-  bool get hasUnionAnnotation {
-    return metadata
-            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isUnionAnnotation) !=
-        null;
-  }
-
-  bool get hasDataClassAnnotation {
-    return metadata
-            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isDataClassAnnotation) !=
-        null;
-  }
-
-  bool get hasEnumAnnotation {
-    return metadata
-            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isEnumAnnotation) !=
-        null;
-  }
-}
-
-extension ClassDeclarationX on ClassDeclaration {
-  bool get hasDataClassAnnotation {
-    return metadata
-            .firstWhereOrNull((Annotation annotation) => annotation.name.name == 'DataClass') !=
-        null;
-  }
-
-  bool get hasUnionAnnotation {
-    return metadata.firstWhereOrNull((Annotation annotation) => annotation.name.name == 'Union') !=
-        null;
-  }
-}
-
-extension EnumDeclarationX on EnumDeclaration {
-  bool get hasEnumAnnotation {
-    return metadata.firstWhereOrNull((Annotation annotation) => annotation.name.name == 'Enum') !=
-        null;
-  }
-}
-
-extension StringX on String {
-  String snakeCaseToCamelCase() {
-    return replaceAllMapped(RegExp(r'_([a-z])'), (Match match) {
-      return match.group(1)!.toUpperCase();
-    });
-  }
-
-  /// Escape $ with \$
-  String escapeDollarSign() {
-    return replaceAllMapped('\$', (Match match) {
-      return '\\${match.group(0)}';
-    });
-  }
-
-  String prefixGenericArgumentsWithDollarSign() {
-    return replaceAllMapped(
-      RegExp(r'(?<=(<|,\s*))(\w+)'),
-      (Match match) {
-        return '\$${match.group(2)}';
-      },
-    );
-  }
-}
-
 extension InterfaceElementX on InterfaceElement {
   ConstructorElement? get defaultConstructor {
     return constructors.firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
@@ -254,13 +153,5 @@ extension ConstructorElementX on ConstructorElement {
 extension InterfaceTypeX on InterfaceType {
   ClassElement? get classElement {
     return element is ClassElement ? element as ClassElement : null;
-  }
-}
-
-extension FolderX on Folder {
-  Future<DataClassPluginOptions> getOptions() async {
-    return await DataClassPluginOptions.fromFile((io.File(
-      utils.getDataClassPluginOptionsPath(path),
-    )));
   }
 }

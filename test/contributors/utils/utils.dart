@@ -9,11 +9,11 @@ import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:analyzer_plugin/protocol/protocol_common.dart';
 import 'package:analyzer_plugin/protocol/protocol_generated.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
+import 'package:data_class_plugin/src/extensions/string_extensions.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 

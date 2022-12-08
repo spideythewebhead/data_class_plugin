@@ -1,20 +1,5 @@
 part of 'utils.dart';
 
-extension StringX on String {
-  /// Removes trailing whitespaces and carriage return characters.
-  String normalizeWhitespaces() {
-    return replaceFirst(RegExp(r'\s$'), '').replaceAll('\r', '');
-  }
-
-  /// Returns a string formatted using [DartFormatter]
-  ///
-  /// This is a workaround for generated code by the contributors,
-  /// as the generated code in test has always length of 80 characters.
-  String dartFormat({int lineLength = 100}) {
-    return DartFormatter(pageWidth: lineLength).format(this).normalizeWhitespaces();
-  }
-}
-
 typedef ContributorConstructor = AssistContributor Function(String path);
 typedef OffsetProvider = int Function(CompilationUnit unit);
 
