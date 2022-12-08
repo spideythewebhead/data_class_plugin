@@ -13,13 +13,15 @@ import 'package:stack_trace/stack_trace.dart';
 class PluginLogger extends Logger {
   PluginLogger({
     final IOSink? ioSink,
-    final bool writeToFile = false,
-  })  : _consoleLogger = ConsoleLogger(ioSink),
-        _fileLogger = writeToFile ? FileLogger() : NoOpLogger();
+  }) : _consoleLogger = ConsoleLogger(ioSink);
 
   final ConsoleLogger _consoleLogger;
-  final Logger _fileLogger;
+  Logger _fileLogger = NoOpLogger();
   late final PluginCommunicationChannel? channel;
+
+  set writeToFile(bool value) {
+    _fileLogger = value ? FileLogger() : NoOpLogger();
+  }
 
   @override
   void write([final Object? object]) {
