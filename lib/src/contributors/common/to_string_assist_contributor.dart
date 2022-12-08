@@ -64,7 +64,7 @@ class ToStringAssistContributor extends Object
       return;
     }
 
-    final SourceRange? toStringSourceRange = classMembers.getSourceRangeForMethod('toString');
+    final SourceRange? toStringSourceRange = classMembers.toStringSourceRange;
 
     final List<VariableElement> fields = <VariableElement>[
       ...element.dataClassFinalFields,

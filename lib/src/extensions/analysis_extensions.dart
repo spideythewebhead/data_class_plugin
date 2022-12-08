@@ -5,6 +5,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
+import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/extensions/core_extensions.dart';
 
 extension DartTypeX on DartType {
@@ -106,6 +107,10 @@ extension NodeListX on NodeList<ClassMember> {
     return null;
   }
 
+  SourceRange? get defaultConstructorSourceRange => getSourceRangeForConstructor(null);
+  SourceRange? get fromJsonSourceRange =>
+      getSourceRangeForConstructor(DataClassAnnotationArg.fromJson.name);
+
   SourceRange? getSourceRangeForMethod(String name) {
     for (final ClassMember node in this) {
       if (node is MethodDeclaration && node.name.lexeme == name) {
@@ -114,6 +119,14 @@ extension NodeListX on NodeList<ClassMember> {
     }
     return null;
   }
+
+  SourceRange? get equalsSourceRange => getSourceRangeForMethod(DataClassAnnotationArg.equals.name);
+  SourceRange? get hashSourceRange => getSourceRangeForMethod(DataClassAnnotationArg.hash.name);
+  SourceRange? get copyWithSourceRange =>
+      getSourceRangeForMethod(DataClassAnnotationArg.copyWith.name);
+  SourceRange? get toStringSourceRange =>
+      getSourceRangeForMethod(DataClassAnnotationArg.$toString.name);
+  SourceRange? get toJsonSourceRange => getSourceRangeForMethod(DataClassAnnotationArg.toJson.name);
 }
 
 extension InterfaceElementX on InterfaceElement {
@@ -138,6 +151,13 @@ extension InterfaceElementX on InterfaceElement {
     }
 
     return fields;
+  }
+
+  List<FieldElement> get jsonSupportedFields {
+    return <FieldElement>[
+      for (final FieldElement field in fields)
+        if (field.isFinal && field.isPublic && field.type.isJsonSupported) field,
+    ];
   }
 }
 

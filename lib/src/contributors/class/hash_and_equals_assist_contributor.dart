@@ -47,8 +47,8 @@ class HashAndEqualsAssistContributor extends Object
       return;
     }
 
-    final SourceRange? equalsSourceRange = classNode.members.getSourceRangeForMethod('==');
-    final SourceRange? hashCodeSourceRange = classNode.members.getSourceRangeForMethod('hashCode');
+    final SourceRange? equalsSourceRange = classNode.members.equalsSourceRange;
+    final SourceRange? hashCodeSourceRange = classNode.members.hashSourceRange;
 
     final List<FieldElement> fields = <FieldElement>[
       ...classElement.dataClassFinalFields,
