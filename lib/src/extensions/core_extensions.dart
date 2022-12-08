@@ -24,3 +24,9 @@ extension FolderX on Folder {
     )));
   }
 }
+
+extension DateTimeX on DateTime {
+  Duration getElapsedDuration() {
+    return DateTime.now().difference(this);
+  }
+}
