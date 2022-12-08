@@ -48,12 +48,8 @@ class EnumFromJsonAssistContributor extends Object
       return;
     }
 
-    final SourceRange? fromJsonSourceRange =
-        enumNode.members.getSourceRangeForConstructor('fromJson');
-
-    final List<FieldElement> finalFieldsElements = enumElement.fields.where((FieldElement field) {
-      return field.isFinal && field.isPublic && field.type.isJsonSupported;
-    }).toList(growable: false);
+    final SourceRange? fromJsonSourceRange = enumNode.members.fromJsonSourceRange;
+    final List<FieldElement> finalFieldsElements = enumElement.jsonSupportedFields;
 
     if (finalFieldsElements.length > 1) {
       return;

@@ -7,6 +7,7 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
+import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/annotations/union_internal.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
@@ -52,16 +53,13 @@ class UnionAssistContributor extends Object
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-
-    final ElementAnnotation? unionElementAnnotation = classElement.metadata
-        .firstWhereOrNull((ElementAnnotation annotation) => annotation.isUnionAnnotation);
-
-    if (unionElementAnnotation == null) {
+    if (!classElement.hasUnionAnnotation) {
       return;
     }
 
-    final UnionInternal unionInternalAnnotation =
-        UnionInternal.fromDartObject(unionElementAnnotation.computeConstantValue());
+    final UnionInternal unionInternalAnnotation = UnionInternal.fromDartObject(
+      classElement.metadata.unionAnnotation!.computeConstantValue(),
+    );
 
     final RedirectedConstructorVisitor redirectedConstructorsVisitor =
         RedirectedConstructorVisitor(result: <String, RedirectedConstructor>{});
@@ -195,7 +193,7 @@ class UnionAssistContributor extends Object
     required final DataClassPluginOptions pluginOptions,
   }) {
     for (final ConstructorElement ctor in classElement.constructors.reversed) {
-      if (!ctor.isFactory || ctor.name.isEmpty || ctor.name == 'fromJson') {
+      if (!ctor.isFactory || ctor.name.isEmpty || ctor.name == UnionAnnotationArg.fromJson.name) {
         continue;
       }
 
@@ -271,7 +269,7 @@ class UnionAssistContributor extends Object
     required final ClassElement classElement,
     required final DartFileEditBuilder fileEditBuilder,
   }) {
-    final SourceRange? sourceRange = classNode.members.getSourceRangeForConstructor('fromJson');
+    final SourceRange? sourceRange = classNode.members.fromJsonSourceRange;
 
     if (sourceRange == null) {
       fileEditBuilder.addInsertion(
@@ -287,7 +285,7 @@ class UnionAssistContributor extends Object
     required final ClassElement classElement,
     required final DartFileEditBuilder fileEditBuilder,
   }) {
-    final SourceRange? sourceRange = classNode.members.getSourceRangeForMethod('toJson');
+    final SourceRange? sourceRange = classNode.members.toJsonSourceRange;
 
     void writerToJsonFunction(DartEditBuilder builder) {
       _writeToJsonFunction(

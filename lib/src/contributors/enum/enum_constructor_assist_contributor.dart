@@ -48,8 +48,7 @@ class EnumConstructorAssistContributor extends Object
       return;
     }
 
-    final SourceRange? copyWithSourceRange = enumNode.members.getSourceRangeForConstructor(null);
-
+    final SourceRange? copyWithSourceRange = enumNode.members.defaultConstructorSourceRange;
     final List<FieldElement> finalFieldsElements = enumElement.fields.where((FieldElement field) {
       return field.isFinal && field.isPublic && !field.hasInitializer;
     }).toList(growable: false);

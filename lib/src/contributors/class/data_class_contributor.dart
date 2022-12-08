@@ -48,26 +48,21 @@ class DataClassAssistContributor extends Object
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-
     if (classElement.hasUnionAnnotation || !classElement.hasDataClassAnnotation) {
       return;
     }
 
     final DataClassInternal dataClassAnnotation = DataClassInternal.fromDartObject(
-      classElement.metadata
-          .firstWhere((ElementAnnotation annotation) => annotation.isDataClassAnnotation)
-          .computeConstantValue(),
+      classElement.metadata.dataClassAnnotation!.computeConstantValue(),
     );
 
-    final SourceRange? constructorSourceRange =
-        classNode.members.getSourceRangeForConstructor(null);
-    final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
-    final SourceRange? equalsSourceRange = classNode.members.getSourceRangeForMethod('==');
-    final SourceRange? hashCodeSourceRange = classNode.members.getSourceRangeForMethod('hashCode');
-    final SourceRange? toStringSourceRange = classNode.members.getSourceRangeForMethod('toString');
-    final SourceRange? fromJsonSourceRange =
-        classNode.members.getSourceRangeForConstructor('fromJson');
-    final SourceRange? toJsonSourceRange = classNode.members.getSourceRangeForMethod('toJson');
+    final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
+    final SourceRange? copyWithSourceRange = classNode.members.copyWithSourceRange;
+    final SourceRange? equalsSourceRange = classNode.members.equalsSourceRange;
+    final SourceRange? hashCodeSourceRange = classNode.members.hashSourceRange;
+    final SourceRange? toStringSourceRange = classNode.members.toStringSourceRange;
+    final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
+    final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
 
     final List<VariableElement> fields = <VariableElement>[
       ...classElement.dataClassFinalFields,

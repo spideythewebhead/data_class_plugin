@@ -47,8 +47,7 @@ class CopyWithAssistContributor extends Object
       return;
     }
 
-    final SourceRange? copyWithSourceRange = classNode.members.getSourceRangeForMethod('copyWith');
-
+    final SourceRange? copyWithSourceRange = classNode.members.copyWithSourceRange;
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(
       filePath,

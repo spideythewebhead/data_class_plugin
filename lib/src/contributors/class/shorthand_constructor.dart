@@ -46,8 +46,7 @@ class ShorthandConstructorAssistContributor extends Object
     }
 
     final ClassElement classElement = classNode.declaredElement!;
-    final SourceRange? constructorSourceRange =
-        classNode.members.getSourceRangeForConstructor(null);
+    final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(

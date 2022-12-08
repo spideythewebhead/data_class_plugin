@@ -59,16 +59,13 @@ class EnumAnnotationAssistContributor extends Object
         await session.analysisContext.contextRoot.root.getPluginOptions();
 
     final EnumInternal enumAnnotation = EnumInternal.fromDartObject(
-      enumElement.metadata
-          .firstWhere((ElementAnnotation annotation) => annotation.isEnumAnnotation)
-          .computeConstantValue(),
+      enumElement.metadata.enumAnnotation!.computeConstantValue(),
     );
 
-    final SourceRange? constructorSourceRange = enumNode.members.getSourceRangeForConstructor(null);
-    final SourceRange? toStringSourceRange = enumNode.members.getSourceRangeForMethod('toString');
-    final SourceRange? fromJsonSourceRange =
-        enumNode.members.getSourceRangeForConstructor('fromJson');
-    final SourceRange? toJsonSourceRange = enumNode.members.getSourceRangeForMethod('toJson');
+    final SourceRange? constructorSourceRange = enumNode.members.defaultConstructorSourceRange;
+    final SourceRange? toStringSourceRange = enumNode.members.toStringSourceRange;
+    final SourceRange? fromJsonSourceRange = enumNode.members.fromJsonSourceRange;
+    final SourceRange? toJsonSourceRange = enumNode.members.toJsonSourceRange;
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
