@@ -72,7 +72,7 @@ packages:
     source: hosted
     version: "3.0.2"
   dart_style:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: dart_style
       url: "https://pub.dartlang.org"

@@ -1,4 +1,4 @@
-import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/extensions/core_extensions.dart';
 import 'package:data_class_plugin/src/options/options_config.dart';
 import 'package:glob/glob.dart';
 

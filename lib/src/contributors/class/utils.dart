@@ -1,5 +1,5 @@
 import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
-import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:glob/glob.dart';

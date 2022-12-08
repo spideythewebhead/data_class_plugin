@@ -2,7 +2,7 @@ import 'dart:io' as io;
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_annotation_assist_contributor.dart';
-import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/extensions/annotation_extensions.dart';
 import 'package:data_class_plugin/src/visitors/enum_visitor.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';

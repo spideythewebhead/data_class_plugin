@@ -1,5 +1,3 @@
-import 'dart:io' as io show File;
-
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -15,9 +13,8 @@ import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_generator.dart';
 import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_generator.dart';
-import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
-import 'package:data_class_plugin/src/extensions.dart';
+import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/visitors/class_visitor.dart';
@@ -70,9 +67,8 @@ class UnionAssistContributor extends Object
         RedirectedConstructorVisitor(result: <String, RedirectedConstructor>{});
     classNode.visitChildren(redirectedConstructorsVisitor);
 
-    final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile((io.File(
-      utils.getDataClassPluginOptionsPath(session.analysisContext.contextRoot.root.path),
-    )));
+    final DataClassPluginOptions pluginOptions =
+        await session.analysisContext.contextRoot.root.getPluginOptions();
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
 
