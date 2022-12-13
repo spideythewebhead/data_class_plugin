@@ -6,10 +6,12 @@ import 'package:data_class_plugin/src/extensions/extensions.dart';
 class FromJsonGenerator {
   /// Shorthand constructor
   FromJsonGenerator({
+    required this.libraryImports,
     this.checkIfShouldUseFromJson,
   });
 
   final bool Function(DartType dartType)? checkIfShouldUseFromJson;
+  final List<LibraryImportElement> libraryImports;
 
   void run({
     required final DartType? nextType,
@@ -136,7 +138,7 @@ class FromJsonGenerator {
     required final String parentVariableName,
     required final int depthIndex,
   }) {
-    builder.write('<${type.typeArguments[0].typeStringValue()}>[');
+    builder.write('<${type.typeArguments[0].typeStringValue(enclosingImports: libraryImports)}>[');
 
     final String loopVariableName = 'i$depthIndex';
     builder.writeln(
@@ -162,7 +164,8 @@ class FromJsonGenerator {
       return;
     }
 
-    builder.write('<String, ${type.typeArguments[1].typeStringValue()}>{');
+    builder.write(
+        '<String, ${type.typeArguments[1].typeStringValue(enclosingImports: libraryImports)}>{');
 
     final String loopVariableName = 'e$depthIndex';
     builder

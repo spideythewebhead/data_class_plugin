@@ -1,33 +1,27 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
-@DataClass()
-class OptionConfig {
-  /// Shorthand constructor
-  const OptionConfig({
-    this.defaultValue,
-    this.enabled = const <String>[],
-    this.disabled = const <String>[],
-  });
+part 'options_config.gen.dart';
 
-  @JsonKey(name: 'default')
-  final bool? defaultValue;
-  final List<String> enabled;
-  final List<String> disabled;
+@DataClass()
+abstract class OptionConfig {
+  const OptionConfig._();
+
+  /// Default constructor
+  const factory OptionConfig({
+    bool? defaultValue,
+    List<String> enabled,
+    List<String> disabled,
+  }) = _$OptionConfigImpl;
 
   /// Creates an instance of [OptionConfig] from [json]
-  factory OptionConfig.fromJson(Map<dynamic, dynamic> json) {
-    return OptionConfig(
-      defaultValue: json['default'] == null ? null : json['default'] as bool,
-      enabled: json['enabled'] == null
-          ? const <String>[]
-          : <String>[
-              for (final dynamic i0 in (json['enabled'] as List<dynamic>)) i0 as String,
-            ],
-      disabled: json['disabled'] == null
-          ? const <String>[]
-          : <String>[
-              for (final dynamic i0 in (json['disabled'] as List<dynamic>)) i0 as String,
-            ],
-    );
-  }
+  factory OptionConfig.fromJson(Map<dynamic, dynamic> json) = _$OptionConfigImpl.fromJson;
+
+  @JsonKey(name: 'default')
+  bool? get defaultValue;
+
+  @DefaultValue(<String>[])
+  List<String> get enabled;
+
+  @DefaultValue(<String>[])
+  List<String> get disabled;
 }

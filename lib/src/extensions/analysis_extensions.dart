@@ -40,7 +40,9 @@ extension DartTypeX on DartType {
         alias == null;
   }
 
-  String typeStringValue() {
+  String typeStringValue({
+    required List<LibraryImportElement> enclosingImports,
+  }) {
     final StringBuffer buffer = StringBuffer();
 
     void visit(DartType type) {
@@ -65,7 +67,20 @@ extension DartTypeX on DartType {
         return;
       }
 
-      buffer.write(type.element!.name);
+      String qualifiedName = type.element!.name!;
+
+      // adds any potential prefixes on the class name
+      // e.g
+      // import 'user.dart' as u;
+      // List<u.User>
+      for (final LibraryImportElement import in enclosingImports) {
+        if (import.prefix != null && import.importedLibrary?.id == type.element!.library?.id) {
+          qualifiedName = '${import.prefix!.element.name}.$qualifiedName';
+          break;
+        }
+      }
+
+      buffer.write(qualifiedName);
       if (type.isNullable) {
         buffer.write('?');
       }
@@ -107,10 +122,6 @@ extension NodeListX on NodeList<ClassMember> {
     return null;
   }
 
-  SourceRange? get defaultConstructorSourceRange => getSourceRangeForConstructor(null);
-  SourceRange? get fromJsonSourceRange =>
-      getSourceRangeForConstructor(DataClassAnnotationArg.fromJson.name);
-
   SourceRange? getSourceRangeForMethod(String name) {
     for (final ClassMember node in this) {
       if (node is MethodDeclaration && node.name.lexeme == name) {
@@ -120,13 +131,19 @@ extension NodeListX on NodeList<ClassMember> {
     return null;
   }
 
+  SourceRange? get defaultConstructorSourceRange => getSourceRangeForConstructor(null);
+  SourceRange? get privateConstructorSourceRange => getSourceRangeForConstructor('_');
+
+  SourceRange? get fromJsonSourceRange =>
+      getSourceRangeForConstructor(DataClassAnnotationArg.fromJson.name);
+  SourceRange? get toJsonSourceRange => getSourceRangeForMethod(DataClassAnnotationArg.toJson.name);
+
   SourceRange? get equalsSourceRange => getSourceRangeForMethod(DataClassAnnotationArg.equals.name);
   SourceRange? get hashSourceRange => getSourceRangeForMethod(DataClassAnnotationArg.hash.name);
   SourceRange? get copyWithSourceRange =>
       getSourceRangeForMethod(DataClassAnnotationArg.copyWith.name);
   SourceRange? get toStringSourceRange =>
       getSourceRangeForMethod(DataClassAnnotationArg.$toString.name);
-  SourceRange? get toJsonSourceRange => getSourceRangeForMethod(DataClassAnnotationArg.toJson.name);
 }
 
 extension InterfaceElementX on InterfaceElement {

@@ -30,10 +30,7 @@ final String dataClassAnnotationPath = join(testFilesPath, 'data_class_annotatio
 class MockLogger extends PluginLogger {}
 
 void main() async {
-  final DataClassPlugin plugin = DataClassPlugin(
-    PhysicalResourceProvider.INSTANCE,
-    MockLogger(),
-  );
+  final DataClassPlugin plugin = DataClassPlugin(PhysicalResourceProvider.INSTANCE);
 
   final AnalysisContextCollection analysis = AnalysisContextCollection(
     includedPaths: <String>[

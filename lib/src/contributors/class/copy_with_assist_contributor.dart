@@ -99,7 +99,8 @@ class CopyWithAssistContributor extends Object
     if (fields.isNotEmpty) {
       builder.write('{');
       for (final VariableElement field in fields) {
-        final String typeStringValue = field.type.typeStringValue();
+        final String typeStringValue =
+            field.type.typeStringValue(enclosingImports: classElement.library.libraryImports);
         final bool isNullable = typeStringValue.endsWith('?');
         builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
       }

@@ -335,6 +335,21 @@ To create a custom configuration you need to add a file named `data_class_plugin
 #### Configuration examples
 
 ```yaml
+
+generation_mode: in_place (default) | file
+
+# This option is **required** if **generation_mode** is "file"
+# Which path matches should generate files
+# If you update this option, you should re-run the genenator
+# or if it's for a specific folder/file(s) you are working on, you can update this without restarting
+file_generation_paths:
+  - "a/glob/here"
+  - "an/oth/er/*.dart"
+
+# If you commit the generated files in git
+# You can set the line length for the generated code too, so it won't fail in potential CI/CD workflows
+generated_file_line_length: 80 (default)
+
 json:
   # Default naming convention for json keys
   key_name_convention: camel_case (default) | snake_case | kebab_case | pascal_case

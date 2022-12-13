@@ -8,10 +8,11 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   $toString: false,
 )
 class User {
+  /// Shorthand constructor
   User({
     required this.id,
     required this.username,
-    required this.permissions,
+    this.permissions,
   });
 
   final String id;

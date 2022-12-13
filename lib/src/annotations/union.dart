@@ -1,3 +1,5 @@
+import 'package:meta/meta_meta.dart';
+
 /// Implementors of this interface can create union types
 ///
 /// ```dart
@@ -12,12 +14,15 @@
 ///   }) = ErrorAsyncResult<T>; // ErrorAsyncResult<T> implementation will be generated
 /// }
 /// ```
+@Target(<TargetKind>{TargetKind.classType})
 class Union {
   /// Shorthand constructor
   const Union({
     this.dataClass,
     this.fromJson,
     this.toJson,
+    this.unionJsonKey,
+    this.unionFallbackJsonValue,
   });
 
   /// Toggles code generation for toString, copyWith, equals and hashCode
@@ -34,20 +39,20 @@ class Union {
   ///
   /// Defaults to false
   final bool? toJson;
+
+  /// Union key to use for json convertion
+  ///
+  /// **Applies only to generation mode = file**, for now
+  ///
+  /// If non provided a method will not be generated
+  final String? unionJsonKey;
+
+  /// If no [UnionJsonKeyValue] is matched then use this fallback value
+  final String? unionFallbackJsonValue;
 }
 
-/// Default value for a field specific in a union constructor
-///
-/// ```dart
-/// @Union()
-/// class AsyncResult<T> {
-///   factory AsyncResult.data({
-///     @UnionFieldValue<int>(0)
-///     required int data,
-///   }) = DataAsyncResult; // DataAsyncResult implementation will be generated
-/// ```
-class UnionFieldValue<T> {
-  const UnionFieldValue(this.value);
+class UnionJsonKeyValue {
+  const UnionJsonKeyValue(this.key);
 
-  final T value;
+  final String key;
 }

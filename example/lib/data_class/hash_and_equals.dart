@@ -1,70 +1,13 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
 @DataClass(
-  hashAndEquals: true,
+  hashAndEquals: false,
   fromJson: false,
-  toJson: false,
-  copyWith: false,
-  $toString: false,
-)
-class ClassName {
-  ClassName({
-    required this.a,
-    required this.b,
-    required this.c,
-    required this.d,
-    required this.e,
-    required this.f,
-    required this.g,
-  });
-
-  final String a;
-  final int b;
-  final double c;
-  final String? d;
-  final List<String> e;
-  final Map<String, int> f;
-  final Set<Point> g;
-
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      a,
-      b,
-      c,
-      d,
-      e,
-      f,
-      g,
-    ]);
-  }
-
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is ClassName &&
-            a == other.a &&
-            b == other.b &&
-            c == other.c &&
-            d == other.d &&
-            deepEquality(e, other.e) &&
-            deepEquality(f, other.f) &&
-            deepEquality(g, other.g);
-  }
-}
-
-@DataClass(
-  hashAndEquals: true,
-  fromJson: false,
-  toJson: false,
-  copyWith: false,
-  $toString: false,
+  toJson: true,
+  $toString: true,
 )
 class Point {
+  /// Shorthand constructor
   Point({
     required this.x,
     required this.y,
@@ -73,20 +16,33 @@ class Point {
   final double x;
   final double y;
 
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      x,
-      y,
-    ]);
+  /// Converts [Point] to a [Map] json
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'x': x,
+      'y': y,
+    };
   }
 
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
+  /// Returns a string with the properties of [Point]
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is Point && x == other.x && y == other.y;
+  String toString() {
+    String value = 'Point{<optimized out>}';
+    assert(() {
+      value = 'Point@<$hexIdentity>{x: $x, y: $y}';
+      return true;
+    }());
+    return value;
+  }
+
+  /// Creates a new instance of [Point] with optional new values
+  Point copyWith({
+    final double? x,
+    final double? y,
+  }) {
+    return Point(
+      x: x ?? this.x,
+      y: y ?? this.y,
+    );
   }
 }
