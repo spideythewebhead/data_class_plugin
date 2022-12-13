@@ -16,6 +16,10 @@ extension ElementX on Element {
 
   bool get hasEnumAnnotation => enumAnnotation != null;
   ElementAnnotation? get enumAnnotation => metadata.getAnnotation(AnnotationType.enumeration);
+
+  bool get hasDefaultValueAnnotation => defaultValueAnnotation != null;
+  ElementAnnotation? get defaultValueAnnotation =>
+      metadata.getAnnotation(AnnotationType.defaultValue);
 }
 
 extension ClassDeclarationX on ClassDeclaration {
@@ -26,6 +30,22 @@ extension ClassDeclarationX on ClassDeclaration {
   Annotation? get unionAnnotation => metadata.getAnnotation(AnnotationType.union);
 
   List<Annotation> get annotations => metadata.annotations;
+
+  bool hasMethod(String methodName) {
+    return null !=
+        members.firstWhereOrNull((ClassMember member) {
+          return member is MethodDeclaration && member.name.lexeme == methodName;
+        });
+  }
+
+  bool hasFactory(String factoryName) {
+    return null !=
+        members.firstWhereOrNull((ClassMember member) {
+          return member is ConstructorDeclaration &&
+              member.factoryKeyword != null &&
+              member.name?.lexeme == factoryName;
+        });
+  }
 }
 
 extension EnumDeclarationX on EnumDeclaration {
@@ -39,6 +59,7 @@ extension ElementAnnotationX on ElementAnnotation {
   bool get isJsonKeyAnnotation => isPluginAnnotation(AnnotationType.jsonKey);
   bool get isUnionAnnotation => isPluginAnnotation(AnnotationType.union);
   bool get isUnionFieldValueAnnotation => isPluginAnnotation(AnnotationType.unionFieldValue);
+  bool get isDefaultValueAnnotation => isPluginAnnotation(AnnotationType.defaultValue);
 
   bool isPluginAnnotation(AnnotationType type) {
     if (element == null) {
@@ -57,6 +78,7 @@ extension ElementAnnotationListX on List<ElementAnnotation> {
   ElementAnnotation? get dataClassAnnotation => getAnnotation(AnnotationType.dataClass);
   ElementAnnotation? get enumAnnotation => getAnnotation(AnnotationType.enumeration);
   ElementAnnotation? get unionAnnotation => getAnnotation(AnnotationType.union);
+  ElementAnnotation? get defaultValueAnnotation => getAnnotation(AnnotationType.defaultValue);
 }
 
 extension AnnotationNodeListX on NodeList<Annotation> {
@@ -113,5 +135,16 @@ extension AnnotationX on Annotation {
     }
 
     return null;
+  }
+
+  bool get isDataClassAnnotation => isPluginAnnotation(AnnotationType.dataClass);
+  bool get isEnumAnnotation => isPluginAnnotation(AnnotationType.enumeration);
+  bool get isJsonKeyAnnotation => isPluginAnnotation(AnnotationType.jsonKey);
+  bool get isUnionAnnotation => isPluginAnnotation(AnnotationType.union);
+  bool get isUnionFieldValueAnnotation => isPluginAnnotation(AnnotationType.unionFieldValue);
+  bool get isDefaultValueAnnotation => isPluginAnnotation(AnnotationType.defaultValue);
+
+  bool isPluginAnnotation(AnnotationType type) {
+    return name.name == type.name;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:data_class_plugin/src/commands/arguments.dart';
+import 'package:data_class_plugin/src/cli/commands/arguments.dart';
 
 class GenerateArgument extends ArgumentOption {
   const GenerateArgument._({

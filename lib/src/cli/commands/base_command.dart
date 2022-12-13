@@ -2,7 +2,8 @@ import 'package:args/command_runner.dart';
 import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 
 abstract class BaseCommand extends Command<void> {
-  BaseCommand(this.logger);
+  BaseCommand({required this.logger});
+
   final PluginLogger logger;
 
   @override

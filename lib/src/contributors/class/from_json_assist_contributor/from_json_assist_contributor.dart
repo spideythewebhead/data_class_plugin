@@ -155,6 +155,7 @@ class FromJsonAssistContributor extends Object
       }
 
       FromJsonGenerator(
+        libraryImports: classElement.library.libraryImports,
         checkIfShouldUseFromJson: (DartType type) {
           return type.element == classElement;
         },

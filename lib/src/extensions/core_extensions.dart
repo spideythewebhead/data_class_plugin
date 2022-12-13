@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:core';
 import 'dart:io' as io show File;
 
@@ -15,6 +16,16 @@ extension IterableX<T> on Iterable<T> {
   }
 
   T? get firstOrNull => isEmpty ? null : elementAt(0);
+
+  T? lastWhereOrNull(bool Function(T element) test) {
+    try {
+      return lastWhere(test);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  T? get lastOrNull => isEmpty ? null : last;
 }
 
 extension FolderX on Folder {
@@ -28,5 +39,13 @@ extension FolderX on Folder {
 extension DateTimeX on DateTime {
   Duration getElapsedDuration() {
     return DateTime.now().difference(this);
+  }
+}
+
+extension CompleterX<T> on Completer<T> {
+  void safeComplete([T? value]) {
+    if (!isCompleted) {
+      complete(value);
+    }
   }
 }

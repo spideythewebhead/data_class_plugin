@@ -1,11 +1,12 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
-@Union(
-  dataClass: true,
-  fromJson: false,
-  toJson: false,
-)
-class AsyncResult<T> {
+@Union(dataClass: true)
+abstract class AsyncResult<T> {
+  /// Creates an instance of [AsyncResult] from [json]
+  factory AsyncResult.fromJson(Map<dynamic, dynamic> json) {
+    throw UnimplementedError();
+  }
+
   const AsyncResult._();
 
   const factory AsyncResult.data({

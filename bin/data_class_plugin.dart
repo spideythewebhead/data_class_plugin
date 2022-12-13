@@ -1,5 +1,13 @@
-import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin_cli.dart';
+import 'dart:io';
+
+import 'package:data_class_plugin/src/cli.dart';
 
 Future<void> main(List<String> args) async {
-  await CliRunner().run(args);
+  try {
+    await CliRunner().run(args);
+    exitCode = 0;
+  } on NoPubspecFound {
+    print('No pubspec.yaml found.. Run this command on the root folder of your project');
+    exitCode = 1;
+  }
 }

@@ -1,5 +1,7 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
+part 'simple_usage.gen.dart';
+
 @DataClass(
   toJson: true,
   fromJson: false,
@@ -7,21 +9,18 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   $toString: false,
   hashAndEquals: false,
 )
-class User {
-  /// Shorthand constructor
-  User({
-    required this.thisIsAVariable,
-    required this.thisIsADifferentVariable,
-  });
+abstract class User {
+  User._();
 
-  final String thisIsAVariable;
-  final String thisIsADifferentVariable;
+  /// Default constructor
+  factory User({
+    required String thisIsAVariable,
+    required String thisIsADifferentVariable,
+  }) = _$UserImpl;
+
+  String get thisIsAVariable;
+  String get thisIsADifferentVariable;
 
   /// Converts [User] to a [Map] json
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'thisIsAVariable': thisIsAVariable,
-      'thisIsADifferentVariable': thisIsADifferentVariable,
-    };
-  }
+  Map<String, dynamic> toJson();
 }

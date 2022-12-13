@@ -21,6 +21,8 @@ dependencies:
   path: ^1.8.2
   file: ^6.1.4
   stack_trace: ^1.11.0
+  watcher: ^1.0.2
+  rxdart: ^0.27.7
 
 dev_dependencies:
   lints: ^2.0.1

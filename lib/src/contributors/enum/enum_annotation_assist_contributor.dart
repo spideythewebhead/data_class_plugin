@@ -92,8 +92,9 @@ class EnumAnnotationAssistContributor extends Object
       if (enumAnnotation.$toString ?? pluginOptions.$enum.effectiveToString(relativeFilePath)) {
         void writerToString(DartEditBuilder builder) {
           ToStringAssistContributor.writeToString(
-            className:
-                enumElement.thisType.typeStringValue().prefixGenericArgumentsWithDollarSign(),
+            className: enumElement.thisType
+                .typeStringValue(enclosingImports: enumElement.library.libraryImports)
+                .prefixGenericArgumentsWithDollarSign(),
             optimizedName: enumElement.name,
             commentElementName: enumElement.name,
             fields: enumElement.dataClassFinalFields,

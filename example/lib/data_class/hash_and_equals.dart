@@ -1,92 +1,34 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
-@DataClass(
-  hashAndEquals: true,
-  fromJson: false,
-  toJson: false,
-  copyWith: false,
-  $toString: false,
-)
-class ClassName {
-  ClassName({
-    required this.a,
-    required this.b,
-    required this.c,
-    required this.d,
-    required this.e,
-    required this.f,
-    required this.g,
-  });
-
-  final String a;
-  final int b;
-  final double c;
-  final String? d;
-  final List<String> e;
-  final Map<String, int> f;
-  final Set<Point> g;
-
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      a,
-      b,
-      c,
-      d,
-      e,
-      f,
-      g,
-    ]);
-  }
-
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is ClassName &&
-            a == other.a &&
-            b == other.b &&
-            c == other.c &&
-            d == other.d &&
-            deepEquality(e, other.e) &&
-            deepEquality(f, other.f) &&
-            deepEquality(g, other.g);
-  }
-}
+part 'hash_and_equals.gen.dart';
 
 @DataClass(
-  hashAndEquals: true,
+  hashAndEquals: false,
   fromJson: false,
-  toJson: false,
-  copyWith: false,
-  $toString: false,
+  toJson: true,
+  $toString: true,
 )
-class Point {
-  Point({
-    required this.x,
-    required this.y,
+abstract class Point {
+  Point._();
+
+  /// Default constructor
+  factory Point({
+    required double x,
+    required double y,
+  }) = _$PointImpl;
+
+  double get x;
+  double get y;
+
+  /// Converts [Point] to a [Map] json
+  Map<String, dynamic> toJson();
+
+  @override
+  String toString();
+
+  /// Creates a new instance of [Point] with optional new values
+  Point copyWith({
+    final double? x,
+    final double? y,
   });
-
-  final double x;
-  final double y;
-
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      x,
-      y,
-    ]);
-  }
-
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is Point && x == other.x && y == other.y;
-  }
 }

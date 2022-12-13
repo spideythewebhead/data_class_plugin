@@ -24,6 +24,11 @@ enum AnnotationType {
     'JsonKey',
     'https://github.com/spideythewebhead/data_class_plugin',
     'Adding the [JsonKey] annotation to a field makes it customizable when generating fromJson/toJson methods.',
+  ),
+  defaultValue(
+    'DefaultValue',
+    'https://github.com/spideythewebhead/data_class_plugin',
+    'Provide default for a Data Class field or Union factory parameter.',
   );
 
   const AnnotationType(

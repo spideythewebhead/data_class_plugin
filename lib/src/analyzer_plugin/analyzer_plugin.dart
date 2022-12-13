@@ -32,13 +32,6 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
   final PluginLogger _logger;
 
   @override
-  void start(PluginCommunicationChannel channel) {
-    super.start(channel);
-    _logger.channel = channel;
-    _logger.notification('Starting $displayName\n');
-  }
-
-  @override
   Future<void> analyzeFile({
     required analyzer.AnalysisContext analysisContext,
     required String path,
@@ -46,37 +39,32 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
 
   @override
   List<AssistContributor> getAssistContributors(String path) {
-    try {
-      return <AssistContributor>[
-        // Class contributors
-        ShorthandConstructorAssistContributor(path),
-        DataClassAssistContributor(path),
+    return <AssistContributor>[
+      // Class contributors
+      ShorthandConstructorAssistContributor(path),
+      DataClassAssistContributor(path),
 
-        // Enum contributors
-        EnumAnnotationAssistContributor(path),
-        EnumConstructorAssistContributor(path),
-        EnumFromJsonAssistContributor(path),
-        EnumToJsonAssistContributor(path),
+      // Enum contributors
+      EnumAnnotationAssistContributor(path),
+      EnumConstructorAssistContributor(path),
+      EnumFromJsonAssistContributor(path),
+      EnumToJsonAssistContributor(path),
 
-        // Common contributors
-        ToStringAssistContributor(path),
-        UnionAssistContributor(path),
-      ];
-    } catch (e, st) {
-      _logger.exception(e, st);
-      return <AssistContributor>[];
-    }
+      // Common contributors
+      ToStringAssistContributor(path),
+      UnionAssistContributor(path),
+    ];
   }
 
-  @override
-  Future<PluginShutdownResult> handlePluginShutdown(PluginShutdownParams parameters) async {
-    _logger.notification('Shutting down $displayName');
-    await _logger.dispose();
-    return await super.handlePluginShutdown(parameters);
-  }
+  // @override
+  // Future<PluginShutdownResult> handlePluginShutdown(PluginShutdownParams parameters) async {
+  // _logger.notification('Shutting down $displayName');
+  // await _logger.dispose();
+  // return await super.handlePluginShutdown(parameters);
+  // }
 
-  @override
-  void onError(Object exception, StackTrace stackTrace) {
-    _logger.exception(exception, stackTrace);
-  }
+  // @override
+  // void onError(Object exception, StackTrace stackTrace) {
+  // _logger.exception(exception, stackTrace);
+  // }
 }

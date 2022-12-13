@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:data_class_plugin/src/commands/arguments.dart';
-import 'package:data_class_plugin/src/commands/base_command.dart';
-import 'package:data_class_plugin/src/commands/install/install_argument.dart';
+import 'package:data_class_plugin/src/cli/commands/arguments.dart';
+import 'package:data_class_plugin/src/cli/commands/base_command.dart';
+import 'package:data_class_plugin/src/cli/commands/install/install_argument.dart';
 import 'package:data_class_plugin/src/tools/logger/ansi.dart';
 
 class InstallCommand extends BaseCommand {
@@ -12,7 +12,9 @@ class InstallCommand extends BaseCommand {
   @override
   String get description => 'Install Data Class Plugin'.bold();
 
-  InstallCommand(super.logger) {
+  InstallCommand({
+    required super.logger,
+  }) {
     argParser.addArgumentOptions(InstallArgument.values);
   }
 

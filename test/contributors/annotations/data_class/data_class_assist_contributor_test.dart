@@ -2,8 +2,8 @@ import 'dart:io' as io;
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:data_class_plugin/src/contributors/class/data_class_contributor.dart';
-import 'package:data_class_plugin/src/extensions/annotation_extensions.dart';
-import 'package:data_class_plugin/src/visitors/class_visitor.dart';
+import 'package:data_class_plugin/src/extensions/extensions.dart';
+import 'package:data_class_plugin/src/visitors/visitors.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 

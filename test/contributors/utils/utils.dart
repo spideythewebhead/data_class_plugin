@@ -62,7 +62,7 @@ const List<Type> availableContributors = <Type>[
   FromJsonAssistContributor,
   ToStringAssistContributor,
   DataClassAssistContributor,
-  UnionAssistContributor,
+  // UnionAssistContributor,
   EnumAnnotationAssistContributor,
   EnumConstructorAssistContributor,
   EnumToJsonAssistContributor,

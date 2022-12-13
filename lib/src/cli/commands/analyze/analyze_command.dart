@@ -4,15 +4,15 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin.dart';
 import 'package:data_class_plugin/src/analyzer_plugin/web_socket_plugin_server.dart';
-import 'package:data_class_plugin/src/commands/analyze/analyze_argument.dart';
-import 'package:data_class_plugin/src/commands/arguments.dart';
-import 'package:data_class_plugin/src/commands/base_command.dart';
+import 'package:data_class_plugin/src/cli/commands/analyze/analyze_argument.dart';
+import 'package:data_class_plugin/src/cli/commands/arguments.dart';
+import 'package:data_class_plugin/src/cli/commands/base_command.dart';
 import 'package:data_class_plugin/src/extensions/core_extensions.dart';
 import 'package:data_class_plugin/src/tools/file_tools.dart';
 import 'package:data_class_plugin/src/tools/logger/ansi.dart';
 
 class AnalyzeCommand extends BaseCommand {
-  AnalyzeCommand(super.logger) {
+  AnalyzeCommand({required super.logger}) {
     argParser.addArgumentOptions(AnalyzeArgument.values);
   }
 

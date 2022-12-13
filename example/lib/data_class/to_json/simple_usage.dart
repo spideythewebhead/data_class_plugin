@@ -1,5 +1,7 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
+part 'simple_usage.gen.dart';
+
 @DataClass(
   toJson: true,
   fromJson: false,
@@ -7,26 +9,22 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   hashAndEquals: false,
   $toString: false,
 )
-class User {
-  /// Shorthand constructor
-  User({
-    required this.id,
-    required this.username,
-    this.email,
-  });
+abstract class User {
+  User._();
 
-  final String id;
-  final String username;
-  final String? email;
+  /// Default constructor
+  factory User({
+    required String id,
+    required String username,
+    String? email,
+  }) = _$UserImpl;
+
+  String get id;
+  String get username;
+  String? get email;
 
   /// Converts [User] to a [Map] json
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'id': id,
-      'username': username,
-      'email': email,
-    };
-  }
+  Map<String, dynamic> toJson();
 }
 
 @DataClass(
@@ -36,23 +34,18 @@ class User {
   hashAndEquals: false,
   $toString: false,
 )
-class GetUsersResponse {
-  /// Shorthand constructor
-  GetUsersResponse({
-    required this.ok,
-    required this.users,
-  });
+abstract class GetUsersResponse {
+  GetUsersResponse._();
 
-  final bool ok;
-  final List<User> users;
+  /// Default constructor
+  factory GetUsersResponse({
+    required bool ok,
+    required List<User> users,
+  }) = _$GetUsersResponseImpl;
+
+  bool get ok;
+  List<User> get users;
 
   /// Converts [GetUsersResponse] to a [Map] json
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'ok': ok,
-      'users': <dynamic>[
-        for (final User i0 in users) i0.toJson(),
-      ],
-    };
-  }
+  Map<String, dynamic> toJson();
 }
