@@ -19,13 +19,13 @@ class DeclarationFinder {
   final String _projectDirectoryPath;
   final ParsedFilesRegistry _parsedFilesRegistry;
 
-  Future<NamedCompilationUnitMember?> findClassDeclarationByName(
+  Future<NamedCompilationUnitMember?> findClassOrEnumDeclarationByName(
     String name, {
     required DependencyGraph dependencyGraph,
     required CompilationUnit compilationUnit,
     required String targetFilePath,
   }) async {
-    return await _findClassDeclarationByName(
+    return await _findClassOrEnumDeclarationByName(
       name,
       dependencyGraph: dependencyGraph,
       compilationUnit: compilationUnit,
@@ -34,7 +34,7 @@ class DeclarationFinder {
     );
   }
 
-  Future<NamedCompilationUnitMember?> _findClassDeclarationByName(
+  Future<NamedCompilationUnitMember?> _findClassOrEnumDeclarationByName(
     String name, {
     required DependencyGraph dependencyGraph,
     required CompilationUnit compilationUnit,
@@ -43,7 +43,7 @@ class DeclarationFinder {
     bool searchExports = false,
   }) async {
     NamedCompilationUnitMember? classDeclaration =
-        _findClassDeclartion(name: name, unit: compilationUnit);
+        _findClassDeclaration(name: name, unit: compilationUnit);
 
     if (classDeclaration != null) {
       return classDeclaration;
@@ -94,7 +94,7 @@ class DeclarationFinder {
     }
 
     for (final CompilationUnit unit in compilationUnits) {
-      classDeclaration = _findClassDeclartion(
+      classDeclaration = _findClassDeclaration(
         name: name,
         unit: unit,
       );
@@ -107,12 +107,15 @@ class DeclarationFinder {
     return null;
   }
 
-  NamedCompilationUnitMember? _findClassDeclartion({
+  NamedCompilationUnitMember? _findClassDeclaration({
     required String name,
     required CompilationUnit unit,
   }) {
     for (final CompilationUnitMember member in unit.declarations) {
-      if (member is NamedCompilationUnitMember && member.name.lexeme == name) {
+      if (member is ClassDeclaration && member.name.lexeme == name) {
+        return member;
+      }
+      if (member is EnumDeclaration && member.name.lexeme == name) {
         return member;
       }
     }

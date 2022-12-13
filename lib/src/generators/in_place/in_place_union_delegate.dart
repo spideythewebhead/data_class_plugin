@@ -40,8 +40,8 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
       classElement.metadata.unionAnnotation!.computeConstantValue(),
     );
 
-    final RedirectedConstructorVisitor redirectedConstructorsVisitor =
-        RedirectedConstructorVisitor(result: <String, RedirectedConstructor>{});
+    final RedirectedConstructorsVisitor redirectedConstructorsVisitor =
+        RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
     classNode.visitChildren(redirectedConstructorsVisitor);
 
     await changeBuilder.addDartFileEdit(
@@ -351,7 +351,8 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
       if (sharedFields.any((VariableElement field) => field.name == param.name)) {
         builder.writeln('@override');
       }
-      builder.writeln('final ${param.type.typeStringValue()} ${param.name};');
+      builder.writeln(
+          'final ${param.type.typeStringValue(enclosingImports: classElement.library.libraryImports)} ${param.name};');
     }
 
     if (unionInternalAnnotation.fromJson ??
@@ -386,6 +387,7 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         final String jsonFieldName = "json['${jsonKey.name ?? param.name}']";
 
         FromJsonGenerator(
+          libraryImports: classElement.library.libraryImports,
           checkIfShouldUseFromJson: (DartType type) => false,
         ).run(
           nextType: param.type,
@@ -430,6 +432,7 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         }
 
         ToJsonGenerator(
+          libraryImports: classElement.library.libraryImports,
           checkIfShouldUseToJson: (DartType dartType) => false,
         ).run(
           nextType: param.type,

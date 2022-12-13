@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:io' as io show File;
 
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/file_system/file_system.dart';
 import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
@@ -47,5 +48,16 @@ extension CompleterX<T> on Completer<T> {
     if (!isCompleted) {
       complete(value);
     }
+  }
+}
+
+extension ListClassMemberX on List<ClassMember> {
+  bool hasFactory(String factoryName) {
+    return null !=
+        firstWhereOrNull((ClassMember member) {
+          return member is ConstructorDeclaration &&
+              member.factoryKeyword != null &&
+              member.name?.lexeme == factoryName;
+        });
   }
 }

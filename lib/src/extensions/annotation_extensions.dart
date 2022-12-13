@@ -37,20 +37,18 @@ extension ClassDeclarationX on ClassDeclaration {
           return member is MethodDeclaration && member.name.lexeme == methodName;
         });
   }
-
-  bool hasFactory(String factoryName) {
-    return null !=
-        members.firstWhereOrNull((ClassMember member) {
-          return member is ConstructorDeclaration &&
-              member.factoryKeyword != null &&
-              member.name?.lexeme == factoryName;
-        });
-  }
 }
 
 extension EnumDeclarationX on EnumDeclaration {
   bool get hasEnumAnnotation => enumAnnotation != null;
   Annotation? get enumAnnotation => metadata.getAnnotation(AnnotationType.enumeration);
+
+  bool hasMethod(String methodName) {
+    return null !=
+        members.firstWhereOrNull((ClassMember member) {
+          return member is MethodDeclaration && member.name.lexeme == methodName;
+        });
+  }
 }
 
 extension ElementAnnotationX on ElementAnnotation {

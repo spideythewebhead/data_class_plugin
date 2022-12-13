@@ -13,7 +13,7 @@ class ToJsonGenerator implements Generator {
     required CodeWriter codeWriter,
     required final List<MethodDeclaration> fields,
     required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
-    required ClassDeclarationFinder classDeclarationFinder,
+    required ClassOrEnumDeclarationFinder classDeclarationFinder,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
@@ -22,7 +22,7 @@ class ToJsonGenerator implements Generator {
   final CodeWriter _codeWriter;
   final List<MethodDeclaration> _fields;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
-  final ClassDeclarationFinder _classDeclarationFinder;
+  final ClassOrEnumDeclarationFinder _classDeclarationFinder;
 
   @override
   Future<void> execute() async {
@@ -127,7 +127,8 @@ class ToJsonGenerator implements Generator {
     final NamedCompilationUnitMember? typeDeclarationNode =
         await _classDeclarationFinder(dartType.name);
 
-    if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasMethod('toJson')) {
+    if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasMethod('toJson') ||
+        typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasMethod('toJson')) {
       _codeWriter.writeln('$parentVariableName.toJson(),');
       return;
     }

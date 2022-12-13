@@ -1,3 +1,5 @@
+generation_mode: in_place
+
 json:
   # default case for naming a json key
   key_name_convention: camel_case

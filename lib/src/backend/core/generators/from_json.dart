@@ -15,20 +15,20 @@ class FromJsonGenerator implements Generator {
     required String generatedClassName,
     required String classTypeParametersSource,
     required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
-    required ClassDeclarationFinder classDeclarationFinder,
+    required ClassOrEnumDeclarationFinder classDeclarationFinder,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _generatedClassName = generatedClassName,
         _classTypeParametersSource = classTypeParametersSource,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
-        _classDeclarationFinder = classDeclarationFinder;
+        _classOrEnumDeclarationFinder = classDeclarationFinder;
 
   final CodeWriter _codeWriter;
   final List<MethodDeclaration> _fields;
   final String _generatedClassName;
   final String _classTypeParametersSource;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
-  final ClassDeclarationFinder _classDeclarationFinder;
+  final ClassOrEnumDeclarationFinder _classOrEnumDeclarationFinder;
 
   @override
   Future<void> execute() async {
@@ -154,9 +154,12 @@ class FromJsonGenerator implements Generator {
     }
 
     final NamedCompilationUnitMember? typeDeclarationNode =
-        await _classDeclarationFinder(dartType.name);
+        await _classOrEnumDeclarationFinder(dartType.name);
 
-    if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasFactory('fromJson')) {
+    if (typeDeclarationNode is ClassDeclaration &&
+            typeDeclarationNode.members.hasFactory('fromJson') ||
+        typeDeclarationNode is EnumDeclaration &&
+            typeDeclarationNode.members.hasFactory('fromJson')) {
       _codeWriter.writeln('${dartType.name}.fromJson($parentVariableName),');
       return;
     }

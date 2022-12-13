@@ -335,6 +335,9 @@ To create a custom configuration you need to add a file named `data_class_plugin
 #### Configuration examples
 
 ```yaml
+
+generation_mode: in_place (default) | file
+
 json:
   # Default naming convention for json keys
   key_name_convention: camel_case (default) | snake_case | kebab_case | pascal_case

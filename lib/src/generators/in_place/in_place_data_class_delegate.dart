@@ -61,8 +61,9 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
           pluginOptions.dataClass.effectiveToString(relativeFilePath)) {
         void writerToString(DartEditBuilder builder) {
           ToStringAssistContributor.writeToString(
-            className:
-                classElement.thisType.typeStringValue().prefixGenericArgumentsWithDollarSign(),
+            className: classElement.thisType
+                .typeStringValue(enclosingImports: classElement.library.libraryImports)
+                .prefixGenericArgumentsWithDollarSign(),
             optimizedName: classElement.name,
             commentElementName: classElement.name,
             fields: fields,

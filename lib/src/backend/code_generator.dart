@@ -81,7 +81,7 @@ class CodeGenerator {
     }) async {
       for (final Directive directive in compilationUnit.directives) {
         String? directiveUri;
-        if (directive is ImportDirective) {
+        if (directive is NamespaceDirective) {
           directiveUri = directive.uri.stringValue;
         }
 
@@ -355,7 +355,7 @@ class CodeGenerator {
         generatedClassName: generatedClassName,
       );
 
-      if (classDeclaration.hasFactory('fromJson')) {
+      if (classDeclaration.members.hasFactory('fromJson')) {
         await FromJsonGenerator(
           codeWriter: codeWriter,
           fields: fields,
@@ -363,7 +363,7 @@ class CodeGenerator {
           classTypeParametersSource: classTypeParametersSource,
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: (String name) {
-            return _declarationFinder.findClassDeclarationByName(
+            return _declarationFinder.findClassOrEnumDeclarationByName(
               name,
               dependencyGraph: _dependencyGraph,
               compilationUnit: compilationUnit,
@@ -379,7 +379,7 @@ class CodeGenerator {
           fields: fields,
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: (String name) {
-            return _declarationFinder.findClassDeclarationByName(
+            return _declarationFinder.findClassOrEnumDeclarationByName(
               name,
               dependencyGraph: _dependencyGraph,
               compilationUnit: compilationUnit,
@@ -455,7 +455,7 @@ class CodeGenerator {
         generatedClassName: generatedClassName,
       );
 
-      if (classDeclaration.hasFactory('fromJson')) {
+      if (classDeclaration.members.hasFactory('fromJson')) {
         await FromJsonGenerator(
           codeWriter: codeWriter,
           fields: fields,
@@ -463,7 +463,7 @@ class CodeGenerator {
           classTypeParametersSource: classTypeParametersSource,
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: (String name) {
-            return _declarationFinder.findClassDeclarationByName(
+            return _declarationFinder.findClassOrEnumDeclarationByName(
               name,
               dependencyGraph: _dependencyGraph,
               compilationUnit: compilationUnit,
@@ -479,7 +479,7 @@ class CodeGenerator {
           fields: fields,
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: (String name) {
-            return _declarationFinder.findClassDeclarationByName(
+            return _declarationFinder.findClassOrEnumDeclarationByName(
               name,
               dependencyGraph: _dependencyGraph,
               compilationUnit: compilationUnit,
