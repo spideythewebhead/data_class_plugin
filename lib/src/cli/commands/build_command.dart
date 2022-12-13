@@ -3,10 +3,9 @@ import 'dart:io';
 
 import 'package:data_class_plugin/src/backend/code_generator.dart';
 import 'package:data_class_plugin/src/cli/commands/base_command.dart';
-import 'package:data_class_plugin/src/cli/commands/exceptions.dart';
 import 'package:data_class_plugin/src/cli/commands/extensions.dart';
 
-class BuildCommand extends BaseCommand with HasPubspecYamlMixin {
+class BuildCommand extends BaseCommand with FileGenerationCommandMixin {
   BuildCommand({
     required super.logger,
     required this.directory,
@@ -25,9 +24,7 @@ class BuildCommand extends BaseCommand with HasPubspecYamlMixin {
 
   @override
   Future<void> execute() async {
-    if (!hasPubspec()) {
-      throw const NoPubspecFound();
-    }
+    ensureHasPubspec();
 
     await _codeGenerator.indexProject();
     return await _codeGenerator.buildProject();

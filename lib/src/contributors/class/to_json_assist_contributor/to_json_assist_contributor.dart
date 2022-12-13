@@ -14,7 +14,7 @@ import 'package:data_class_plugin/src/contributors/class/utils.dart' as utils;
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:data_class_plugin/src/mixins.dart';
-import 'package:data_class_plugin/src/options/options.dart';
+import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
 class ToJsonAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin, RelativeFilePathMixin

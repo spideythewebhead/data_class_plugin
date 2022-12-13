@@ -4,9 +4,13 @@ part of 'parsed_file_data.dart';
 
 class _$ParsedFileDataImpl extends ParsedFileData {
   _$ParsedFileDataImpl({
+    required this.absolutePath,
     required this.compilationUnit,
     required this.lastModifiedAt,
   }) : super._();
+
+  @override
+  final String absolutePath;
 
   @override
   final CompilationUnit compilationUnit;
@@ -19,6 +23,7 @@ class _$ParsedFileDataImpl extends ParsedFileData {
     return identical(this, other) ||
         other is ParsedFileData &&
             runtimeType == other.runtimeType &&
+            absolutePath == other.absolutePath &&
             compilationUnit == other.compilationUnit &&
             lastModifiedAt == other.lastModifiedAt;
   }
@@ -27,6 +32,7 @@ class _$ParsedFileDataImpl extends ParsedFileData {
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
+      absolutePath,
       compilationUnit,
       lastModifiedAt,
     ]);
@@ -37,7 +43,7 @@ class _$ParsedFileDataImpl extends ParsedFileData {
     String value = 'ParsedFileData{<optimized out>}';
     assert(() {
       value =
-          'ParsedFileData@<$hexIdentity>{compilationUnit: $compilationUnit, lastModifiedAt: $lastModifiedAt}';
+          'ParsedFileData@<$hexIdentity>{absolutePath: $absolutePath, compilationUnit: $compilationUnit, lastModifiedAt: $lastModifiedAt}';
       return true;
     }());
     return value;

@@ -5,7 +5,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
-import 'package:data_class_plugin/src/options/options.dart';
+import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as path;
 

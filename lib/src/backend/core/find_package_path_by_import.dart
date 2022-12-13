@@ -10,19 +10,19 @@ part 'find_package_path_by_import.gen.dart';
 const String _dartPrefix = 'dart:';
 const String _packagePrefix = 'package:';
 
-Future<String?> findDartFileForImport({
+Future<String?> findDartFileFromUri({
   required String projectDirectoryPath,
   required String currentDirectoryPath,
-  required String importUri,
+  required String uri,
 }) async {
-  if (importUri.startsWith(_dartPrefix)) {
+  if (uri.startsWith(_dartPrefix)) {
     return null;
   }
 
-  if (!importUri.startsWith(_packagePrefix)) {
+  if (!uri.startsWith(_packagePrefix)) {
     return path.normalize(path.join(
       currentDirectoryPath,
-      importUri.toString(),
+      uri.toString(),
     ));
   }
 
@@ -43,7 +43,7 @@ Future<String?> findDartFileForImport({
       PackageInfo.fromJson(packageJson)
   ]);
 
-  final String packageName = importUri.substring(_packagePrefix.length, importUri.indexOf('/'));
+  final String packageName = uri.substring(_packagePrefix.length, uri.indexOf('/'));
   final PackageInfo? targetPackage =
       packages.firstWhereOrNull((PackageInfo package) => package.name == packageName);
 
@@ -54,7 +54,7 @@ Future<String?> findDartFileForImport({
   return Uri.parse(path.join(
     path.isRelative(targetPackage.rootUri.path) ? projectDirectoryPath : targetPackage.rootUri.path,
     targetPackage.packageUri.path,
-    importUri.substring(1 + importUri.indexOf('/')),
+    uri.substring(1 + uri.indexOf('/')),
   )).toString();
 }
 

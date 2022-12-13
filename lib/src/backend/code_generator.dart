@@ -85,38 +85,41 @@ class CodeGenerator {
           directiveUri = directive.uri.stringValue;
         }
 
-        if (directiveUri != null) {
-          final String? dartFilePath = await findDartFileForImport(
-            projectDirectoryPath: directory.path,
-            currentDirectoryPath: File(targetFilePath).parent.absolute.path,
-            importUri: directiveUri,
+        if (directiveUri == null) {
+          continue;
+        }
+
+        final String? dartFilePath = await findDartFileFromUri(
+          projectDirectoryPath: directory.path,
+          currentDirectoryPath: File(targetFilePath).parent.absolute.path,
+          uri: directiveUri,
+        );
+
+        if (dartFilePath == null || !File(dartFilePath).existsSync()) {
+          continue;
+        }
+
+        if (_filesRegistry.containsKey(dartFilePath)) {
+          _dependencyGraph.add(
+            targetFilePath,
+            dartFilePath,
+          );
+          continue;
+        }
+
+        if (path.isWithin(directory.path, dartFilePath)) {
+          _dependencyGraph.add(targetFilePath, dartFilePath);
+          _filesRegistry[dartFilePath] = ParsedFileData(
+            absolutePath: dartFilePath,
+            compilationUnit:
+                dartFilePath.parse(featureSet: FeatureSet.latestLanguageVersion()).unit,
+            lastModifiedAt: File(dartFilePath).lastModifiedSync(),
           );
 
-          if (dartFilePath == null || !File(dartFilePath).existsSync()) {
-            continue;
-          }
-
-          if (_filesRegistry.containsKey(dartFilePath)) {
-            _dependencyGraph.add(
-              targetFilePath,
-              dartFilePath,
-            );
-            continue;
-          }
-
-          if (path.isWithin(directory.path, dartFilePath)) {
-            _dependencyGraph.add(targetFilePath, dartFilePath);
-            _filesRegistry[dartFilePath] = ParsedFileData(
-              compilationUnit:
-                  dartFilePath.parse(featureSet: FeatureSet.latestLanguageVersion()).unit,
-              lastModifiedAt: File(dartFilePath).lastModifiedSync(),
-            );
-
-            await index(
-              targetFilePath: dartFilePath,
-              compilationUnit: _filesRegistry[dartFilePath]!.compilationUnit,
-            );
-          }
+          await index(
+            targetFilePath: dartFilePath,
+            compilationUnit: _filesRegistry[dartFilePath]!.compilationUnit,
+          );
         }
       }
     }
@@ -129,6 +132,7 @@ class CodeGenerator {
       }
 
       _filesRegistry[targetFilePath] = ParsedFileData(
+        absolutePath: targetFilePath,
         compilationUnit: targetFilePath.parse(featureSet: FeatureSet.latestLanguageVersion()).unit,
         lastModifiedAt: file.lastModifiedSync(),
       );
@@ -219,6 +223,7 @@ class CodeGenerator {
 
     if (compilationUnit == null) {
       _filesRegistry[targetFilePath] = ParsedFileData(
+        absolutePath: targetFilePath,
         compilationUnit: targetFilePath.parse(featureSet: FeatureSet.latestLanguageVersion()).unit,
         lastModifiedAt: await File(targetFilePath).lastModified(),
       );

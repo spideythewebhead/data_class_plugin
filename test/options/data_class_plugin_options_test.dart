@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:data_class_plugin/src/options/options.dart';
+
+import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:path/path.dart';
 import 'package:test/test.dart';
 

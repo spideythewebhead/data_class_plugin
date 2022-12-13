@@ -3,10 +3,9 @@ import 'dart:io';
 
 import 'package:data_class_plugin/src/backend/code_generator.dart';
 import 'package:data_class_plugin/src/cli/commands/base_command.dart';
-import 'package:data_class_plugin/src/cli/commands/exceptions.dart';
 import 'package:data_class_plugin/src/cli/commands/extensions.dart';
 
-class WatchCommand extends BaseCommand with HasPubspecYamlMixin {
+class WatchCommand extends BaseCommand with FileGenerationCommandMixin {
   WatchCommand({
     required super.logger,
     required this.directory,
@@ -25,9 +24,7 @@ class WatchCommand extends BaseCommand with HasPubspecYamlMixin {
 
   @override
   Future<void> execute() async {
-    if (!hasPubspec()) {
-      throw const NoPubspecFound();
-    }
+    ensureHasPubspec();
 
     ProcessSignal.sigterm.watch().listen((_) => _dispose());
     ProcessSignal.sigint.watch().listen((_) => _dispose());

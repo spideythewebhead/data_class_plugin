@@ -40,85 +40,148 @@ class DeclarationFinder {
     required CompilationUnit compilationUnit,
     required String targetFilePath,
     required String currentDirectoryPath,
-    bool searchExports = false,
   }) async {
-    NamedCompilationUnitMember? classDeclaration =
-        _findClassDeclaration(name: name, unit: compilationUnit);
+    NamedCompilationUnitMember? nodeDeclaration =
+        await _findClassOrEnumDeclaration(name: name, unit: compilationUnit);
 
-    if (classDeclaration != null) {
-      return classDeclaration;
+    if (nodeDeclaration != null) {
+      return nodeDeclaration;
     }
 
-    final List<CompilationUnit> compilationUnits = <CompilationUnit>[];
+    final List<ParsedFileData> parsedFiles = <ParsedFileData>[];
 
     for (final Directive directive in compilationUnit.directives) {
       String? directiveUri;
-      if (searchExports) {
-        directiveUri = directive is ExportDirective ? directive.uri.stringValue : null;
-      } else if (directive is ImportDirective) {
+
+      if (directive is ImportDirective) {
         directiveUri = directive.uri.stringValue;
       }
-      if (directiveUri != null) {
-        final String? dartFilePath = await findDartFileForImport(
-          projectDirectoryPath: _projectDirectoryPath,
-          currentDirectoryPath: currentDirectoryPath,
-          importUri: directiveUri,
-        );
 
-        if (dartFilePath == null || !path.isWithin(_projectDirectoryPath, dartFilePath)) {
-          continue;
-        }
-
-        final File dartFile = File(dartFilePath);
-        if (!await dartFile.exists()) {
-          continue;
-        }
-
-        final DateTime lastModifiedAt = await dartFile.lastModified();
-
-        if (!dependencyGraph.hasDependency(targetFilePath, dartFilePath)) {
-          dependencyGraph.add(targetFilePath, dartFilePath);
-        }
-
-        if (!_parsedFilesRegistry.containsKey(dartFilePath) ||
-            lastModifiedAt.isAfter(_parsedFilesRegistry[dartFilePath]!.lastModifiedAt)) {
-          _parsedFilesRegistry[dartFilePath] = ParsedFileData(
-            compilationUnit:
-                dartFilePath.parse(featureSet: FeatureSet.latestLanguageVersion()).unit,
-            lastModifiedAt: lastModifiedAt,
-          );
-        }
-
-        compilationUnits.add(_parsedFilesRegistry[dartFilePath]!.compilationUnit);
+      if (directiveUri == null) {
+        continue;
       }
-    }
 
-    for (final CompilationUnit unit in compilationUnits) {
-      classDeclaration = _findClassDeclaration(
-        name: name,
-        unit: unit,
+      final String? dartFilePath = await findDartFileFromUri(
+        projectDirectoryPath: _projectDirectoryPath,
+        currentDirectoryPath: currentDirectoryPath,
+        uri: directiveUri,
       );
 
-      if (classDeclaration != null) {
-        return classDeclaration;
+      if (dartFilePath == null || !path.isWithin(_projectDirectoryPath, dartFilePath)) {
+        continue;
+      }
+
+      final File dartFile = File(dartFilePath);
+      if (!await dartFile.exists()) {
+        continue;
+      }
+
+      final DateTime lastModifiedAt = await dartFile.lastModified();
+
+      if (!dependencyGraph.hasDependency(targetFilePath, dartFilePath)) {
+        dependencyGraph.add(targetFilePath, dartFilePath);
+      }
+
+      if (!_parsedFilesRegistry.containsKey(dartFilePath) ||
+          lastModifiedAt.isAfter(_parsedFilesRegistry[dartFilePath]!.lastModifiedAt)) {
+        _parsedFilesRegistry[dartFilePath] = ParsedFileData(
+          absolutePath: dartFilePath,
+          compilationUnit: dartFilePath.parse(featureSet: FeatureSet.latestLanguageVersion()).unit,
+          lastModifiedAt: lastModifiedAt,
+        );
+      }
+
+      parsedFiles.add(_parsedFilesRegistry[dartFilePath]!);
+    }
+
+    for (final ParsedFileData parsedFileData in parsedFiles) {
+      nodeDeclaration = await _findClassOrEnumDeclaration(
+        name: name,
+        unit: parsedFileData.compilationUnit,
+      );
+
+      if (nodeDeclaration != null) {
+        break;
+      }
+
+      nodeDeclaration = await _recursivelyExploreExports(
+        name,
+        currentDirectoryPath: File(parsedFileData.absolutePath).parent.absolute.path,
+        compilationUnit: parsedFileData.compilationUnit,
+      );
+
+      if (nodeDeclaration != null) {
+        break;
       }
     }
 
-    return null;
+    return nodeDeclaration;
   }
 
-  NamedCompilationUnitMember? _findClassDeclaration({
+  Future<NamedCompilationUnitMember?> _recursivelyExploreExports(
+    String name, {
+    required String currentDirectoryPath,
+    required CompilationUnit compilationUnit,
+  }) async {
+    NamedCompilationUnitMember? nodeDeclaration;
+
+    for (final Directive directive in compilationUnit.directives) {
+      if (directive is ExportDirective) {
+        final String? exportDartFilePath = await findDartFileFromUri(
+          projectDirectoryPath: _projectDirectoryPath,
+          currentDirectoryPath: currentDirectoryPath,
+          uri: directive.uri.stringValue!,
+        );
+
+        if (exportDartFilePath == null) {
+          continue;
+        }
+
+        final ParsedFileData parsedFileData = _parsedFilesRegistry[exportDartFilePath]!;
+
+        nodeDeclaration =
+            await _findClassOrEnumDeclaration(name: name, unit: parsedFileData.compilationUnit);
+
+        if (nodeDeclaration != null) {
+          break;
+        }
+
+        nodeDeclaration = await _recursivelyExploreExports(
+          name,
+          currentDirectoryPath: File(exportDartFilePath).parent.absolute.path,
+          compilationUnit: parsedFileData.compilationUnit,
+        );
+
+        if (nodeDeclaration != null) {
+          break;
+        }
+      }
+    }
+
+    return nodeDeclaration;
+  }
+
+  Future<NamedCompilationUnitMember?> _findClassOrEnumDeclaration({
     required String name,
     required CompilationUnit unit,
-  }) {
+  }) async {
     for (final CompilationUnitMember member in unit.declarations) {
       if (member is ClassDeclaration && member.name.lexeme == name) {
         return member;
       }
+
       if (member is EnumDeclaration && member.name.lexeme == name) {
         return member;
       }
+
+      //     if (member is ExportDirective) {
+      // final NamedCompilationUnitMember? declaration = await _findClassOrEnumDeclaration(
+      //   name:name,
+
+      // );
+      // }
     }
+
     return null;
   }
 }

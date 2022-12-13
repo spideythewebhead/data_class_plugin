@@ -9,10 +9,12 @@ abstract class ParsedFileData {
 
   /// Default constructor
   factory ParsedFileData({
+    required String absolutePath,
     required CompilationUnit compilationUnit,
     required DateTime lastModifiedAt,
   }) = _$ParsedFileDataImpl;
 
+  String get absolutePath;
   CompilationUnit get compilationUnit;
   DateTime get lastModifiedAt;
 

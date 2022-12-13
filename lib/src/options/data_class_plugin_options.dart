@@ -1,12 +1,10 @@
 import 'dart:io' as io show File;
 
 import 'package:data_class_plugin/data_class_plugin.dart';
-import 'package:data_class_plugin/src/options/data_class_options.dart';
-import 'package:data_class_plugin/src/options/enum_options.dart';
-import 'package:data_class_plugin/src/options/json_options.dart';
-import 'package:data_class_plugin/src/options/union_options.dart';
-// import 'package:data_class_plugin/src/options/options.dart';
+import 'package:data_class_plugin/src/options/options.dart';
 import 'package:yaml/yaml.dart';
+
+export 'options.dart';
 
 part 'data_class_plugin_options.gen.dart';
 
