@@ -1,19 +1,15 @@
 import 'package:analyzer/dart/analysis/analysis_context.dart' as analyzer;
 import 'package:analyzer/file_system/file_system.dart' as analyzer;
-import 'package:analyzer_plugin/channel/channel.dart';
 import 'package:analyzer_plugin/plugin/assist_mixin.dart';
 import 'package:analyzer_plugin/plugin/plugin.dart';
-import 'package:analyzer_plugin/protocol/protocol_generated.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
-import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 
 class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
   DataClassPlugin(
     final analyzer.ResourceProvider resourceProvider,
-    this._logger,
   ) : super(resourceProvider: resourceProvider);
 
   @override
@@ -29,15 +25,6 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
   @override
   String get version => '1.0.0';
 
-  final PluginLogger _logger;
-
-  @override
-  void start(PluginCommunicationChannel channel) {
-    super.start(channel);
-    _logger.channel = channel;
-    _logger.notification('Starting $displayName\n');
-  }
-
   @override
   Future<void> analyzeFile({
     required analyzer.AnalysisContext analysisContext,
@@ -46,37 +33,32 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
 
   @override
   List<AssistContributor> getAssistContributors(String path) {
-    try {
-      return <AssistContributor>[
-        // Class contributors
-        ShorthandConstructorAssistContributor(path),
-        DataClassAssistContributor(path),
+    return <AssistContributor>[
+      // Class contributors
+      ShorthandConstructorAssistContributor(path),
+      DataClassAssistContributor(path),
 
-        // Enum contributors
-        EnumAnnotationAssistContributor(path),
-        EnumConstructorAssistContributor(path),
-        EnumFromJsonAssistContributor(path),
-        EnumToJsonAssistContributor(path),
+      // Enum contributors
+      EnumAnnotationAssistContributor(path),
+      EnumConstructorAssistContributor(path),
+      EnumFromJsonAssistContributor(path),
+      EnumToJsonAssistContributor(path),
 
-        // Common contributors
-        ToStringAssistContributor(path),
-        UnionAssistContributor(path),
-      ];
-    } catch (e, st) {
-      _logger.exception(e, st);
-      return <AssistContributor>[];
-    }
+      // Common contributors
+      ToStringAssistContributor(path),
+      UnionAssistContributor(path),
+    ];
   }
 
-  @override
-  Future<PluginShutdownResult> handlePluginShutdown(PluginShutdownParams parameters) async {
-    _logger.notification('Shutting down $displayName');
-    await _logger.dispose();
-    return await super.handlePluginShutdown(parameters);
-  }
+  // @override
+  // Future<PluginShutdownResult> handlePluginShutdown(PluginShutdownParams parameters) async {
+  // _logger.notification('Shutting down $displayName');
+  // await _logger.dispose();
+  // return await super.handlePluginShutdown(parameters);
+  // }
 
-  @override
-  void onError(Object exception, StackTrace stackTrace) {
-    _logger.exception(exception, stackTrace);
-  }
+  // @override
+  // void onError(Object exception, StackTrace stackTrace) {
+  // _logger.exception(exception, stackTrace);
+  // }
 }

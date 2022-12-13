@@ -18,10 +18,10 @@ class User {
 )
 class UnionWithDefaultValues {
   const factory UnionWithDefaultValues.impl({
-    @UnionFieldValue<User>(User.none) User value,
-    @UnionFieldValue<String>('') String value2,
-    @UnionFieldValue<User>(User(username: '')) User value3,
-    @UnionFieldValue<int>(0) int value4,
-    @UnionFieldValue<bool>(true) bool value5,
+    @DefaultValue<User>(User.none) User value,
+    @DefaultValue<String>('') String value2,
+    @DefaultValue<User>(User(username: '')) User value3,
+    @DefaultValue<int>(0) int value4,
+    @DefaultValue<bool>(true) bool value5,
   }) = Impl;
 }

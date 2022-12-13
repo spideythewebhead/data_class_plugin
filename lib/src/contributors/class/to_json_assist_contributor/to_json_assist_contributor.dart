@@ -132,6 +132,7 @@ class ToJsonAssistContributor extends Object
       }
 
       ToJsonGenerator(
+        libraryImports: classElement.library.libraryImports,
         checkIfShouldUseToJson: (DartType type) {
           return type.element == classElement;
         },

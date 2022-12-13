@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:data_class_plugin/src/options/options.dart';
+
+import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:path/path.dart';
 import 'package:test/test.dart';
 
@@ -28,7 +29,6 @@ void main() {
       ));
 
       final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(optionsFile);
-      print(options.toString());
 
       expect(options, isNotNull);
       expect(options.dataClass, isNotNull);

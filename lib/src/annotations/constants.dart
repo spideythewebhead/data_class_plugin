@@ -10,20 +10,25 @@ enum AnnotationType {
     'https://github.com/spideythewebhead/data_class_plugin#union-annotation',
     'Implementors of this interface can create union types.',
   ),
+  unionJsonKeyValue(
+    'UnionJsonKeyValue',
+    'https://github.com/spideythewebhead/data_class_plugin',
+    'Annotates a constructor with the value to use for json convertion',
+  ),
   enumeration(
     'Enum',
     'https://github.com/spideythewebhead/data_class_plugin#enum-annotation',
     'Adding this annotation to an enum enables it to create common data class functionality.',
   ),
-  unionFieldValue(
-    'UnionFieldValue',
-    'https://github.com/spideythewebhead/data_class_plugin',
-    '',
-  ),
   jsonKey(
     'JsonKey',
     'https://github.com/spideythewebhead/data_class_plugin',
     'Adding the [JsonKey] annotation to a field makes it customizable when generating fromJson/toJson methods.',
+  ),
+  defaultValue(
+    'DefaultValue',
+    'https://github.com/spideythewebhead/data_class_plugin',
+    'Provide default for a Data Class field or Union factory parameter.',
   );
 
   const AnnotationType(

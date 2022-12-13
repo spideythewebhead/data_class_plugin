@@ -35,4 +35,11 @@ extension StringX on String {
   String dartFormat({int lineLength = 100}) {
     return DartFormatter(pageWidth: lineLength).format(this).normalizeWhitespaces();
   }
+
+  String wrapWithAngleBracketsIfNotEmpty() {
+    if (isEmpty) {
+      return this;
+    }
+    return '<$this>';
+  }
 }

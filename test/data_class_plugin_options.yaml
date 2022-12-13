@@ -1,0 +1,33 @@
+generation_mode: in_place
+
+json:
+  key_name_conventions:
+    camel_case:
+      - "test/contributors/annotations/**/*_camel_case.dart"
+    kebab_case:
+      - "test/contributors/annotations/**/*_kebab_case.dart"
+    pascal_case:
+      - "test/contributors/annotations/**/*_pascal_case.dart"
+    snake_case:
+      - "test/contributors/annotations/**/*_snake_case.dart"
+
+enum:
+  options_config:
+    from_json:
+      default: false
+    to_json:
+      default: false
+    to_string:
+      default: false
+
+union:
+  options_config:
+    data_class:
+      enabled:
+        - "test/contributors/annotations/union/test_files/*_from_options.dart"
+    from_json:
+      disabled:
+        - "test/contributors/annotations/union/test_files/*_from_options.dart"
+    to_json:
+      disabled:
+        - "test/contributors/annotations/union/test_files/*_from_options.dart"

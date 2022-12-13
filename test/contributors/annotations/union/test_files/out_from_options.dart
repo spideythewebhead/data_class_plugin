@@ -3,9 +3,9 @@ class UnionWithDefaultValues {
   const UnionWithDefaultValues._();
 
   const factory UnionWithDefaultValues.impl({
-    @UnionFieldValue<String>('') String value2,
-    @UnionFieldValue<int>(0) int value4,
-    @UnionFieldValue<bool>(true) bool value5,
+    @DefaultValue<String>('') String value2,
+    @DefaultValue<int>(0) int value4,
+    @DefaultValue<bool>(true) bool value5,
   }) = Impl;
 
   /// Executes one of the provided callbacks based on a type match
