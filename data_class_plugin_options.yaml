@@ -1,14 +1,15 @@
+generation_mode: file
+
+file_generation_paths:
+  - "lib/src/options/**"
+  - "lib/src/backend/**"
+
+generated_file_line_length: 100
+
 json:
   # key_name_conventions glob match takes precedence over key_name_convention
   key_name_conventions:
-    camel_case:
-      - "test/contributors/annotations/**/*camel_case.dart"
-    kebab_case:
-      - "test/contributors/annotations/**/*_kebab_case.dart"
-    pascal_case:
-      - "test/contributors/annotations/**/*_pascal_case.dart"
     snake_case:
-      - "test/contributors/annotations/**/*_snake_case.dart"
       - "lib/src/options/*.dart"
 
 data_class:
@@ -37,15 +38,3 @@ enum:
       default: false
     to_string:
       default: false
-
-union:
-  options_config:
-    data_class:
-      enabled:
-        - "test/contributors/annotations/union/test_files/*_from_options.dart"
-    from_json:
-      disabled:
-        - "test/contributors/annotations/union/test_files/*_from_options.dart"
-    to_json:
-      disabled:
-        - "test/contributors/annotations/union/test_files/*_from_options.dart"

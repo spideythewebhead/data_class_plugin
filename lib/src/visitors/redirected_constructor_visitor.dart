@@ -2,9 +2,9 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 
-class RedirectedConstructorVisitor extends RecursiveAstVisitor<void> {
+class RedirectedConstructorsVisitor extends RecursiveAstVisitor<void> {
   /// Shorthand constructor
-  RedirectedConstructorVisitor({
+  RedirectedConstructorsVisitor({
     required this.result,
   });
 

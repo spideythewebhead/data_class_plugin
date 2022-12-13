@@ -5,10 +5,12 @@ import 'package:data_class_plugin/src/extensions/extensions.dart';
 
 class ToJsonGenerator {
   ToJsonGenerator({
+    required this.libraryImports,
     this.checkIfShouldUseToJson,
   });
 
   final bool Function(DartType dartType)? checkIfShouldUseToJson;
+  final List<LibraryImportElement> libraryImports;
 
   void run({
     required final DartType? nextType,
@@ -121,7 +123,7 @@ class ToJsonGenerator {
 
     final String loopVariableName = 'i$depthIndex';
     builder.writeln('for (final '
-        '${type.typeArguments[0].typeStringValue()} '
+        '${type.typeArguments[0].typeStringValue(enclosingImports: libraryImports)} '
         '$loopVariableName in $parentVariableName'
         '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''})');
 
@@ -158,7 +160,7 @@ class ToJsonGenerator {
     final String loopVariableName = 'e$depthIndex';
     builder
       ..writeln('for (final '
-          'MapEntry<String, ${type.typeArguments[1].typeStringValue()}> '
+          'MapEntry<String, ${type.typeArguments[1].typeStringValue(enclosingImports: libraryImports)}> '
           '$loopVariableName in $parentVariableName'
           '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''}'
           '.entries)')

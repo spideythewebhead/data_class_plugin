@@ -101,6 +101,7 @@ class EnumToJsonAssistContributor extends Object
       return;
     }
 
-    builder.writeln('${fieldElement.type.typeStringValue()} toJson() => ${fieldElement.name};');
+    builder.writeln(
+        '${fieldElement.type.typeStringValue(enclosingImports: enumElement.library.libraryImports)} toJson() => ${fieldElement.name};');
   }
 }

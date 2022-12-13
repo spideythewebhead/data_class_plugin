@@ -22,6 +22,7 @@ typedef ToJsonConverter<T> = Object? Function(T value);
 @Target(<TargetKind>{
   TargetKind.field,
   TargetKind.parameter,
+  TargetKind.getter,
 })
 class JsonKey<T> {
   const JsonKey({

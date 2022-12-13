@@ -6,14 +6,19 @@ import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-import 'package:data_class_plugin/src/generators/in-place/in_place_data_class_delegate.dart';
+import 'package:data_class_plugin/src/generators/code_generation_delegate.dart';
+import 'package:data_class_plugin/src/generators/file_generation/file_generation_data_class_delegate.dart';
+import 'package:data_class_plugin/src/generators/in_place/in_place_data_class_delegate.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
 class DataClassAssistContributor extends Object
     with AssistContributorMixin, ClassAstVisitorMixin, RelativeFilePathMixin
     implements AssistContributor {
-  DataClassAssistContributor(this.targetFilePath);
+  DataClassAssistContributor(
+    this.targetFilePath, {
+    DataClassPluginOptions? pluginOptions,
+  }) : _pluginOptions = pluginOptions;
 
   @override
   final String targetFilePath;
@@ -26,6 +31,8 @@ class DataClassAssistContributor extends Object
 
   @override
   AnalysisSession get session => assistRequest.result.session;
+
+  final DataClassPluginOptions? _pluginOptions;
 
   @override
   Future<void> computeAssists(
@@ -50,16 +57,27 @@ class DataClassAssistContributor extends Object
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     final DataClassPluginOptions pluginOptions =
-        await session.analysisContext.contextRoot.root.getPluginOptions();
+        _pluginOptions ?? await session.analysisContext.contextRoot.root.getPluginOptions();
 
-    final InPlaceDataClassDelegate delegate = InPlaceDataClassDelegate(
-      relativeFilePath: relativeFilePath,
-      targetFilePath: targetFilePath,
-      classElement: classElement,
-      classNode: classNode,
-      pluginOptions: pluginOptions,
-      changeBuilder: changeBuilder,
-    );
+    final CodeGenerationDelegate delegate =
+        pluginOptions.generationMode == CodeGenerationMode.inPlace
+            ? InPlaceDataClassDelegate(
+                relativeFilePath: relativeFilePath,
+                targetFilePath: targetFilePath,
+                classElement: classElement,
+                classNode: classNode,
+                pluginOptions: pluginOptions,
+                changeBuilder: changeBuilder,
+              )
+            : FileGenerationDataClassDelegate(
+                relativeFilePath: relativeFilePath,
+                targetFilePath: targetFilePath,
+                changeBuilder: changeBuilder,
+                pluginOptions: pluginOptions,
+                classNode: classNode,
+                classElement: classElement,
+                compilationUnit: assistRequest.result.unit,
+              );
 
     await delegate.generate();
     addAssist(AvailableAssists.dataClass, changeBuilder);

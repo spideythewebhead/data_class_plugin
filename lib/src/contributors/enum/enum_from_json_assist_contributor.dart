@@ -107,7 +107,8 @@ class EnumFromJsonAssistContributor extends Object
     }
 
     builder
-      ..writeln('factory $enumName.fromJson(${fieldElement.type.typeStringValue()} json) {')
+      ..writeln(
+          'factory $enumName.fromJson(${fieldElement.type.typeStringValue(enclosingImports: enumElement.library.libraryImports)} json) {')
       ..writeln('return $enumName.values.firstWhere')
       ..writeln('(($enumName e) => e.${fieldElement.name} == json);')
       ..writeln('}');
