@@ -25,6 +25,7 @@ class BuildCommand extends BaseCommand with FileGenerationCommandMixin {
   @override
   Future<void> execute() async {
     ensureHasPubspec();
+    await ensureIsFileGenerationMode();
 
     await _codeGenerator.indexProject();
     return await _codeGenerator.buildProject();
