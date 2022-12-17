@@ -25,6 +25,7 @@ class WatchCommand extends BaseCommand with FileGenerationCommandMixin {
   @override
   Future<void> execute() async {
     ensureHasPubspec();
+    await ensureIsFileGenerationMode();
 
     ProcessSignal.sigterm.watch().listen((_) => _dispose());
     ProcessSignal.sigint.watch().listen((_) => _dispose());

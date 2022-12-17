@@ -49,4 +49,15 @@ class _$PackageInfoImpl extends PackageInfo {
       languageVersion: json['languageVersion'] as String,
     );
   }
+
+  @override
+  String toString() {
+    String toStringOutput = 'PackageInfo{<optimized out>}';
+    assert(() {
+      toStringOutput =
+          'PackageInfo@<$hexIdentity>{name: $name, rootUri: $rootUri, packageUri: $packageUri, languageVersion: $languageVersion}';
+      return true;
+    }());
+    return toStringOutput;
+  }
 }

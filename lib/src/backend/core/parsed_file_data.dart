@@ -17,16 +17,4 @@ abstract class ParsedFileData {
   String get absolutePath;
   CompilationUnit get compilationUnit;
   DateTime get lastModifiedAt;
-
-  /// Returns a hash code based on [this] properties
-  @override
-  int get hashCode;
-
-  /// Compares [this] with [other] on identity, class type, and properties
-  /// *with deep comparison on collections*
-  @override
-  bool operator ==(Object? other);
-
-  @override
-  String toString();
 }

@@ -67,7 +67,7 @@ class NoDartToolDirectoryFoundException implements Exception {
   hashAndEquals: false,
 )
 abstract class PackageNotInstalledException implements Exception {
-  const PackageNotInstalledException._();
+  PackageNotInstalledException._();
 
   /// Default constructor
   factory PackageNotInstalledException({
@@ -75,9 +75,6 @@ abstract class PackageNotInstalledException implements Exception {
   }) = _$PackageNotInstalledExceptionImpl;
 
   String get packageName;
-
-  @override
-  String toString();
 }
 
 @DataClass(
@@ -88,7 +85,7 @@ abstract class PackageNotInstalledException implements Exception {
   toJson: false,
 )
 abstract class PackageInfo {
-  const PackageInfo._();
+  PackageInfo._();
 
   /// Default constructor
   factory PackageInfo({
