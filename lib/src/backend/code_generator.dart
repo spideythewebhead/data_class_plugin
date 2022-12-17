@@ -298,9 +298,11 @@ class CodeGenerator {
 
     await _generateDataClasses(
       codeWriter: codeWriter,
+      pluginOptions: pluginOptions,
       compilationUnit: compilationUnit,
       classDeclarations: dataClasses,
       targetFilePath: targetFilePath,
+      targetFileRelativePath: relativeFilePath,
       jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
     );
 
@@ -350,9 +352,11 @@ class CodeGenerator {
 
   Future<void> _generateDataClasses({
     required CodeWriter codeWriter,
+    required DataClassPluginOptions pluginOptions,
     required CompilationUnit compilationUnit,
     required List<ClassDeclaration> classDeclarations,
     required String targetFilePath,
+    required String targetFileRelativePath,
     required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
   }) async {
     for (final ClassDeclaration classDeclaration in classDeclarations) {
@@ -386,6 +390,9 @@ class CodeGenerator {
             );
           })
           .toList(growable: false);
+
+      final AnnotationValueExtractor dataClassAnnotationValueExtractor =
+          AnnotationValueExtractor(classDeclaration.dataClassAnnotation);
 
       codeWriter.writeln(
           'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersSource {');
@@ -431,7 +438,8 @@ class CodeGenerator {
         ).execute();
       }
 
-      if (classDeclaration.hasMethod('copyWith')) {
+      if (dataClassAnnotationValueExtractor.getBool('copyWith') ??
+          pluginOptions.dataClass.effectiveCopyWith(targetFileRelativePath)) {
         createCopyWith(
           codeWriter: codeWriter,
           fields: fields,
@@ -439,7 +447,8 @@ class CodeGenerator {
         );
       }
 
-      if (classDeclaration.hasMethod('hashCode')) {
+      if (dataClassAnnotationValueExtractor.getBool('hashAndEquals') ??
+          pluginOptions.dataClass.effectiveHashAndEquals(targetFileRelativePath)) {
         HashAndEqualsGenerator(
           codeWriter: codeWriter,
           className: '$className$classTypeParametersSource',
@@ -447,7 +456,8 @@ class CodeGenerator {
         ).execute();
       }
 
-      if (classDeclaration.hasMethod('toString')) {
+      if (dataClassAnnotationValueExtractor.getBool('toString') ??
+          pluginOptions.dataClass.effectiveToString(targetFileRelativePath)) {
         createToString(
           codeWriter: codeWriter,
           className: className,
