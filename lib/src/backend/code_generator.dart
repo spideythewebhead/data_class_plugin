@@ -612,7 +612,7 @@ class CodeGenerator {
             codeWriter: codeWriter,
             className: '$generatedClassName$classTypeParametersSource',
             fields: fields,
-          );
+          ).execute();
         }
 
         if (unionAnnotationValueExtractor.getBool('\$toString') ??
