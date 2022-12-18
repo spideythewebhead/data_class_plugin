@@ -82,7 +82,7 @@ class ResponseUnauthorized extends Response {
 
   /// Creates an instance of [ResponseUnauthorized] from [json]
   factory ResponseUnauthorized.fromJson(Map<dynamic, dynamic> json) {
-    return ResponseUnauthorized();
+    return const ResponseUnauthorized();
   }
 }
 

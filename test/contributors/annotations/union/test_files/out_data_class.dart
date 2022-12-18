@@ -85,8 +85,9 @@ class AsyncResultData<T> extends AsyncResult<T> {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is AsyncResultData<T> && data == other.data;
+  bool operator ==(Object? other) {
+    return identical(this, other) ||
+        other is AsyncResultData<T> && runtimeType == other.runtimeType && data == other.data;
   }
 
   /// Returns a string with the properties of [AsyncResultData]
@@ -120,8 +121,9 @@ class AsyncResultLoading<T> extends AsyncResult<T> {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is AsyncResultLoading<T>;
+  bool operator ==(Object? other) {
+    return identical(this, other) ||
+        other is AsyncResultLoading<T> && runtimeType == other.runtimeType;
   }
 
   /// Returns a string with the properties of [AsyncResultLoading]
@@ -169,9 +171,12 @@ class AsyncResultError<T> extends AsyncResult<T> {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
+  bool operator ==(Object? other) {
     return identical(this, other) ||
-        other is AsyncResultError<T> && error == other.error && stackTrace == other.stackTrace;
+        other is AsyncResultError<T> &&
+            runtimeType == other.runtimeType &&
+            error == other.error &&
+            stackTrace == other.stackTrace;
   }
 
   /// Returns a string with the properties of [AsyncResultError]

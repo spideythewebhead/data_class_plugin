@@ -95,9 +95,13 @@ class UserNormal extends User {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
+  bool operator ==(Object? other) {
     return identical(this, other) ||
-        other is UserNormal && id == other.id && username == other.username && email == other.email;
+        other is UserNormal &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            username == other.username &&
+            email == other.email;
   }
 
   /// Returns a string with the properties of [UserNormal]
@@ -153,9 +157,13 @@ class UserAdmin extends User {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
+  bool operator ==(Object? other) {
     return identical(this, other) ||
-        other is UserAdmin && id == other.id && username == other.username && email == other.email;
+        other is UserAdmin &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            username == other.username &&
+            email == other.email;
   }
 
   /// Returns a string with the properties of [UserAdmin]

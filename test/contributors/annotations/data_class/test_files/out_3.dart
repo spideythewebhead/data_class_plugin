@@ -20,7 +20,7 @@ class HashAndEqualsTest {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is HashAndEqualsTest;
+  bool operator ==(Object? other) {
+    return identical(this, other) || other is HashAndEqualsTest && runtimeType == other.runtimeType;
   }
 }
