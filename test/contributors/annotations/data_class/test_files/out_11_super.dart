@@ -32,9 +32,12 @@ class AdminUser extends User {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
+  bool operator ==(Object? other) {
     return identical(this, other) ||
-        other is AdminUser && username == other.username && id == other.id;
+        other is AdminUser &&
+            runtimeType == other.runtimeType &&
+            username == other.username &&
+            id == other.id;
   }
 
   /// Creates a new instance of [AdminUser] with optional new values

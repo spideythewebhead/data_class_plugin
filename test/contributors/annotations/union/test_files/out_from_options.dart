@@ -70,9 +70,13 @@ class Impl extends UnionWithDefaultValues {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
+  bool operator ==(Object? other) {
     return identical(this, other) ||
-        other is Impl && value2 == other.value2 && value4 == other.value4 && value5 == other.value5;
+        other is Impl &&
+            runtimeType == other.runtimeType &&
+            value2 == other.value2 &&
+            value4 == other.value4 &&
+            value5 == other.value5;
   }
 
   /// Returns a string with the properties of [Impl]
