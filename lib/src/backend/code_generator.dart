@@ -591,15 +591,18 @@ class CodeGenerator {
           ).execute();
         }
 
-        if (unionAnnotationValueExtractor.getBool('dataClass') ??
-            pluginOptions.union.effectiveDataClass(targetFileRelativePath)) {
+        if (unionAnnotationValueExtractor.getBool('copyWith') ??
+            pluginOptions.union.effectiveCopyWith(targetFileRelativePath)) {
           CopyWithGenerator(
             codeWriter: codeWriter,
             fields: fields,
             generatedClassName: '$generatedClassName$classTypeParametersSource',
             shouldAnnotateWithOverride: false,
           ).execute();
+        }
 
+        if (unionAnnotationValueExtractor.getBool('hashAndEquals') ??
+            pluginOptions.union.effectiveHashAndEquals(targetFileRelativePath)) {
           HashGenerator(
             codeWriter: codeWriter,
             fields: fields,
@@ -610,7 +613,10 @@ class CodeGenerator {
             className: '$generatedClassName$classTypeParametersSource',
             fields: fields,
           );
+        }
 
+        if (unionAnnotationValueExtractor.getBool('\$toString') ??
+            pluginOptions.union.effectiveToString(targetFileRelativePath)) {
           ToStringGenerator(
             codeWriter: codeWriter,
             className: generatedClassName,

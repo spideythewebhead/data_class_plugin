@@ -1,7 +1,6 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
 @Union(
-  dataClass: true,
   fromJson: false,
   toJson: false,
 )

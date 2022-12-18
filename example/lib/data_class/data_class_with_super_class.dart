@@ -77,9 +77,10 @@ class Admin extends User {
   /// Compares [this] with [other] on identity, class type, and properties
   /// *with deep comparison on collections*
   @override
-  bool operator ==(Object other) {
+  bool operator ==(Object? other) {
     return identical(this, other) ||
         other is Admin &&
+            runtimeType == other.runtimeType &&
             deepEquality(permissions, other.permissions) &&
             username == other.username &&
             id == other.id &&
