@@ -4,27 +4,20 @@ import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
 import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
 import 'package:data_class_plugin/src/common/code_writer.dart';
 
-class HashAndEqualsGenerator implements Generator {
-  HashAndEqualsGenerator({
+class HashGenerator implements Generator {
+  HashGenerator({
     required CodeWriter codeWriter,
-    required String className,
     required List<DeclarationInfo> fields,
   })  : _codeWriter = codeWriter,
-        _className = className,
         _fields = fields;
 
   final CodeWriter _codeWriter;
-  final String _className;
   final List<DeclarationInfo> _fields;
 
   @override
   void execute() {
-    _writeEquals();
-    _writeHash();
-  }
-
-  void _writeHash() {
     _codeWriter
+      ..writeln()
       ..writeln('@override')
       ..writeln('int get hashCode {')
       ..writeln('return Object.hashAll(<Object?>[')
@@ -39,8 +32,23 @@ class HashAndEqualsGenerator implements Generator {
       ..writeln('}')
       ..writeln();
   }
+}
 
-  void _writeEquals() {
+class EqualsGenerator implements Generator {
+  EqualsGenerator({
+    required CodeWriter codeWriter,
+    required String className,
+    required List<DeclarationInfo> fields,
+  })  : _codeWriter = codeWriter,
+        _className = className,
+        _fields = fields;
+
+  final CodeWriter _codeWriter;
+  final String _className;
+  final List<DeclarationInfo> _fields;
+
+  @override
+  void execute() {
     _codeWriter
       ..writeln()
       ..writeln('@override')

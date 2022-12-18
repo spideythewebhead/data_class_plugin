@@ -1,39 +1,52 @@
 import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
+import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
 import 'package:data_class_plugin/src/common/code_writer.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 
-void createToString({
-  required final CodeWriter codeWriter,
-  required final String className,
-  required final List<DeclarationInfo> fields,
-}) {
-  codeWriter
-    ..writeln('@override')
-    ..writeln('String toString() {')
-    ..writeln("String toStringOutput = '$className{<optimized out>}';")
-    ..writeln('assert(() {')
-    ..write("toStringOutput = '$className@<\$hexIdentity>{");
+class ToStringGenerator implements Generator {
+  ToStringGenerator({
+    required CodeWriter codeWriter,
+    required List<DeclarationInfo> fields,
+    required String className,
+  })  : _codeWriter = codeWriter,
+        _className = className,
+        _fields = fields;
 
-  for (final DeclarationInfo field in fields) {
-    final String fieldName = field.name;
+  final CodeWriter _codeWriter;
+  final String _className;
+  final List<DeclarationInfo> _fields;
 
-    codeWriter.write('${fieldName.escapeDollarSign()}: \$');
+  @override
+  void execute() {
+    _codeWriter
+      ..writeln()
+      ..writeln('@override')
+      ..writeln('String toString() {')
+      ..writeln("String toStringOutput = '$_className{<optimized out>}';")
+      ..writeln('assert(() {')
+      ..write("toStringOutput = '$_className@<\$hexIdentity>{");
 
-    if (fieldName.contains('\$')) {
-      codeWriter.write('{$fieldName}');
-    } else {
-      codeWriter.write(fieldName);
+    for (final DeclarationInfo field in _fields) {
+      final String fieldName = field.name;
+
+      _codeWriter.write('${fieldName.escapeDollarSign()}: \$');
+
+      if (fieldName.contains('\$')) {
+        _codeWriter.write('{$fieldName}');
+      } else {
+        _codeWriter.write(fieldName);
+      }
+
+      if (field != _fields.last) {
+        _codeWriter.write(', ');
+      }
     }
 
-    if (field != fields.last) {
-      codeWriter.write(', ');
-    }
+    _codeWriter
+      ..writeln("}';")
+      ..writeln('return true;')
+      ..writeln('}());')
+      ..writeln('return toStringOutput;')
+      ..writeln('}');
   }
-
-  codeWriter
-    ..writeln("}';")
-    ..writeln('return true;')
-    ..writeln('}());')
-    ..writeln('return toStringOutput;')
-    ..writeln('}');
 }
