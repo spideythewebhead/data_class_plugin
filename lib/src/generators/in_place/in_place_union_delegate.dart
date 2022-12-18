@@ -5,12 +5,9 @@ import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/constants.dart';
-import 'package:data_class_plugin/src/annotations/json_key_internal.dart';
 import 'package:data_class_plugin/src/annotations/union_internal.dart';
-import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
-import 'package:data_class_plugin/src/contributors/class/from_json_assist_contributor/from_json_generator.dart';
-import 'package:data_class_plugin/src/contributors/class/to_json_assist_contributor/to_json_generator.dart';
-import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
+import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/contributors/generators/generators.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/generators/class_generation_delegate.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
@@ -289,6 +286,7 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
     required final UnionInternal unionInternalAnnotation,
     required final DataClassPluginOptions pluginOptions,
   }) {
+    final CodeWriter codeWriter = CodeWriter.dartEditBuilder(builder);
     // Contains default values of constructor parameters
     final Map<String, String> defaultValues = <String, String>{};
 
@@ -296,22 +294,22 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
       return field.getter != null && field.getter!.isGetter && field.getter!.isAbstract;
     }).toList(growable: false);
 
-    builder
+    codeWriter
       ..writeln('class $redirectedCtor extends ${classElement.thisType} {')
       ..writeln('const ${redirectedCtor.name}(');
 
     if (constructorElement.parameters.isNotEmpty) {
-      builder.write('{');
+      codeWriter.write('{');
 
       for (final ParameterElement param in constructorElement.parameters) {
         final ElementAnnotation? defaultValueAnnotation = param.metadata.firstWhereOrNull(
             (ElementAnnotation annotation) => annotation.isDefaultValueAnnotation);
 
         if (!param.type.isNullable && defaultValueAnnotation == null) {
-          builder.write('required ');
+          codeWriter.write('required ');
         }
 
-        builder.write('this.${param.name}');
+        codeWriter.write('this.${param.name}');
 
         if (defaultValueAnnotation != null) {
           // toSource will provide a value like "@DefaultValue<User>(User(username: 'test'))"
@@ -320,162 +318,103 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
               RegExp(r'\((.*)\)').firstMatch(defaultValueAnnotation.toSource())?.group(1)?.trim();
 
           if (extractedValue != null) {
-            builder.write(' = ');
+            codeWriter.write(' = ');
 
             // if the extractedValue contains a pair of parenthesis we assume
             // that this is an instance declaration so we prefix with const
             bool isConst = false;
             if (extractedValue.contains(RegExp(r'\(.*\)'))) {
-              builder.write('const ');
+              codeWriter.write('const ');
               isConst = true;
             }
-            builder.write(extractedValue);
+            codeWriter.write(extractedValue);
 
             defaultValues[param.name] = '${isConst ? 'const' : ''} $extractedValue';
           }
         }
 
-        builder.writeln(',');
+        codeWriter.writeln(',');
       }
 
-      builder.write('}');
+      codeWriter.write('}');
     }
 
-    builder
+    codeWriter
       ..writeln('): super._();')
       ..writeln();
 
     for (final ParameterElement param in constructorElement.parameters) {
       if (sharedFields.any((VariableElement field) => field.name == param.name)) {
-        builder.writeln('@override');
+        codeWriter.writeln('@override');
       }
-      builder.writeln(
+      codeWriter.writeln(
           'final ${param.type.typeStringValue(enclosingImports: classElement.library.libraryImports)} ${param.name};');
     }
 
     if (unionInternalAnnotation.fromJson ??
         pluginOptions.union.effectiveFromJson(relativeFilePath)) {
-      builder
-        ..writeln()
-        ..writeln('/// Creates an instance of [${redirectedCtor.name}] from [json]')
-        ..writeln('factory ${redirectedCtor.name}.fromJson(Map<dynamic, dynamic> json) {')
-        ..writeln('return $redirectedCtor(');
-
-      for (final ParameterElement param in constructorElement.parameters) {
-        final ElementAnnotation? jsonKeyAnnotation = param.metadata
-            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
-        final JsonKeyInternal jsonKey = JsonKeyInternal //
-            .fromDartObject(jsonKeyAnnotation?.computeConstantValue());
-
-        if (jsonKey.ignore) {
-          continue;
-        }
-
-        builder.write('${param.name}: ');
-
-        if (jsonKey.fromJson != null) {
-          builder
-            ..write(jsonKey.fromJson!.fullyQualifiedName(
-              enclosingImports: classElement.library.libraryImports,
-            ))
-            ..write('(json),');
-          continue;
-        }
-
-        final String jsonFieldName = "json['${jsonKey.name ?? param.name}']";
-
-        FromJsonGenerator(
-          libraryImports: classElement.library.libraryImports,
-          checkIfShouldUseFromJson: (DartType type) => false,
-        ).run(
-          nextType: param.type,
-          builder: builder,
-          depthIndex: 0,
-          parentVariableName: jsonFieldName,
-          defaultValue: defaultValues[param.name],
-        );
-      }
-
-      builder
-        ..writeln(');')
-        ..writeln('}');
+      FromJsonGenerator(
+        codeWriter: codeWriter,
+        className: '$redirectedCtor',
+        factoryClassName: redirectedCtor.name,
+        fields: constructorElement.parameters,
+        hasConstConstructor: constructorElement.isConst,
+        libraryImports: classElement.library.libraryImports,
+        targetFileRelativePath: relativeFilePath,
+        pluginOptions: pluginOptions,
+        checkIfShouldUseFromJson: (DartType type) {
+          return type.element == classElement;
+        },
+        getDefaultValueForField: (String fieldName) => defaultValues[fieldName],
+      ).execute();
     }
 
     if (unionInternalAnnotation.toJson ?? pluginOptions.union.effectiveToJson(relativeFilePath)) {
-      builder
-        ..writeln()
-        ..writeln('/// Converts [${redirectedCtor.name}] to a [Map] json')
-        ..writeln('@override')
-        ..writeln('Map<String, dynamic> toJson() {')
-        ..writeln('return <String, dynamic>{');
-
-      for (final ParameterElement param in constructorElement.parameters) {
-        final ElementAnnotation? jsonKeyAnnotation = param.metadata
-            .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
-        final JsonKeyInternal jsonKey = JsonKeyInternal //
-            .fromDartObject(jsonKeyAnnotation?.computeConstantValue());
-
-        if (jsonKey.ignore) {
-          continue;
-        }
-
-        builder.write("'${jsonKey.name ?? param.name}': ");
-
-        if (jsonKey.toJson != null) {
-          builder
-            ..write(jsonKey.toJson!
-                .fullyQualifiedName(enclosingImports: classElement.library.libraryImports))
-            ..write('(${param.name}),');
-          continue;
-        }
-
-        ToJsonGenerator(
-          libraryImports: classElement.library.libraryImports,
-          checkIfShouldUseToJson: (DartType dartType) => false,
-        ).run(
-          nextType: param.type,
-          builder: builder,
-          parentVariableName: param.name,
-          depthIndex: 0,
-        );
-      }
-
-      builder
-        ..writeln('};')
-        ..writeln('}');
+      ToJsonGenerator(
+        codeWriter: codeWriter,
+        className: redirectedCtor.name,
+        fields: constructorElement.parameters,
+        annotateWithOverride: true,
+        libraryImports: classElement.library.libraryImports,
+        targetFileRelativePath: relativeFilePath,
+        pluginOptions: pluginOptions,
+        checkIfShouldUseToJson: (DartType type) {
+          return type.element == classElement;
+        },
+      ).execute();
     }
 
     if (unionInternalAnnotation.dataClass ??
         pluginOptions.union.effectiveDataClass(relativeFilePath)) {
-      CopyWithAssistContributor.writeCopyWith(
+      CopyWithGenerator(
+        codeWriter: CodeWriter.dartEditBuilder(builder),
         className: '$redirectedCtor',
+        commentClassName: redirectedCtor.name,
         classElement: classElement,
+        fields: constructorElement.parameters,
+      ).execute();
+
+      HashGenerator(
+        codeWriter: codeWriter,
+        fields: constructorElement.parameters,
+      ).execute();
+
+      EqualsGenerator(
+        codeWriter: codeWriter,
+        className: '$redirectedCtor',
+        fields: constructorElement.parameters,
+      ).execute();
+
+      ToStringGenerator(
+        codeWriter: CodeWriter.dartEditBuilder(builder),
+        className: '$redirectedCtor'.prefixGenericArgumentsWithDollarSign(),
+        optimizedClassName: redirectedCtor.name,
         commentClassName: redirectedCtor.name,
         fields: constructorElement.parameters,
-        builder: builder,
-      );
-
-      HashAndEqualsAssistContributor.writeHashCode(
-        fields: constructorElement.parameters,
-        builder: builder,
-      );
-
-      HashAndEqualsAssistContributor.writeEquals(
-        className: '$redirectedCtor',
-        fields: constructorElement.parameters,
-        builder: builder,
-      );
-
-      ToStringAssistContributor.writeToString(
-        className: '$redirectedCtor'.prefixGenericArgumentsWithDollarSign(),
-        optimizedName: redirectedCtor.name,
-        commentElementName: redirectedCtor.name,
-        fields: constructorElement.parameters,
-        builder: builder,
-      );
+      ).execute();
     }
 
-    builder.writeln('}');
+    codeWriter.writeln('}');
   }
 
   void _writeWhenFunction({

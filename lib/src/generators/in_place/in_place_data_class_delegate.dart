@@ -1,9 +1,11 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
+import 'package:data_class_plugin/src/common/code_writer.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
-import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
+import 'package:data_class_plugin/src/contributors/generators/generators.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/generators/class_generation_delegate.dart';
 
@@ -60,15 +62,15 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
       if (dataClassAnnotation.$toString ??
           pluginOptions.dataClass.effectiveToString(relativeFilePath)) {
         void writerToString(DartEditBuilder builder) {
-          ToStringAssistContributor.writeToString(
+          ToStringGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
             className: classElement.thisType
                 .typeStringValue(enclosingImports: classElement.library.libraryImports)
                 .prefixGenericArgumentsWithDollarSign(),
-            optimizedName: classElement.name,
-            commentElementName: classElement.name,
+            optimizedClassName: classElement.name,
+            commentClassName: classElement.name,
             fields: fields,
-            builder: builder,
-          );
+          ).execute();
         }
 
         if (toStringSourceRange != null) {
@@ -89,18 +91,19 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
       if (dataClassAnnotation.hashAndEquals ??
           pluginOptions.dataClass.effectiveHashAndEquals(relativeFilePath)) {
         void writerHashCode(DartEditBuilder builder) {
-          HashAndEqualsAssistContributor.writeHashCode(
+          HashGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
             fields: fields,
-            builder: builder,
-          );
+          ).execute();
         }
 
         void writerEquals(DartEditBuilder builder) {
-          HashAndEqualsAssistContributor.writeEquals(
-            className: classElement.thisType.toString(),
+          EqualsGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
+            className: classElement.thisType
+                .typeStringValue(enclosingImports: classElement.library.libraryImports),
             fields: fields,
-            builder: builder,
-          );
+          ).execute();
         }
 
         if (hashCodeSourceRange != null) {
@@ -133,13 +136,14 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
       if (dataClassAnnotation.copyWith ??
           pluginOptions.dataClass.effectiveCopyWith(relativeFilePath)) {
         void writerCopyWith(DartEditBuilder builder) {
-          CopyWithAssistContributor.writeCopyWith(
-            className: classElement.thisType.toString(),
-            classElement: classElement,
+          CopyWithGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
+            className: classElement.thisType
+                .typeStringValue(enclosingImports: classElement.library.libraryImports),
             commentClassName: classElement.name,
+            classElement: classElement,
             fields: fields,
-            builder: builder,
-          );
+          ).execute();
         }
 
         if (copyWithSourceRange != null) {
@@ -156,12 +160,18 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
 
       if (dataClassAnnotation.toJson ?? pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
         void writerToJson(DartEditBuilder builder) {
-          ToJsonAssistContributor.writeToJson(
+          ToJsonGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
+            className: classElement.name,
+            fields: fields,
+            annotateWithOverride: false,
+            libraryImports: classElement.library.libraryImports,
             targetFileRelativePath: relativeFilePath,
             pluginOptions: pluginOptions,
-            classElement: classElement,
-            builder: builder,
-          );
+            checkIfShouldUseToJson: (DartType type) {
+              return type.element == classElement;
+            },
+          ).execute();
         }
 
         if (toJsonSourceRange != null) {
@@ -178,13 +188,28 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
 
       if (dataClassAnnotation.fromJson ??
           pluginOptions.dataClass.effectiveFromJson(relativeFilePath)) {
+        final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+
         void writerFromJson(DartEditBuilder builder) {
-          FromJsonAssistContributor.writeFromJson(
+          FromJsonGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
+            className: classElement.thisType
+                .typeStringValue(enclosingImports: classElement.library.libraryImports),
+            fields: fields,
+            factoryClassName: classElement.name,
+            hasConstConstructor: defaultConstructor?.isConst ?? false,
+            libraryImports: classElement.library.libraryImports,
             targetFileRelativePath: relativeFilePath,
             pluginOptions: pluginOptions,
-            classElement: classElement,
-            builder: builder,
-          );
+            checkIfShouldUseFromJson: (DartType type) {
+              return type.element == classElement;
+            },
+            getDefaultValueForField: (String fieldName) {
+              return defaultConstructor?.parameters
+                  .firstWhereOrNull((ParameterElement param) => param.name == fieldName)
+                  ?.defaultValueCode;
+            },
+          ).execute();
         }
 
         if (fromJsonSourceRange != null) {

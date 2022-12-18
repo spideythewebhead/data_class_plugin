@@ -7,9 +7,10 @@ import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/enum_internal.dart';
+import 'package:data_class_plugin/src/common/code_writer.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
-import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
+import 'package:data_class_plugin/src/contributors/generators/generators.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
@@ -91,15 +92,15 @@ class EnumAnnotationAssistContributor extends Object
 
       if (enumAnnotation.$toString ?? pluginOptions.$enum.effectiveToString(relativeFilePath)) {
         void writerToString(DartEditBuilder builder) {
-          ToStringAssistContributor.writeToString(
+          ToStringGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
             className: enumElement.thisType
                 .typeStringValue(enclosingImports: enumElement.library.libraryImports)
                 .prefixGenericArgumentsWithDollarSign(),
-            optimizedName: enumElement.name,
-            commentElementName: enumElement.name,
+            optimizedClassName: enumElement.name,
+            commentClassName: enumElement.name,
             fields: enumElement.dataClassFinalFields,
-            builder: builder,
-          );
+          ).execute();
         }
 
         if (toStringSourceRange != null) {

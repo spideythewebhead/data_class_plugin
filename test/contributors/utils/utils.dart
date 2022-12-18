@@ -56,10 +56,6 @@ class AssistCollectorTest extends AssistCollector {
 
 const List<Type> availableContributors = <Type>[
   ShorthandConstructorAssistContributor,
-  HashAndEqualsAssistContributor,
-  CopyWithAssistContributor,
-  ToJsonAssistContributor,
-  FromJsonAssistContributor,
   ToStringAssistContributor,
   DataClassAssistContributor,
   UnionAssistContributor,
@@ -101,7 +97,7 @@ Future<void> testContributorAssists({
     test('should have 8/${availableContributors.length} contributors', () {
       expect(contributors, isNotEmpty);
       expect(contributors.length, 8);
-      expect(contributors.length == availableContributors.length, false);
+      expect(contributors.length == availableContributors.length, true);
     });
 
     // Verify that all required contributors return assists

@@ -6,7 +6,9 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
+import 'package:data_class_plugin/src/common/code_writer.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
+import 'package:data_class_plugin/src/contributors/generators/to_string.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
@@ -76,18 +78,22 @@ class ToStringAssistContributor extends Object
       filePath,
       (DartFileEditBuilder fileEditBuilder) {
         void writerToString(DartEditBuilder builder) {
-          String elementName = element.name;
+          late final String elementName;
           if (element is EnumElement) {
-            elementName = '$elementName.\$name';
+            elementName = '${element.name}.\$name';
+          } else {
+            elementName = (element as ClassElement)
+                .thisType
+                .typeStringValue(enclosingImports: element.library.libraryImports);
           }
 
-          writeToString(
+          ToStringGenerator(
+            codeWriter: CodeWriter.dartEditBuilder(builder),
             className: elementName,
-            optimizedName: element.name,
-            commentElementName: element.name,
+            optimizedClassName: element.name,
+            commentClassName: element.name,
             fields: fields,
-            builder: builder,
-          );
+          ).execute();
         }
 
         if (toStringSourceRange != null) {
@@ -104,43 +110,5 @@ class ToStringAssistContributor extends Object
     );
 
     addAssist(AvailableAssists.toString2, changeBuilder);
-  }
-
-  static void writeToString({
-    required final String className,
-    required final String optimizedName,
-    required final List<VariableElement> fields,
-    required final DartEditBuilder builder,
-    final String? commentElementName,
-  }) {
-    builder
-      ..writeln()
-      ..writeln('/// Returns a string with the properties of [${commentElementName ?? className}]')
-      ..writeln('@override')
-      ..writeln('String toString() {')
-      ..writeln("String value = '$optimizedName{<optimized out>}';")
-      ..writeln('assert(() {')
-      ..write("value = '$className@<\$hexIdentity>{");
-
-    for (final VariableElement field in fields) {
-      builder.write('${field.name.escapeDollarSign()}: \$');
-
-      if (field.name.contains('\$')) {
-        builder.write('{${field.name}}');
-      } else {
-        builder.write(field.name);
-      }
-
-      if (field != fields.last) {
-        builder.write(', ');
-      }
-    }
-
-    builder
-      ..writeln("}';")
-      ..writeln('return true;')
-      ..writeln('}());')
-      ..writeln('return value;')
-      ..writeln('}');
   }
 }
