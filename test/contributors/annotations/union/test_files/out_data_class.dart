@@ -1,5 +1,4 @@
 @Union(
-  dataClass: true,
   fromJson: false,
   toJson: false,
 )
@@ -64,15 +63,6 @@ class AsyncResultData<T> extends AsyncResult<T> {
 
   final T data;
 
-  /// Creates a new instance of [AsyncResultData] with optional new values
-  AsyncResultData<T> copyWith({
-    final T? data,
-  }) {
-    return AsyncResultData<T>(
-      data: data ?? this.data,
-    );
-  }
-
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
@@ -104,11 +94,6 @@ class AsyncResultData<T> extends AsyncResult<T> {
 
 class AsyncResultLoading<T> extends AsyncResult<T> {
   const AsyncResultLoading() : super._();
-
-  /// Creates a new instance of [AsyncResultLoading] with optional new values
-  AsyncResultLoading<T> copyWith() {
-    return AsyncResultLoading<T>();
-  }
 
   /// Returns a hash code based on [this] properties
   @override
@@ -146,17 +131,6 @@ class AsyncResultError<T> extends AsyncResult<T> {
 
   final Object error;
   final StackTrace? stackTrace;
-
-  /// Creates a new instance of [AsyncResultError] with optional new values
-  AsyncResultError<T> copyWith({
-    final Object? error,
-    final StackTrace? stackTrace,
-  }) {
-    return AsyncResultError<T>(
-      error: error ?? this.error,
-      stackTrace: stackTrace ?? this.stackTrace,
-    );
-  }
 
   /// Returns a hash code based on [this] properties
   @override

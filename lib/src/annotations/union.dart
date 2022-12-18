@@ -18,17 +18,29 @@ import 'package:meta/meta_meta.dart';
 class Union {
   /// Shorthand constructor
   const Union({
-    this.dataClass,
+    this.copyWith,
+    this.hashAndEquals,
+    this.$toString,
     this.fromJson,
     this.toJson,
     this.unionJsonKey,
     this.unionFallbackJsonValue,
   });
 
-  /// Toggles code generation for toString, copyWith, equals and hashCode
+  /// Toggles code generation for copyWith
+  ///
+  /// Defaults to false
+  final bool? copyWith;
+
+  /// Toggles code generation for hash and equals
   ///
   /// Defaults to true
-  final bool? dataClass;
+  final bool? hashAndEquals;
+
+  /// Toggles code generation for toString
+  ///
+  /// Defaults to true
+  final bool? $toString;
 
   /// Toggles code generation for fromJson
   ///

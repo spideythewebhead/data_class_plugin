@@ -1,7 +1,9 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
 @Union(
-  dataClass: false,
+  copyWith: false,
+  hashAndEquals: false,
+  $toString: false,
   fromJson: true,
   toJson: false,
 )
@@ -91,7 +93,7 @@ class ResponseUnauthorized extends Response {
 
   /// Creates an instance of [ResponseUnauthorized] from [json]
   factory ResponseUnauthorized.fromJson(Map<dynamic, dynamic> json) {
-    return ResponseUnauthorized();
+    return const ResponseUnauthorized();
   }
 }
 

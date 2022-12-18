@@ -1,5 +1,7 @@
 @Union(
-  dataClass: true,
+  copyWith: true,
+  hashAndEquals: true,
+  $toString: true,
   fromJson: false,
   toJson: false,
 )

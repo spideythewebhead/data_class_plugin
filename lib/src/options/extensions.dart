@@ -41,10 +41,6 @@ extension OptionsGlobMatch on Map<String, OptionConfig> {
     return _effectiveValue('hash_and_equals', filePath, defaultValue);
   }
 
-  bool effectiveDataClass({required String filePath, required bool defaultValue}) {
-    return _effectiveValue('data_class', filePath, defaultValue);
-  }
-
   bool _effectiveValue(
     String method,
     String filePath,

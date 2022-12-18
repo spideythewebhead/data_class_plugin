@@ -12,7 +12,9 @@ class User {
 }
 
 @Union(
-  dataClass: false,
+  copyWith: false,
+  $toString: false,
+  hashAndEquals: false,
   fromJson: false,
   toJson: false,
 )
