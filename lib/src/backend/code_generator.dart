@@ -440,29 +440,34 @@ class CodeGenerator {
 
       if (dataClassAnnotationValueExtractor.getBool('copyWith') ??
           pluginOptions.dataClass.effectiveCopyWith(targetFileRelativePath)) {
-        createCopyWith(
+        CopyWithGenerator(
           codeWriter: codeWriter,
           fields: fields,
           generatedClassName: '$generatedClassName$classTypeParametersSource',
-        );
+        ).execute();
       }
 
       if (dataClassAnnotationValueExtractor.getBool('hashAndEquals') ??
           pluginOptions.dataClass.effectiveHashAndEquals(targetFileRelativePath)) {
-        HashAndEqualsGenerator(
+        EqualsGenerator(
           codeWriter: codeWriter,
           className: '$className$classTypeParametersSource',
+          fields: fields,
+        ).execute();
+
+        HashGenerator(
+          codeWriter: codeWriter,
           fields: fields,
         ).execute();
       }
 
       if (dataClassAnnotationValueExtractor.getBool('toString') ??
           pluginOptions.dataClass.effectiveToString(targetFileRelativePath)) {
-        createToString(
+        ToStringGenerator(
           codeWriter: codeWriter,
           className: className,
           fields: fields,
-        );
+        ).execute();
       }
 
       codeWriter.writeln('}');
@@ -588,24 +593,29 @@ class CodeGenerator {
 
         if (unionAnnotationValueExtractor.getBool('dataClass') ??
             pluginOptions.union.effectiveDataClass(targetFileRelativePath)) {
-          createCopyWith(
+          CopyWithGenerator(
             codeWriter: codeWriter,
             fields: fields,
             generatedClassName: '$generatedClassName$classTypeParametersSource',
             shouldAnnotateWithOverride: false,
-          );
+          ).execute();
 
-          HashAndEqualsGenerator(
+          HashGenerator(
             codeWriter: codeWriter,
-            className: '$generatedClassName$classTypeParametersSource',
             fields: fields,
           ).execute();
 
-          createToString(
+          EqualsGenerator(
+            codeWriter: codeWriter,
+            className: '$generatedClassName$classTypeParametersSource',
+            fields: fields,
+          );
+
+          ToStringGenerator(
             codeWriter: codeWriter,
             className: generatedClassName,
             fields: fields,
-          );
+          ).execute();
         }
 
         codeWriter.writeln('}');
