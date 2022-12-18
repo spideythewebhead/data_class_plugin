@@ -11,7 +11,9 @@ void main() {
 
     test('provides correct default values', () {
       expect(options.union, equals(const UnionOptions()));
-      expect(options.union.effectiveDataClass(''), equals(true));
+      expect(options.union.effectiveCopyWith(''), equals(false));
+      expect(options.union.effectiveHashAndEquals(''), equals(true));
+      expect(options.union.effectiveToString(''), equals(true));
       expect(options.union.effectiveFromJson(''), equals(false));
       expect(options.union.effectiveToJson(''), equals(false));
     });

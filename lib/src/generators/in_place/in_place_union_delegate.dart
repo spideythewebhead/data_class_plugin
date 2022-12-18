@@ -384,8 +384,8 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
       ).execute();
     }
 
-    if (unionInternalAnnotation.dataClass ??
-        pluginOptions.union.effectiveDataClass(relativeFilePath)) {
+    if (unionInternalAnnotation.copyWith ??
+        pluginOptions.union.effectiveCopyWith(relativeFilePath)) {
       CopyWithGenerator(
         codeWriter: CodeWriter.dartEditBuilder(builder),
         className: '$redirectedCtor',
@@ -393,7 +393,9 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         classElement: classElement,
         fields: constructorElement.parameters,
       ).execute();
-
+    }
+    if (unionInternalAnnotation.hashAndEquals ??
+        pluginOptions.union.effectiveHashAndEquals(relativeFilePath)) {
       HashGenerator(
         codeWriter: codeWriter,
         fields: constructorElement.parameters,
@@ -404,7 +406,10 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         className: '$redirectedCtor',
         fields: constructorElement.parameters,
       ).execute();
+    }
 
+    if (unionInternalAnnotation.$toString ??
+        pluginOptions.union.effectiveToString(relativeFilePath)) {
       ToStringGenerator(
         codeWriter: CodeWriter.dartEditBuilder(builder),
         className: '$redirectedCtor'.prefixGenericArgumentsWithDollarSign(),

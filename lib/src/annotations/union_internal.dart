@@ -2,18 +2,24 @@ import 'package:analyzer/dart/constant/value.dart';
 
 class UnionInternal {
   const UnionInternal({
-    required this.dataClass,
+    required this.copyWith,
+    required this.hashAndEquals,
+    required this.$toString,
     required this.fromJson,
     required this.toJson,
   });
 
-  final bool? dataClass;
+  final bool? copyWith;
+  final bool? hashAndEquals;
+  final bool? $toString;
   final bool? fromJson;
   final bool? toJson;
 
   factory UnionInternal.fromDartObject(DartObject? object) {
     return UnionInternal(
-      dataClass: object?.getField('dataClass')?.toBoolValue(),
+      copyWith: object?.getField('copyWith')?.toBoolValue(),
+      hashAndEquals: object?.getField('hashAndEquals')?.toBoolValue(),
+      $toString: object?.getField('\$toString')?.toBoolValue(),
       fromJson: object?.getField('fromJson')?.toBoolValue(),
       toJson: object?.getField('toJson')?.toBoolValue(),
     );

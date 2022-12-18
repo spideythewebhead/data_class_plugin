@@ -19,8 +19,14 @@ abstract class UnionOptions {
   @DefaultValue(<String, OptionConfig>{})
   Map<String, OptionConfig> get optionsConfig;
 
-  bool effectiveDataClass(String filePath) =>
-      optionsConfig.effectiveDataClass(filePath: filePath, defaultValue: true);
+  bool effectiveCopyWith(String filePath) =>
+      optionsConfig.effectiveCopyWith(filePath: filePath, defaultValue: false);
+
+  bool effectiveHashAndEquals(String filePath) =>
+      optionsConfig.effectiveHashAndEquals(filePath: filePath, defaultValue: true);
+
+  bool effectiveToString(String filePath) =>
+      optionsConfig.effectiveToString(filePath: filePath, defaultValue: true);
 
   bool effectiveFromJson(String filePath) =>
       optionsConfig.effectiveFromJson(filePath: filePath, defaultValue: false);

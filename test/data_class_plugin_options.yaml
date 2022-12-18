@@ -22,9 +22,15 @@ enum:
 
 union:
   options_config:
-    data_class:
+    copy_with:
       enabled:
         - "test/contributors/annotations/union/test_files/*_from_options.dart"
+    to_string:
+      enabled:
+        - "test/contributors/annotations/union/test_files/*_from_options.dart"
+    hash_and_equals:
+      enabled:
+          - "test/contributors/annotations/union/test_files/*_from_options.dart"
     from_json:
       disabled:
         - "test/contributors/annotations/union/test_files/*_from_options.dart"

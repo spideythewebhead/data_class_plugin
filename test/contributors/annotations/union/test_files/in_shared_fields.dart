@@ -1,7 +1,9 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
 @Union(
-  dataClass: true,
+  copyWith: true,
+  hashAndEquals: true,
+  $toString: true,
   fromJson: false,
   toJson: false,
 )
