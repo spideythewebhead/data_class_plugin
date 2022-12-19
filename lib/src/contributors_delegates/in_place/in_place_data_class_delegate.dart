@@ -143,6 +143,9 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
             commentClassName: classElement.name,
             classElement: classElement,
             fields: fields,
+            annotateWithOverride: classElement.supertype?.classElement?.methods
+                    .any((MethodElement m) => m.name == 'copyWith') ??
+                false,
           ).execute();
         }
 

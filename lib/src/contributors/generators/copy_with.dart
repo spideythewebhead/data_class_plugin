@@ -10,17 +10,20 @@ class CopyWithGenerator implements Generator {
     required String commentClassName,
     required ClassElement classElement,
     required List<VariableElement> fields,
+    required bool annotateWithOverride,
   })  : _codeWriter = codeWriter,
         _className = className,
         _commentClassName = commentClassName,
         _classElement = classElement,
-        _fields = fields;
+        _fields = fields,
+        _annotateWithOverride = annotateWithOverride;
 
   final CodeWriter _codeWriter;
   final String _className;
   final String _commentClassName;
   final ClassElement _classElement;
   final List<VariableElement> _fields;
+  final bool _annotateWithOverride;
 
   @override
   void execute() {
@@ -29,8 +32,13 @@ class CopyWithGenerator implements Generator {
 
     _codeWriter
       ..writeln()
-      ..writeln('/// Creates a new instance of [$_commentClassName] with optional new values')
-      ..writeln('$_className copyWith(');
+      ..writeln('/// Creates a new instance of [$_commentClassName] with optional new values');
+
+    if (_annotateWithOverride) {
+      _codeWriter.writeln('@override');
+    }
+
+    _codeWriter.writeln('$_className copyWith(');
 
     if (_fields.isNotEmpty) {
       _codeWriter.write('{');
