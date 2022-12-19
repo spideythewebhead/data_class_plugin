@@ -1,3 +1,9 @@
+## 0.0.6
+
+- Introduce new code generation mode: "file" (like build runner). See [README](README.md#new-mode-file-generation)
+- Add CLI command [(issue #156)](https://github.com/spideythewebhead/data_class_plugin/issues/156)
+- Code cleanup
+
 ## 0.0.5
 
 - General
