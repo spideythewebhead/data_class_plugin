@@ -4,8 +4,8 @@ import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
 import 'package:data_class_plugin/src/common/utils.dart';
+import 'package:data_class_plugin/src/contributors_delegates/class_generation_delegate.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-import 'package:data_class_plugin/src/generators/class_generation_delegate.dart';
 
 class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
   FileGenerationDataClassDelegate({

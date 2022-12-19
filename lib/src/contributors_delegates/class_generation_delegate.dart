@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
-import 'package:data_class_plugin/src/generators/code_generation_delegate.dart';
+import 'package:data_class_plugin/src/contributors_delegates/code_generation_delegate.dart';
 
 abstract class ClassGenerationDelegate extends CodeGenerationDelegate {
   ClassGenerationDelegate({
