@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:data_class_plugin/src/cli/commands/analyze/analyze_command.dart';
 import 'package:data_class_plugin/src/cli/commands/base_command.dart';
 import 'package:data_class_plugin/src/cli/commands/generate/generate_command.dart';
-import 'package:data_class_plugin/src/cli/commands/install/install_command.dart';
 import 'package:data_class_plugin/src/tools/logger/ansi.dart';
 import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 
@@ -21,8 +19,8 @@ class CliRunner extends CommandRunner<void> {
     logger.writeln();
 
     <BaseCommand>[
-      InstallCommand(logger: logger),
-      AnalyzeCommand(logger: logger),
+      // InstallCommand(logger: logger),
+      // AnalyzeCommand(logger: logger),
       GenerateCommand(logger: logger),
     ].forEach(addCommand);
   }
