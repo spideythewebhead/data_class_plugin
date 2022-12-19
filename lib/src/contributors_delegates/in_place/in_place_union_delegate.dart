@@ -392,6 +392,7 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         commentClassName: redirectedCtor.name,
         classElement: classElement,
         fields: constructorElement.parameters,
+        annotateWithOverride: false,
       ).execute();
     }
     if (unionInternalAnnotation.hashAndEquals ??
