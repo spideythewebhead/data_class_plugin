@@ -1,5 +1,5 @@
 name: data_class_plugin
-version: 0.0.5
+version: 0.0.6
 description: A tool that uses Dart's Analyzer to generate code on-the-fly.
 
 homepage: https://github.com/spideythewebhead/dart_data_class_plugin
