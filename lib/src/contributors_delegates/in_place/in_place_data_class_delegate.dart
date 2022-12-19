@@ -6,8 +6,8 @@ import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
 import 'package:data_class_plugin/src/common/code_writer.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/generators/generators.dart';
+import 'package:data_class_plugin/src/contributors_delegates/class_generation_delegate.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-import 'package:data_class_plugin/src/generators/class_generation_delegate.dart';
 
 class InPlaceDataClassDelegate extends ClassGenerationDelegate {
   InPlaceDataClassDelegate({

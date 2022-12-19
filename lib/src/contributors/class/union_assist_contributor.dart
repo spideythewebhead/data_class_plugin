@@ -5,10 +5,10 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
+import 'package:data_class_plugin/src/contributors_delegates/code_generation_delegate.dart';
+import 'package:data_class_plugin/src/contributors_delegates/file_generation/file_generation_union_delegate.dart';
+import 'package:data_class_plugin/src/contributors_delegates/in_place/in_place_union_delegate.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-import 'package:data_class_plugin/src/generators/code_generation_delegate.dart';
-import 'package:data_class_plugin/src/generators/file_generation/file_generation_union_delegate.dart';
-import 'package:data_class_plugin/src/generators/in_place/in_place_union_delegate.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 
