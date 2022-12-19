@@ -14,11 +14,11 @@ class _$EnumOptionsImpl extends EnumOptions {
     return _$EnumOptionsImpl(
       optionsConfig: json['options_config'] == null
           ? const <String, OptionConfig>{}
-          : Map<String, OptionConfig>.unmodifiable(<String, OptionConfig>{
+          : <String, OptionConfig>{
               for (final MapEntry<dynamic, dynamic> e0
                   in (json['options_config'] as Map<dynamic, dynamic>).entries)
                 e0.key: OptionConfig.fromJson(e0.value),
-            }),
+            },
     );
   }
 }

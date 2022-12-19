@@ -23,14 +23,14 @@ class _$OptionConfigImpl extends OptionConfig {
       defaultValue: json['default'] == null ? null : json['default'] as bool,
       enabled: json['enabled'] == null
           ? const <String>[]
-          : List<String>.unmodifiable(<String>[
+          : <String>[
               for (final dynamic i0 in (json['enabled'] as List<dynamic>)) i0 as String,
-            ]),
+            ],
       disabled: json['disabled'] == null
           ? const <String>[]
-          : List<String>.unmodifiable(<String>[
+          : <String>[
               for (final dynamic i0 in (json['disabled'] as List<dynamic>)) i0 as String,
-            ]),
+            ],
     );
   }
 }

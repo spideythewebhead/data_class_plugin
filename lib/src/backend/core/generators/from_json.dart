@@ -177,7 +177,7 @@ class FromJsonGenerator implements Generator {
     required final int depthIndex,
   }) async {
     final String fullType = dartType.typeArguments[0].fullTypeName;
-    _codeWriter.write('List<$fullType>.unmodifiable(<$fullType>[');
+    _codeWriter.write('<$fullType>[');
 
     final String loopVariableName = 'i$depthIndex';
     _codeWriter
@@ -189,7 +189,7 @@ class FromJsonGenerator implements Generator {
       depthIndex: 1 + depthIndex,
     );
 
-    _codeWriter.writeln('])');
+    _codeWriter.writeln(']');
   }
 
   Future<void> _parseMap({
@@ -202,8 +202,7 @@ class FromJsonGenerator implements Generator {
     }
 
     final String secondArgumentFullType = dartType.typeArguments[1].fullTypeName;
-    _codeWriter.write(
-        'Map<String, $secondArgumentFullType>.unmodifiable(<String, $secondArgumentFullType>{');
+    _codeWriter.write('<String, $secondArgumentFullType>{');
 
     final String loopVariableName = 'e$depthIndex';
     _codeWriter
@@ -217,6 +216,6 @@ class FromJsonGenerator implements Generator {
       depthIndex: 1 + depthIndex,
     );
 
-    _codeWriter.writeln('})');
+    _codeWriter.writeln('}');
   }
 }
