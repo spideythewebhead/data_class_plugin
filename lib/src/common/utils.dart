@@ -43,7 +43,7 @@ void addPartDirective({
   bool shouldAddPart = true;
   for (final PartElement part in classElement.library.parts) {
     final DirectiveUri partUri = part.uri;
-    if (partUri is DirectiveUriWithUnit) {
+    if (partUri is DirectiveUriWithRelativeUri) {
       if (targetPartName == partUri.relativeUriString) {
         shouldAddPart = false;
         break;
