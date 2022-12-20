@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Bug fix multiple part directives being added [(issue #175)](https://github.com/spideythewebhead/data_class_plugin/issues/175)
+- Add example for file generation mode [(issue #177)](https://github.com/spideythewebhead/data_class_plugin/issues/177)
+
 ## 0.0.6
 
 - Introduce new code generation mode: "file" (like build runner). See [README](README.md#new-mode-file-generation)
