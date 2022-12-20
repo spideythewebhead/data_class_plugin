@@ -353,7 +353,8 @@ Run the code actions like described previously
 
 The actions will generate for you the constructor, methods and and the part directive.
 
-Save the file and you should be good to go
+Save the file and run the data_class_plugin CLI to generate
+`dart run data_class_plugin <build | watch>`
 
 ## Configuration
 

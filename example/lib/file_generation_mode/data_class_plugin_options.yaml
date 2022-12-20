@@ -1,0 +1,6 @@
+generation_mode: file
+
+file_generation_paths:
+  - "lib/**"
+
+generated_file_line_length: 100
