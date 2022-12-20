@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Bump data_class_plugin version in tools/analyzer_plugin
+
 ## 0.0.7
 
 - Bug fix multiple part directives being added [(issue #175)](https://github.com/spideythewebhead/data_class_plugin/issues/175)
