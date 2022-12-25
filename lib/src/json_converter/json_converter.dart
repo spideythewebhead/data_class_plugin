@@ -61,7 +61,7 @@ class JsonConverterRegistrant {
   JsonConverter<Object?, Object?> find<InType>(InType type) {
     final JsonConverter<Object?, Object?>? converter = _converters[type];
     if (converter == null) {
-      throw Exception('No json converter found for $InType');
+      throw Exception("No json converter found for type '$type'");
     }
     return converter;
   }
