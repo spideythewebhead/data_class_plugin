@@ -44,6 +44,15 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
     await changeBuilder.addDartFileEdit(
       targetFilePath,
       (DartFileEditBuilder fileEditBuilder) {
+        if (!classElement.isAbstract) {
+          fileEditBuilder.addInsertion(
+            classNode.classKeyword.offset,
+            (DartEditBuilder builder) {
+              builder.write('abstract ');
+            },
+          );
+        }
+
         _generateWhenFunction(
           classElement: classElement,
           classNode: classNode,
