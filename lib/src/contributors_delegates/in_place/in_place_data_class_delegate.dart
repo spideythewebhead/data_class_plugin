@@ -144,7 +144,7 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
             classElement: classElement,
             fields: fields,
             annotateWithOverride: classElement.supertype?.classElement?.methods
-                    .any((MethodElement m) => m.name == 'copyWith') ??
+                    .any((MethodElement method) => method.name == 'copyWith') ??
                 false,
           ).execute();
         }
@@ -167,7 +167,9 @@ class InPlaceDataClassDelegate extends ClassGenerationDelegate {
             codeWriter: CodeWriter.dartEditBuilder(builder),
             className: classElement.name,
             fields: fields,
-            annotateWithOverride: false,
+            annotateWithOverride: classElement.supertype?.classElement?.methods
+                    .any((MethodElement method) => method.name == 'toJson') ??
+                false,
             libraryImports: classElement.library.libraryImports,
             targetFileRelativePath: relativeFilePath,
             pluginOptions: pluginOptions,
