@@ -102,7 +102,8 @@ class AsyncResultError<T> extends AsyncResult<T> {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'error': jsonConverterRegistrant.find(Object).toJson(error),
-      'stackTrace': jsonConverterRegistrant.find(StackTrace).toJson(stackTrace),
+      'stackTrace':
+          stackTrace == null ? null : jsonConverterRegistrant.find(StackTrace).toJson(stackTrace),
     };
   }
 }

@@ -161,17 +161,22 @@ class ToJsonGenerator implements Generator {
         }
       });
 
+      final String accessOperator = type.isNullable ? '?.' : '.';
+
       if (convertMethod != null) {
-        _codeWriter.writeln('$parentVariableName.$convertMethod(),');
+        _codeWriter.writeln('$parentVariableName$accessOperator$convertMethod(),');
         return;
       }
 
       if (_checkIfShouldUseToJson?.call(type) ?? false) {
-        _codeWriter.writeln('$parentVariableName.toJson(),');
+        _codeWriter.writeln('$parentVariableName${accessOperator}toJson(),');
         return;
       }
     }
 
+    if (type.isNullable) {
+      _writeNullableParsingPrefix(parentVariableName: parentVariableName);
+    }
     _codeWriter.write('jsonConverterRegistrant.find($fieldType).toJson($parentVariableName),');
   }
 
