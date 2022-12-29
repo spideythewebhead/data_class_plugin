@@ -1,5 +1,5 @@
 @Union()
-class UnionWithDefaultValues {
+abstract class UnionWithDefaultValues {
   const UnionWithDefaultValues._();
 
   const factory UnionWithDefaultValues.impl({

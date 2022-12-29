@@ -7,7 +7,7 @@ import 'package:data_class_plugin/data_class_plugin.dart';
   fromJson: true,
   toJson: false,
 )
-class Response {
+abstract class Response {
   const Response._();
 
   /// Creates an instance of [Response] from [json]

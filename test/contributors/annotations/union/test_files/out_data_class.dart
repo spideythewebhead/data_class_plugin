@@ -2,7 +2,7 @@
   fromJson: false,
   toJson: false,
 )
-class AsyncResult<T> {
+abstract class AsyncResult<T> {
   const AsyncResult._();
 
   const factory AsyncResult.data({

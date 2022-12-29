@@ -4,7 +4,7 @@
   fromJson: true,
   toJson: false,
 )
-class Response {
+abstract class Response {
   const Response._();
 
   /// Creates an instance of [Response] from [json]
