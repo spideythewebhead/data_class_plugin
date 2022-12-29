@@ -310,12 +310,12 @@ enum Category {
 
 In this mode most of the code generation happens on a generated file.
 
-You still need to generate some of the boilerplate on the main source code via actions,
-but most of the code now is generated into a different file (like code build_runner).
+You still need to generate some boilerplate code on the main class via actions,
+but most of the code now is generated into a different file (like build_runner).
 
 The generated file has the format of `base_filename.gen.dart`
 
-To start with mode you need:
+To start with this mode you need to:
 
 1. Update data_class_plugin_options.yaml (See more options)
 
@@ -323,8 +323,8 @@ To start with mode you need:
 generation_mode: file (default in_place)
 
 # This option is **required** if **generation_mode** is "file"
-# Which path matches should generate files
-# If you update this option, you should re-run the genenator
+# Specify which path matches should generate files
+# If you update this option, you should re-run the generator
 # or if it's for a specific folder/file(s) you are working on, you can update this without restarting
 file_generation_paths:
   - "a/glob/here"
@@ -349,12 +349,12 @@ class User {
 }
 ```
 
-Run the code actions like described previously
+Run the code actions like described previously.
 
-The actions will generate for you the constructor, methods and and the part directive.
+The actions will generate for you the constructor, methods and the part directive.
 
 Save the file and run the data_class_plugin CLI to generate
-`dart run data_class_plugin <build | watch>`
+`dart run data_class_plugin generate <build | watch>`
 
 ## Configuration
 
