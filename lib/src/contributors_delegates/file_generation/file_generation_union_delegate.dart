@@ -35,6 +35,9 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
         RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
     classNode.visitChildren(redirectedConstructorsVisitor);
 
+    final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
+    final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
+
     await changeBuilder.addDartFileEdit(
       targetFilePath,
       (DartFileEditBuilder fileEditBuilder) {
@@ -65,8 +68,11 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
           _generateFromJsonFunction(
             classNode: classNode,
             classElement: classElement,
+            sourceRange: fromJsonSourceRange,
             fileEditBuilder: fileEditBuilder,
           );
+        } else if (fromJsonSourceRange != null) {
+          fileEditBuilder.addDeletion(fromJsonSourceRange);
         }
 
         if (unionInternalAnnotation.toJson ??
@@ -75,7 +81,10 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
             classNode: classNode,
             classElement: classElement,
             fileEditBuilder: fileEditBuilder,
+            sourceRange: toJsonSourceRange,
           );
+        } else if (toJsonSourceRange != null) {
+          fileEditBuilder.addDeletion(toJsonSourceRange);
         }
 
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
@@ -113,10 +122,9 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
   void _generateFromJsonFunction({
     required final ClassDeclaration classNode,
     required final ClassElement classElement,
+    required final SourceRange? sourceRange,
     required final DartFileEditBuilder fileEditBuilder,
   }) {
-    final SourceRange? sourceRange = classNode.members.fromJsonSourceRange;
-
     if (sourceRange != null) {
       fileEditBuilder.addReplacement(
         sourceRange,
@@ -135,10 +143,9 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
   void _generateToJsonFunction({
     required final ClassDeclaration classNode,
     required final ClassElement classElement,
+    required final SourceRange? sourceRange,
     required final DartFileEditBuilder fileEditBuilder,
   }) {
-    final SourceRange? sourceRange = classNode.members.toJsonSourceRange;
-
     void writerToJsonFunction(DartEditBuilder builder) {
       _writeToJsonFunction(
         classElement: classElement,
