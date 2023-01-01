@@ -57,6 +57,7 @@ class ToJsonGenerator implements Generator {
         dartType: dartType,
         depthIndex: 0,
         parentVariableName: fieldName,
+        requiresBangOperator: dartType.isNullable,
       );
     }
 
@@ -76,26 +77,25 @@ class ToJsonGenerator implements Generator {
     required final CustomDartType dartType,
     required final int depthIndex,
     required final String parentVariableName,
-    final String? defaultValue,
+    final bool requiresBangOperator = false,
   }) async {
     if (dartType.isList) {
-      if (dartType.isNullable || defaultValue != null) {}
       await _encodeList(
         dartType: dartType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
-        requiresBangOperator: depthIndex == 0,
+        requiresBangOperator: requiresBangOperator,
       );
       _codeWriter.writeln(',');
       return;
     }
 
     if (dartType.isMap) {
-      if (dartType.isNullable || defaultValue != null) {}
       await _encodeMap(
         dartType: dartType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
+        requiresBangOperator: requiresBangOperator,
       );
       _codeWriter.writeln(',');
       return;
@@ -105,10 +105,6 @@ class ToJsonGenerator implements Generator {
       dartType: dartType,
       parentVariableName: parentVariableName,
     );
-  }
-
-  String _getBangOperatorIfNullable(CustomDartType type) {
-    return type.isNullable ? '!' : '';
   }
 
   Future<void> _encodePrimary({
@@ -131,11 +127,16 @@ class ToJsonGenerator implements Generator {
 
     if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasMethod('toJson') ||
         typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasMethod('toJson')) {
-      _codeWriter.writeln('$parentVariableName.toJson(),');
+      final String accessOperator = dartType.isNullable ? '?.' : '.';
+      _codeWriter.writeln('$parentVariableName${accessOperator}toJson(),');
       return;
     }
 
     print('WARNING: No "toJson" method found for type ${dartType.name}');
+
+    if (dartType.isNullable) {
+      _writeNullableParsingPrefix(parentVariableName: parentVariableName);
+    }
 
     _codeWriter
         .writeln('jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),');
@@ -159,7 +160,7 @@ class ToJsonGenerator implements Generator {
     _codeWriter.writeln('for (final '
         '${dartType.typeArguments[0].fullTypeName} '
         '$loopVariableName in $parentVariableName'
-        '${requiresBangOperator ? _getBangOperatorIfNullable(dartType) : ''})');
+        '${requiresBangOperator ? '!' : ''})');
 
     await _encode(
       dartType: dartType.typeArguments[0],
@@ -174,23 +175,34 @@ class ToJsonGenerator implements Generator {
     required final CustomDartType dartType,
     required final String parentVariableName,
     required final int depthIndex,
+    required final bool requiresBangOperator,
   }) async {
-    if (!dartType.typeArguments[0].isString) {
+    if (!dartType.typeArguments[0].isPrimary) {
       return;
     }
 
-    _codeWriter.write('<String, ${dartType.typeArguments[1].fullTypeName}>{');
+    if (dartType.isNullable) {
+      _writeNullableParsingPrefix(
+        parentVariableName: parentVariableName,
+      );
+    }
+
+    _codeWriter.write('<String, dynamic>{');
 
     final String loopVariableName = 'e$depthIndex';
     _codeWriter
-      ..writeln(
-          'for (final MapEntry<dynamic, dynamic> $loopVariableName in ($parentVariableName as Map<dynamic, dynamic>).entries)')
+      ..writeln('for (final '
+          'MapEntry<String, ${dartType.typeArguments[1].fullTypeName}> '
+          '$loopVariableName in $parentVariableName'
+          '${requiresBangOperator ? '!' : ''}'
+          '.entries)')
       ..write('$loopVariableName.key: ');
 
     await _encode(
       dartType: dartType.typeArguments[1],
       parentVariableName: '$loopVariableName.value',
       depthIndex: 1 + depthIndex,
+      requiresBangOperator: dartType.typeArguments[1].isNullable,
     );
 
     _codeWriter.writeln('}');
