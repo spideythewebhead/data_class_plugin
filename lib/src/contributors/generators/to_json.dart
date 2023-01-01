@@ -80,6 +80,7 @@ class ToJsonGenerator implements Generator {
         nextType: field.type,
         parentVariableName: field.name,
         depthIndex: 0,
+        requiresBangOperator: field.type.isNullable,
       );
     }
 
@@ -92,6 +93,7 @@ class ToJsonGenerator implements Generator {
     required final DartType? nextType,
     required final int depthIndex,
     required final String parentVariableName,
+    final bool requiresBangOperator = false,
   }) {
     if (nextType == null) {
       return;
@@ -102,7 +104,7 @@ class ToJsonGenerator implements Generator {
         type: nextType as ParameterizedType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
-        requiresBangOperator: depthIndex == 0,
+        requiresBangOperator: requiresBangOperator,
       );
       _codeWriter.writeln(',');
       return;
@@ -113,7 +115,7 @@ class ToJsonGenerator implements Generator {
         type: nextType as ParameterizedType,
         parentVariableName: parentVariableName,
         depthIndex: depthIndex,
-        requiresBangOperator: depthIndex == 0,
+        requiresBangOperator: requiresBangOperator,
       );
       _codeWriter.writeln(',');
       return;
@@ -123,10 +125,6 @@ class ToJsonGenerator implements Generator {
       type: nextType,
       parentVariableName: parentVariableName,
     );
-  }
-
-  String _getBangOperatorIfNullable(DartType type) {
-    return type.isNullable ? '!' : '';
   }
 
   void _writeNullableParsingPrefix({
@@ -198,7 +196,7 @@ class ToJsonGenerator implements Generator {
     _codeWriter.writeln('for (final '
         '${type.typeArguments[0].typeStringValue(enclosingImports: _libraryImports)} '
         '$loopVariableName in $parentVariableName'
-        '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''})');
+        '${requiresBangOperator ? '!' : ''})');
 
     _encode(
       nextType: type.typeArguments.first,
@@ -232,7 +230,7 @@ class ToJsonGenerator implements Generator {
       ..writeln('for (final '
           'MapEntry<String, ${type.typeArguments[1].typeStringValue(enclosingImports: _libraryImports)}> '
           '$loopVariableName in $parentVariableName'
-          '${requiresBangOperator ? _getBangOperatorIfNullable(type) : ''}'
+          '${requiresBangOperator ? '!' : ''}'
           '.entries)')
       ..write('$loopVariableName.key: ');
 
@@ -240,6 +238,7 @@ class ToJsonGenerator implements Generator {
       nextType: type.typeArguments[1],
       parentVariableName: '$loopVariableName.value',
       depthIndex: 1 + depthIndex,
+      requiresBangOperator: type.typeArguments[1].isNullable,
     );
 
     _codeWriter.writeln('}');
