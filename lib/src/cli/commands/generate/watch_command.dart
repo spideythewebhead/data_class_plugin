@@ -27,7 +27,9 @@ class WatchCommand extends BaseCommand with FileGenerationCommandMixin {
     ensureHasPubspec();
     await ensureIsFileGenerationMode();
 
-    ProcessSignal.sigterm.watch().listen((_) => _dispose());
+    if (!Platform.isWindows) {
+      ProcessSignal.sigterm.watch().listen((_) => _dispose());
+    }
     ProcessSignal.sigint.watch().listen((_) => _dispose());
 
     await _codeGenerator.watchProject(onReady: () => print('Listening'));
