@@ -62,6 +62,10 @@ class CustomDartType {
   bool get isPrimary {
     return isString || isBool || isDouble || isInt || isNum;
   }
+
+  bool get isCollection {
+    return isList || isMap;
+  }
 }
 
 extension CoreTypeOnTypeAnnotationX on TypeAnnotation? {

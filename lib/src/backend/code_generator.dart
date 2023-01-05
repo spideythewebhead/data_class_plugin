@@ -394,15 +394,20 @@ class CodeGenerator {
       final AnnotationValueExtractor dataClassAnnotationValueExtractor =
           AnnotationValueExtractor(classDeclaration.dataClassAnnotation);
 
+      final bool unmodifiableCollections =
+          dataClassAnnotationValueExtractor.getBool('unmodifiableCollections') ??
+              pluginOptions.dataClass.effectiveUnmodifiableCollections(targetFileRelativePath);
+
       codeWriter.writeln(
           'class $generatedClassName$classTypeParametersSource with $className$classTypeParametersSource {');
 
-      createConstructor(
+      ConstructorGenerator(
         codeWriter: codeWriter,
         constructor: defaultConstructor,
         fields: fields,
         generatedClassName: generatedClassName,
-      );
+        unmodifiableCollections: unmodifiableCollections,
+      ).execute();
 
       if (classDeclaration.members.hasFactory('fromJson')) {
         await FromJsonGenerator(
@@ -458,6 +463,7 @@ class CodeGenerator {
         HashGenerator(
           codeWriter: codeWriter,
           fields: fields,
+          skipCollections: unmodifiableCollections,
         ).execute();
       }
 
@@ -544,16 +550,21 @@ class CodeGenerator {
           );
         }).toList(growable: false);
 
+        final bool unmodifiableCollections =
+            unionAnnotationValueExtractor.getBool('unmodifiableCollections') ??
+                pluginOptions.union.effectiveUnmodifiableCollections(targetFileRelativePath);
+
         codeWriter.writeln(
             'class $generatedClassName$classTypeParametersSource with $className$classTypeParametersSource {');
 
-        createConstructor(
+        ConstructorGenerator(
           codeWriter: codeWriter,
           constructor: ctor,
           fields: fields,
           generatedClassName: generatedClassName,
           shouldAnnotateFieldsWithOverride: false,
-        );
+          unmodifiableCollections: unmodifiableCollections,
+        ).execute();
 
         if (unionAnnotationValueExtractor.getBool('fromJson') ??
             pluginOptions.union.effectiveFromJson(targetFileRelativePath)) {
@@ -606,6 +617,7 @@ class CodeGenerator {
           HashGenerator(
             codeWriter: codeWriter,
             fields: fields,
+            skipCollections: unmodifiableCollections,
           ).execute();
 
           EqualsGenerator(
