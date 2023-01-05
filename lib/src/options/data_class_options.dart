@@ -6,8 +6,6 @@ part 'data_class_options.gen.dart';
 
 @DataClass()
 abstract class DataClassOptions {
-  const DataClassOptions._();
-
   /// Default constructor
   const factory DataClassOptions({
     Map<String, OptionConfig> optionsConfig,

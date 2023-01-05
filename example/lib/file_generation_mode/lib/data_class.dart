@@ -7,8 +7,6 @@ part 'data_class.gen.dart';
   toJson: true,
 )
 abstract class User {
-  User._();
-
   /// Default constructor
   factory User({
     required String id,

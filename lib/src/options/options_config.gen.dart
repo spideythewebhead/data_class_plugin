@@ -2,12 +2,12 @@
 
 part of 'options_config.dart';
 
-class _$OptionConfigImpl extends OptionConfig {
+class _$OptionConfigImpl with OptionConfig {
   const _$OptionConfigImpl({
     this.defaultValue,
     this.enabled = const <String>[],
     this.disabled = const <String>[],
-  }) : super._();
+  });
 
   @override
   final bool? defaultValue;

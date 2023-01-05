@@ -395,7 +395,7 @@ class CodeGenerator {
           AnnotationValueExtractor(classDeclaration.dataClassAnnotation);
 
       codeWriter.writeln(
-          'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersSource {');
+          'class $generatedClassName$classTypeParametersSource with $className$classTypeParametersSource {');
 
       createConstructor(
         codeWriter: codeWriter,
@@ -545,7 +545,7 @@ class CodeGenerator {
         }).toList(growable: false);
 
         codeWriter.writeln(
-            'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersSource {');
+            'class $generatedClassName$classTypeParametersSource with $className$classTypeParametersSource {');
 
         createConstructor(
           codeWriter: codeWriter,
