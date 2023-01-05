@@ -4,8 +4,6 @@ part 'json_options.gen.dart';
 
 @DataClass()
 abstract class JsonOptions {
-  const JsonOptions._();
-
   /// Default constructor
   const factory JsonOptions({
     String? keyNameConvention,

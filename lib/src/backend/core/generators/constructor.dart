@@ -47,7 +47,7 @@ void createConstructor({
   }
 
   codeWriter
-    ..writeln('): super._();')
+    ..writeln(');')
     ..writeln();
 
   for (final DeclarationInfo field in fields) {

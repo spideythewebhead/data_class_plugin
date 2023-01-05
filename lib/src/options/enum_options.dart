@@ -6,8 +6,6 @@ part 'enum_options.gen.dart';
 
 @DataClass()
 abstract class EnumOptions {
-  const EnumOptions._();
-
   /// Default constructor
   const factory EnumOptions({
     Map<String, OptionConfig> optionsConfig,

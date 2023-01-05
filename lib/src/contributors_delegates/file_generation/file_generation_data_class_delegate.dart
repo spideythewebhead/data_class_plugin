@@ -27,12 +27,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     );
 
     final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
-    final SourceRange? privateConstructorSourceRange =
-        classNode.members.privateConstructorSourceRange;
     final SourceRange? copyWithSourceRange = classNode.members.copyWithSourceRange;
-    // final SourceRange? equalsSourceRange = classNode.members.equalsSourceRange;
-    // final SourceRange? hashCodeSourceRange = classNode.members.hashSourceRange;
-    // final SourceRange? toStringSourceRange = classNode.members.toStringSourceRange;
     final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
     final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
 
@@ -59,25 +54,6 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
         fileEditBuilder: fileEditBuilder,
         targetFilePath: targetFilePath,
       );
-
-      void createPrivateConstructor(DartEditBuilder builder) {
-        _createPrivateConstructor(
-          classElement: classElement,
-          builder: builder,
-        );
-      }
-
-      if (privateConstructorSourceRange != null) {
-        fileEditBuilder.addReplacement(
-          privateConstructorSourceRange,
-          createPrivateConstructor,
-        );
-      } else {
-        fileEditBuilder.addInsertion(
-          classNode.leftBracket.offset + 1,
-          createPrivateConstructor,
-        );
-      }
 
       void createFactoryConstructor(DartEditBuilder builder) {
         _createFactoryConstructor(
@@ -142,52 +118,6 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
         fileEditBuilder.addDeletion(copyWithSourceRange);
       }
 
-      // if (dataClassAnnotation.hashAndEquals ??
-      //     pluginOptions.dataClass.effectiveHashAndEquals(relativeFilePath)) {
-      //   if (hashCodeSourceRange != null) {
-      //     fileEditBuilder.addReplacement(hashCodeSourceRange, _createHash);
-      //   } else {
-      //     fileEditBuilder.addInsertion(
-      //       classNode.rightBracket.offset,
-      //       _createHash,
-      //     );
-      //   }
-
-      //   if (equalsSourceRange != null) {
-      //     fileEditBuilder.addReplacement(equalsSourceRange, _createEquals);
-      //   } else {
-      //     fileEditBuilder.addInsertion(
-      //       classNode.rightBracket.offset,
-      //       _createEquals,
-      //     );
-      //   }
-      // } else {
-      //   if (hashCodeSourceRange != null) {
-      //     fileEditBuilder.addDeletion(hashCodeSourceRange);
-      //   }
-
-      //   if (equalsSourceRange != null) {
-      //     fileEditBuilder.addDeletion(equalsSourceRange);
-      //   }
-      // }
-
-      // if (dataClassAnnotation.$toString ??
-      //     pluginOptions.dataClass.effectiveToString(relativeFilePath)) {
-      //   if (toStringSourceRange != null) {
-      //     fileEditBuilder.addReplacement(
-      //       toStringSourceRange,
-      //       _createToString,
-      //     );
-      //   } else {
-      //     fileEditBuilder.addInsertion(
-      //       classNode.rightBracket.offset,
-      //       _createToString,
-      //     );
-      //   }
-      // } else if (toStringSourceRange != null) {
-      //   fileEditBuilder.addDeletion(toStringSourceRange);
-      // }
-
       if (dataClassAnnotation.toJson ?? pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
         void createToJson(DartEditBuilder builder) {
           _createToJson(
@@ -210,18 +140,6 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
 
       fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
     });
-  }
-
-  void _createPrivateConstructor({
-    required final ClassElement classElement,
-    required final DartEditBuilder builder,
-  }) {
-    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
-    final bool isConst = defaultConstructor?.isConst ?? true;
-    builder
-      ..writeln()
-      ..writeln('${isConst ? 'const' : ''} ${classElement.name}._();')
-      ..writeln();
   }
 
   void _createFactoryConstructor({
@@ -286,28 +204,6 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
 
     builder.writeln(');');
   }
-
-  // void _createHash(DartEditBuilder builder) {
-  //   builder
-  //     ..writeln('/// Returns a hash code based on [this] properties')
-  //     ..writeln('@override')
-  //     ..writeln('int get hashCode;');
-  // }
-
-  // void _createEquals(DartEditBuilder builder) {
-  //   builder
-  //     ..writeln('/// Compares [this] with [other] on identity, class type, and properties')
-  //     ..writeln('/// *with deep comparison on collections*')
-  //     ..writeln('@override')
-  //     ..writeln('bool operator ==(Object? other);');
-  // }
-
-  // void _createToString(DartEditBuilder builder) {
-  //   builder
-  //     ..writeln()
-  //     ..writeln('@override')
-  //     ..writeln('String toString();');
-  // }
 
   void _createFromJson({
     required final ClassElement classElement,

@@ -2,11 +2,11 @@
 
 part of 'json_options.dart';
 
-class _$JsonOptionsImpl extends JsonOptions {
+class _$JsonOptionsImpl with JsonOptions {
   const _$JsonOptionsImpl({
     this.keyNameConvention,
     this.nameConventionGlobs = const <String, List<String>>{},
-  }) : super._();
+  });
 
   @override
   final String? keyNameConvention;

@@ -57,12 +57,6 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
           targetFilePath: targetFilePath,
         );
 
-        _generateGenerativeConstructor(
-          classNode: classNode,
-          classElement: classElement,
-          fileEditBuilder: fileEditBuilder,
-        );
-
         if (unionInternalAnnotation.fromJson ??
             pluginOptions.union.effectiveFromJson(relativeFilePath)) {
           _generateFromJsonFunction(
@@ -90,33 +84,6 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
       },
     );
-  }
-
-  void _generateGenerativeConstructor({
-    required final ClassElement classElement,
-    required final ClassDeclaration classNode,
-    required final DartFileEditBuilder fileEditBuilder,
-  }) {
-    final SourceRange? sourceRange = classNode.members.getSourceRangeForConstructor('_');
-
-    void writerGenerativeConstructor(DartEditBuilder builder) {
-      _writeGenerativeConstructor(
-        classElement: classElement,
-        builder: builder,
-      );
-    }
-
-    if (sourceRange != null) {
-      fileEditBuilder.addReplacement(
-        sourceRange,
-        writerGenerativeConstructor,
-      );
-    } else {
-      fileEditBuilder.addInsertion(
-        1 + classNode.leftBracket.offset,
-        writerGenerativeConstructor,
-      );
-    }
   }
 
   void _generateFromJsonFunction({
@@ -164,16 +131,6 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
         writerToJsonFunction,
       );
     }
-  }
-
-  void _writeGenerativeConstructor({
-    required final ClassElement classElement,
-    required final DartEditBuilder builder,
-  }) {
-    builder
-      ..writeln()
-      ..writeln('const ${classElement.name}._();')
-      ..writeln();
   }
 
   void _writeFromJsonFunction({

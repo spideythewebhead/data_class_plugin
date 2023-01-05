@@ -58,8 +58,10 @@ Future<String?> findDartFileFromUri({
   )).toString();
 }
 
-class NoDartToolDirectoryFoundException implements Exception {
-  const NoDartToolDirectoryFoundException();
+@DataClass(copyWith: false)
+abstract class NoDartToolDirectoryFoundException implements Exception {
+  /// Default constructor
+  const factory NoDartToolDirectoryFoundException() = _$NoDartToolDirectoryFoundExceptionImpl;
 }
 
 @DataClass(
@@ -67,8 +69,6 @@ class NoDartToolDirectoryFoundException implements Exception {
   hashAndEquals: false,
 )
 abstract class PackageNotInstalledException implements Exception {
-  PackageNotInstalledException._();
-
   /// Default constructor
   factory PackageNotInstalledException({
     required String packageName,
@@ -82,11 +82,8 @@ abstract class PackageNotInstalledException implements Exception {
   $toString: false,
   copyWith: false,
   hashAndEquals: false,
-  toJson: false,
 )
 abstract class PackageInfo {
-  PackageInfo._();
-
   /// Default constructor
   factory PackageInfo({
     required String name,

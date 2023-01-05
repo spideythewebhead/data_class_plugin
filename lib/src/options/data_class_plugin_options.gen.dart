@@ -2,7 +2,7 @@
 
 part of 'data_class_plugin_options.dart';
 
-class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
+class _$DataClassPluginOptionsImpl with DataClassPluginOptions {
   const _$DataClassPluginOptionsImpl({
     this.generationMode = CodeGenerationMode.inPlace,
     this.allowedFilesGenerationPaths = const <Glob>[],
@@ -11,7 +11,7 @@ class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
     this.dataClass = const DataClassOptions(),
     this.$enum = const EnumOptions(),
     this.union = const UnionOptions(),
-  }) : super._();
+  });
 
   @override
   final CodeGenerationMode generationMode;
