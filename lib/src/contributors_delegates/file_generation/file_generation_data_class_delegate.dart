@@ -2,7 +2,9 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
+import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
+import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
 import 'package:data_class_plugin/src/common/utils.dart';
 import 'package:data_class_plugin/src/contributors_delegates/class_generation_delegate.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
@@ -48,6 +50,18 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
         );
       }
 
+      final List<FieldDeclaration> finalFieldsDeclarations = classNode.members
+          .where((ClassMember member) {
+            return member is FieldDeclaration && member.fields.isFinal;
+          })
+          .toList(growable: false)
+          .cast<FieldDeclaration>();
+
+      _updateFinalFieldsToGetters(
+        finalFieldsDeclarations: finalFieldsDeclarations,
+        fileEditBuilder: fileEditBuilder,
+      );
+
       addPartDirective(
         classElement: classElement,
         directives: compilationUnit.directives,
@@ -60,6 +74,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
           classElement: classElement,
           builder: builder,
           fields: fields,
+          finalFieldsDeclarations: finalFieldsDeclarations,
         );
       }
 
@@ -142,10 +157,59 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     });
   }
 
+  void _updateFinalFieldsToGetters({
+    required List<FieldDeclaration> finalFieldsDeclarations,
+    required DartFileEditBuilder fileEditBuilder,
+  }) {
+    final List<FormalParameter> formalParameters =
+        (classNode.members.firstWhereOrNull((ClassMember member) {
+              return member is ConstructorDeclaration && member.name?.lexeme == null;
+            }) as ConstructorDeclaration?)
+                ?.parameters
+                .parameters
+                .where((FormalParameter parameter) => parameter.isNamed)
+                .toList(growable: false) ??
+            const <FormalParameter>[];
+
+    for (final FieldDeclaration fieldDeclaration in finalFieldsDeclarations) {
+      fileEditBuilder.addReplacement(
+        SourceRange(fieldDeclaration.offset, fieldDeclaration.length),
+        (DartEditBuilder builder) {
+          for (final VariableDeclaration variableDeclaration in fieldDeclaration.fields.variables) {
+            final Annotation? jsonKeyAnnotation =
+                fieldDeclaration.metadata.getAnnotation(AnnotationType.jsonKey);
+
+            if (jsonKeyAnnotation != null) {
+              builder.writeln(jsonKeyAnnotation.toSource());
+            }
+
+            final FormalParameter? matchedFormalParameter =
+                formalParameters.firstWhereOrNull((FormalParameter parameter) {
+              return parameter.name?.lexeme == variableDeclaration.name.lexeme;
+            });
+
+            if (matchedFormalParameter is DefaultFormalParameter &&
+                matchedFormalParameter.defaultValue != null &&
+                matchedFormalParameter.defaultValue!.toSource() != 'null') {
+              final String? defaultValueExpression =
+                  matchedFormalParameter.defaultValue?.toSource().replaceFirst('const', '');
+
+              builder.writeln('@DefaultValue($defaultValueExpression)');
+            }
+
+            builder.writeln(
+                '${fieldDeclaration.fields.type?.toSource() ?? 'dynamic'} get ${variableDeclaration.name.lexeme};');
+          }
+        },
+      );
+    }
+  }
+
   void _createFactoryConstructor({
     required final ClassElement classElement,
     required final DartEditBuilder builder,
-    required List<FieldElement> fields,
+    required final List<FieldElement> fields,
+    required final List<FieldDeclaration> finalFieldsDeclarations,
   }) {
     final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
     final String optionalTypeParameters =
@@ -157,22 +221,34 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
       ..writeln('/// Default constructor')
       ..writeln('${isConst ? 'const' : ''} factory ${classElement.name}(');
 
-    if (fields.isNotEmpty) {
+    if (fields.isNotEmpty || finalFieldsDeclarations.isNotEmpty) {
       builder.write('{');
+    }
 
-      for (final FieldElement field in fields) {
-        if (!(field.type.isDynamic ||
-            field.type.isNullable ||
-            field.getter!.hasDefaultValueAnnotation)) {
-          builder.write('required');
-        }
+    for (final FieldDeclaration fieldDeclaration in finalFieldsDeclarations) {
+      final CustomDartType customDartType = fieldDeclaration.fields.type.customDartType;
+      if (!(customDartType.isDynamic || customDartType.isNullable)) {
+        builder.write('required');
+      }
+      for (final VariableDeclaration variableDeclaration in fieldDeclaration.fields.variables) {
+        builder.writeln(' ${customDartType.fullTypeName} ${variableDeclaration.name.lexeme},');
+      }
+    }
 
-        builder
-          ..write(
-              ' ${field.type.typeStringValue(enclosingImports: classElement.library.libraryImports)}')
-          ..writeln(' ${field.name},');
+    for (final FieldElement field in fields) {
+      if (!(field.type.isDynamic ||
+          field.type.isNullable ||
+          field.getter!.hasDefaultValueAnnotation)) {
+        builder.write('required');
       }
 
+      builder
+        ..write(
+            ' ${field.type.typeStringValue(enclosingImports: classElement.library.libraryImports)}')
+        ..writeln(' ${field.name},');
+    }
+
+    if (fields.isNotEmpty || finalFieldsDeclarations.isNotEmpty) {
       builder.write('}');
     }
 
