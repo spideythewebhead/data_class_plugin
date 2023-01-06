@@ -11,22 +11,27 @@ class ConsoleLogger extends Logger {
 
   @override
   void write([final Object? object]) {
-    _sink.write(object ?? '');
+    _sink.write(object);
   }
 
   @override
   void writeln([final Object? object]) {
-    _sink.writeln(object ?? '');
+    _sink.writeln(object);
   }
 
   @override
   void info([final Object? object]) {
-    _sink.writeln('$object'.blue());
+    log('$object'.blue(), LogSeverity.info);
+  }
+
+  @override
+  void debug([final Object? object]) {
+    log(object, LogSeverity.debug);
   }
 
   @override
   void warning([final Object? object]) {
-    _sink.writeln('$object'.yellow());
+    log('$object'.yellow(), LogSeverity.warning);
   }
 
   @override

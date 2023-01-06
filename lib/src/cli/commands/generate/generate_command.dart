@@ -28,4 +28,9 @@ class GenerateCommand extends BaseCommand {
   Future<void> execute() async {
     // noop
   }
+
+  @override
+  Future<void> dispose() async {
+    await logger.dispose();
+  }
 }
