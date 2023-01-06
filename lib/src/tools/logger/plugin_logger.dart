@@ -7,44 +7,67 @@ import 'package:data_class_plugin/src/tools/logger/ansi.dart';
 import 'package:data_class_plugin/src/tools/logger/console_logger.dart';
 import 'package:data_class_plugin/src/tools/logger/file_logger.dart';
 import 'package:data_class_plugin/src/tools/logger/logger.dart';
-import 'package:data_class_plugin/src/tools/logger/no_op_logger.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 class PluginLogger extends Logger {
   PluginLogger({
     final IOSink? ioSink,
-  }) : _consoleLogger = ConsoleLogger(ioSink);
+  }) {
+    registerLogger(ConsoleLogger(ioSink));
+  }
 
-  final ConsoleLogger _consoleLogger;
-  Logger _fileLogger = NoOpLogger();
-  late final PluginCommunicationChannel? channel;
+  PluginCommunicationChannel? channel;
 
   set writeToFile(bool value) {
-    _fileLogger = value ? FileLogger() : NoOpLogger();
+    if (value) {
+      registerLogger(FileLogger());
+    } else {
+      unregisterLogger(FileLogger);
+    }
+  }
+
+  final List<Logger> _loggers = <Logger>[];
+  void registerLogger(Logger logger) {
+    _loggers.add(logger);
+  }
+
+  void unregisterLogger(Type type) {
+    _loggers.removeWhere((Logger l) => l.runtimeType == type);
   }
 
   @override
   void write([final Object? object]) {
-    _consoleLogger.write(object);
-    _fileLogger.write(object);
+    for (final Logger logger in _loggers) {
+      logger.write(object);
+    }
   }
 
   @override
   void writeln([final Object? object]) {
-    _consoleLogger.writeln(object);
-    _fileLogger.writeln(object);
+    for (final Logger logger in _loggers) {
+      logger.writeln(object);
+    }
   }
 
   @override
   void info([final Object? object]) {
-    _consoleLogger.info(object);
-    _fileLogger.info(object);
+    for (final Logger logger in _loggers) {
+      logger.info(object);
+    }
+  }
+
+  @override
+  void debug([final Object? object]) {
+    for (final Logger logger in _loggers) {
+      logger.debug(object);
+    }
   }
 
   @override
   void warning([final Object? object]) {
-    _consoleLogger.warning(object);
-    _fileLogger.warning(object);
+    for (final Logger logger in _loggers) {
+      logger.warning(object);
+    }
   }
 
   @override
@@ -53,8 +76,9 @@ class PluginLogger extends Logger {
     final StackTrace? st,
     final bool isFatal = false,
   ]) {
-    _consoleLogger.error(error, st, isFatal);
-    _fileLogger.error(error, st, isFatal);
+    for (final Logger logger in _loggers) {
+      logger.error(error, st, isFatal);
+    }
   }
 
   @override
@@ -65,8 +89,9 @@ class PluginLogger extends Logger {
   ]) {
     final StackTrace stackTrace = st ?? Trace(<Frame>[Trace.current(1).frames[0]]);
 
-    _consoleLogger.exception(error, stackTrace, isFatal);
-    _fileLogger.exception(error, stackTrace, isFatal);
+    for (final Logger logger in _loggers) {
+      logger.exception(error, st, isFatal);
+    }
 
     _showErrorNotification(
       'An exception was thrown: $error',
@@ -103,7 +128,7 @@ class PluginLogger extends Logger {
     final StackTrace? stackTrace,
     final bool isFatal = true,
   }) {
-    channel!.sendNotification(
+    channel?.sendNotification(
       PluginErrorParams(
         isFatal,
         error,
@@ -184,7 +209,7 @@ class PluginLogger extends Logger {
   }) {
     final Location defaultLocation = location ?? Location(path, 0, 1, 1, 1);
 
-    channel!.sendNotification(
+    channel?.sendNotification(
       AnalysisErrorsParams(path, <AnalysisError>[
         AnalysisError(
           severity,
@@ -201,8 +226,9 @@ class PluginLogger extends Logger {
 
   @override
   void logHeader(LogHeader header) {
-    _consoleLogger.logHeader(header);
-    _fileLogger.logHeader(header);
+    for (final Logger logger in _loggers) {
+      logger.logHeader(header);
+    }
   }
 
   static LogHeader pluginHeader() {
@@ -216,7 +242,8 @@ class PluginLogger extends Logger {
 
   @override
   Future<void> dispose() async {
-    await _consoleLogger.dispose();
-    await _fileLogger.dispose();
+    for (final Logger logger in _loggers) {
+      await logger.dispose();
+    }
   }
 }

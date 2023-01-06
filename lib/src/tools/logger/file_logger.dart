@@ -20,17 +20,22 @@ class FileLogger extends Logger {
 
   @override
   void writeln([final Object? object]) {
-    _log(object, LogSeverity.debug);
+    log(object, LogSeverity.debug);
   }
 
   @override
   void info([final Object? object]) {
-    _log(object, LogSeverity.info);
+    log(object, LogSeverity.info);
+  }
+
+  @override
+  void debug([final Object? object]) {
+    log(object, LogSeverity.debug);
   }
 
   @override
   void warning([final Object? object]) {
-    _log(object, LogSeverity.warning);
+    log(object, LogSeverity.warning);
   }
 
   @override
@@ -39,13 +44,13 @@ class FileLogger extends Logger {
     final StackTrace? st,
     final bool isFatal = false,
   ]) {
-    _log(error, LogSeverity.error);
+    log(error, LogSeverity.error);
 
     if (st != null) {
-      _log(Ansi.horizontalLine(), LogSeverity.error);
-      _log('Stacktrace:', LogSeverity.error);
-      _log(st.toString(), LogSeverity.error);
-      _log(Ansi.horizontalLine(), LogSeverity.error);
+      log(Ansi.horizontalLine(), LogSeverity.error);
+      log('Stacktrace:', LogSeverity.error);
+      log(st.toString(), LogSeverity.error);
+      log(Ansi.horizontalLine(), LogSeverity.error);
     }
   }
 
@@ -55,14 +60,14 @@ class FileLogger extends Logger {
     final StackTrace? st,
     final bool isFatal = false,
   ]) {
-    _log(Ansi.horizontalLine(), LogSeverity.fatal);
-    _log('An exception was thrown:', LogSeverity.fatal);
-    _log(error, LogSeverity.fatal);
+    log(Ansi.horizontalLine(), LogSeverity.fatal);
+    log('An exception was thrown:', LogSeverity.fatal);
+    log(error, LogSeverity.fatal);
 
-    _log(Ansi.horizontalLine(), LogSeverity.fatal);
-    _log('Stacktrace:', LogSeverity.fatal);
-    _log(st.toString(), LogSeverity.fatal);
-    _log(Ansi.horizontalLine(), LogSeverity.fatal);
+    log(Ansi.horizontalLine(), LogSeverity.fatal);
+    log('Stacktrace:', LogSeverity.fatal);
+    log(st.toString(), LogSeverity.fatal);
+    log(Ansi.horizontalLine(), LogSeverity.fatal);
   }
 
   @override
@@ -101,16 +106,5 @@ class FileLogger extends Logger {
       'logs',
       '${now.year}$month${day}_$hour$minute$second.log',
     );
-  }
-
-  void _log(Object? object, LogSeverity severity) {
-    if (object != null) {
-      object.toString().split('\n').forEach((String line) {
-        _sink.writeln('${DateTime.now()}\t${severity.name.toUpperCase().padRight(10)}\t$line');
-      });
-      return;
-    }
-
-    _sink.writeln('${DateTime.now()}\t${severity.name.toUpperCase()}');
   }
 }

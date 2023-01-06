@@ -16,7 +16,7 @@ class CliRunner extends CommandRunner<void> {
               .bold(),
         ) {
     logger.logHeader(PluginLogger.pluginHeader());
-    logger.writeln();
+    logger.writeln('');
 
     <BaseCommand>[
       // InstallCommand(logger: logger),

@@ -7,6 +7,7 @@ import 'package:data_class_plugin/src/backend/core/typedefs.dart';
 import 'package:data_class_plugin/src/common/code_writer.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
+import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 import 'package:data_class_plugin/src/typedefs.dart';
 
 class FromJsonGenerator implements Generator {
@@ -17,12 +18,14 @@ class FromJsonGenerator implements Generator {
     required String classTypeParametersSource,
     required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required ClassOrEnumDeclarationFinder classDeclarationFinder,
+    PluginLogger? logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _generatedClassName = generatedClassName,
         _classTypeParametersSource = classTypeParametersSource,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
-        _classOrEnumDeclarationFinder = classDeclarationFinder;
+        _classOrEnumDeclarationFinder = classDeclarationFinder,
+        _logger = logger ?? PluginLogger();
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
@@ -30,6 +33,7 @@ class FromJsonGenerator implements Generator {
   final String _classTypeParametersSource;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
   final ClassOrEnumDeclarationFinder _classOrEnumDeclarationFinder;
+  final PluginLogger _logger;
 
   @override
   Future<void> execute() async {
@@ -165,7 +169,7 @@ class FromJsonGenerator implements Generator {
       return;
     }
 
-    print('WARNING: No "fromJson" factory found for type ${dartType.name}');
+    _logger.warning('WARNING: No "fromJson" factory found for type ${dartType.name}');
 
     _codeWriter.writeln(
         'jsonConverterRegistrant.find(${dartType.name}).fromJson($parentVariableName) as ${dartType.name},');

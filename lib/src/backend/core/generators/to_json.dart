@@ -7,6 +7,7 @@ import 'package:data_class_plugin/src/backend/core/typedefs.dart';
 import 'package:data_class_plugin/src/common/code_writer.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
+import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 import 'package:data_class_plugin/src/typedefs.dart';
 
 class ToJsonGenerator implements Generator {
@@ -15,15 +16,18 @@ class ToJsonGenerator implements Generator {
     required final List<DeclarationInfo> fields,
     required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required ClassOrEnumDeclarationFinder classDeclarationFinder,
+    PluginLogger? logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
-        _classDeclarationFinder = classDeclarationFinder;
+        _classDeclarationFinder = classDeclarationFinder,
+        _logger = logger ?? PluginLogger();
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
   final ClassOrEnumDeclarationFinder _classDeclarationFinder;
+  final PluginLogger _logger;
 
   @override
   Future<void> execute() async {
@@ -132,7 +136,7 @@ class ToJsonGenerator implements Generator {
       return;
     }
 
-    print('WARNING: No "toJson" method found for type ${dartType.name}');
+    _logger.warning('WARNING: No "toJson" method found for type ${dartType.name}');
 
     if (dartType.isNullable) {
       _writeNullableParsingPrefix(parentVariableName: parentVariableName);

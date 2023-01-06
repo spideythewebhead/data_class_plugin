@@ -7,6 +7,7 @@ abstract class Logger {
   void writeln([final Object? object]);
 
   void info([final Object? object]);
+  void debug([final Object? object]);
   void warning([final Object? object]);
   void error(
     final Object? error, [
@@ -19,6 +20,25 @@ abstract class Logger {
     final StackTrace? st,
     final bool isFatal = false,
   ]);
+
+  void log(Object? object, LogSeverity? severity) {
+    if (object != null) {
+      object.toString().split('\n').forEach((String line) {
+        if (severity == null) {
+          writeln('${DateTime.now()}\t$line');
+        } else {
+          writeln('${DateTime.now()}\t${severity.name.toUpperCase().padRight(10)}\t$line');
+        }
+      });
+      return;
+    }
+
+    if (severity == null) {
+      writeln('${DateTime.now()}\t$object');
+    } else {
+      writeln('${DateTime.now()}\t${severity.name.toUpperCase().padRight(10)}\t$object');
+    }
+  }
 
   void logHeader(LogHeader header);
 
