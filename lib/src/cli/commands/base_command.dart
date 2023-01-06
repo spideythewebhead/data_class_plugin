@@ -10,7 +10,7 @@ abstract class BaseCommand extends Command<void> {
   String get invocation => '${runner?.executableName} $name [arguments]';
 
   Future<void> init() async {
-    logger.info('> $name');
+    logger.info('> Running command: $name');
   }
 
   Future<void> execute();
@@ -20,4 +20,6 @@ abstract class BaseCommand extends Command<void> {
     await init();
     await execute();
   }
+
+  Future<void> dispose() async {}
 }

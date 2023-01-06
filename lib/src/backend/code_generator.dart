@@ -21,6 +21,7 @@ import 'package:data_class_plugin/src/common/utils.dart' as common_utils;
 import 'package:data_class_plugin/src/common/utils.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
+import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 import 'package:data_class_plugin/src/typedefs.dart';
 import 'package:data_class_plugin/src/visitors/visitors.dart';
 import 'package:glob/glob.dart';
@@ -33,9 +34,12 @@ final RegExp _dartFileNameMatcher = RegExp(r'^[a-zA-Z0-9_]+.dart$');
 class CodeGenerator {
   CodeGenerator({
     required this.directory,
-  }) : _watcher = DirectoryWatcher(directory.path);
+    PluginLogger? logger,
+  })  : _watcher = DirectoryWatcher(directory.path),
+        _logger = logger ?? PluginLogger();
 
   final Directory directory;
+  final PluginLogger _logger;
   final Watcher _watcher;
 
   final Map<String, Completer<void>?> _activeWrites = <String, Completer<void>?>{};
@@ -72,7 +76,7 @@ class CodeGenerator {
 
   /// Indexes the project and creates links between source files
   Future<void> indexProject() async {
-    print('~ Indexing project..');
+    _logger.info('~ Indexing project..');
 
     final Stopwatch stopwatch = Stopwatch()..start();
 
@@ -161,14 +165,14 @@ class CodeGenerator {
     }
 
     stopwatch.stop();
-    print('~ Indexed ${_filesRegistry.length} files in ${stopwatch.elapsedMilliseconds}ms');
+    _logger.info('~ Indexed ${_filesRegistry.length} files in ${stopwatch.elapsedMilliseconds}ms');
   }
 
   /// Builds the project
   ///
   /// **Project must be indexed before it can correctly build**
   Future<void> buildProject() async {
-    print('~ Builting project..');
+    _logger.info('~ Building project..');
     final Stopwatch stopwatch = Stopwatch()..start();
 
     for (final MapEntry<String, ParsedFileData> entry in _filesRegistry.entries) {
@@ -181,7 +185,7 @@ class CodeGenerator {
     }
 
     stopwatch.stop();
-    print('~ Completed built in ${stopwatch.elapsed.inMilliseconds}ms..');
+    _logger.info('~ Completed build in ${stopwatch.elapsed.inMilliseconds}ms..');
   }
 
   void _onWatchEvent(WatchEvent event) async {
@@ -209,10 +213,7 @@ class CodeGenerator {
 
       await _generateCode(targetFilePath: targetFilePath, outputFilePath: outputFilePath);
     } catch (error, stackTrace) {
-      print('> Error start');
-      print(error);
-      print(stackTrace);
-      print('< Error end');
+      _logger.exception(error, stackTrace);
     } finally {
       completer?.safeComplete();
     }
@@ -235,7 +236,7 @@ class CodeGenerator {
       return;
     }
 
-    print('$indent~ Checking $relativeFilePath');
+    _logger.debug('$indent~ Checking $relativeFilePath');
 
     late final Stopwatch? stopwatch;
     if (reportTime) {
@@ -270,7 +271,7 @@ class CodeGenerator {
         await File(outputFilePath).delete();
       } catch (_) {
       } finally {
-        print('$indent~ Skipping $relativeFilePath');
+        _logger.debug('$indent~ Skipping $relativeFilePath');
       }
       stopwatch?.stop();
       return;
@@ -283,7 +284,7 @@ class CodeGenerator {
         .where((ClassDeclaration classDecl) => classDecl.hasUnionAnnotation)
         .toList(growable: false);
 
-    print('$indent~ Starting build for $relativeFilePath');
+    _logger.debug('$indent~ Starting build for $relativeFilePath');
 
     final JsonKeyNameConventionGetter jsonKeyNameConventionGetter = utils.getJsonKeyNameConvention(
       targetFileRelativePath: path.relative(targetFilePath),
@@ -329,7 +330,7 @@ class CodeGenerator {
 
     final List<String> dependants = _dependencyGraph.getDependants(targetFilePath);
     if (!skipDependencies && dependants.isNotEmpty) {
-      print('  Rebuilding ${dependants.length} depandants..');
+      _logger.debug('  Rebuilding ${dependants.length} depandants..');
 
       await Future.wait(<Future<void>>[
         for (final String dependency in dependants)
@@ -346,7 +347,8 @@ class CodeGenerator {
 
     if (reportTime) {
       stopwatch!.stop();
-      print('$indent~ Built done for $relativeFilePath in ${stopwatch.elapsed.inMilliseconds}ms');
+      _logger.info(
+          '$indent~ Finished building $relativeFilePath in ${stopwatch.elapsed.inMilliseconds}ms');
     }
   }
 
@@ -593,6 +595,7 @@ class CodeGenerator {
                 targetFilePath: targetFilePath,
               );
             },
+            logger: _logger,
           ).execute();
         }
 
@@ -610,6 +613,7 @@ class CodeGenerator {
                 targetFilePath: targetFilePath,
               );
             },
+            logger: _logger,
           ).execute();
         }
 

@@ -9,7 +9,10 @@ class WatchCommand extends BaseCommand with FileGenerationCommandMixin {
   WatchCommand({
     required super.logger,
     required this.directory,
-  }) : _codeGenerator = CodeGenerator(directory: directory);
+  }) : _codeGenerator = CodeGenerator(
+          directory: directory,
+          logger: logger,
+        );
 
   final CodeGenerator _codeGenerator;
 
@@ -32,7 +35,7 @@ class WatchCommand extends BaseCommand with FileGenerationCommandMixin {
     }
     ProcessSignal.sigint.watch().listen((_) => _dispose());
 
-    await _codeGenerator.watchProject(onReady: () => print('Listening'));
+    await _codeGenerator.watchProject(onReady: () => logger.debug('Listening'));
   }
 
   void _dispose() {

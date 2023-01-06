@@ -9,7 +9,10 @@ class BuildCommand extends BaseCommand with FileGenerationCommandMixin {
   BuildCommand({
     required super.logger,
     required this.directory,
-  }) : _codeGenerator = CodeGenerator(directory: directory);
+  }) : _codeGenerator = CodeGenerator(
+          directory: directory,
+          logger: logger,
+        );
 
   final CodeGenerator _codeGenerator;
 

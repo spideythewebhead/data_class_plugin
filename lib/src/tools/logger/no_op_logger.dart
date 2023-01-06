@@ -22,6 +22,9 @@ class NoOpLogger extends Logger {
   void info([Object? object]) {}
 
   @override
+  void debug([Object? object]) {}
+
+  @override
   void logHeader(LogHeader header) {}
 
   @override
