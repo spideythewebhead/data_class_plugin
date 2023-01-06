@@ -31,4 +31,7 @@ abstract class DataClassOptions {
 
   bool effectiveToJson(String filePath) =>
       optionsConfig.effectiveToJson(filePath: filePath, defaultValue: false);
+
+  bool effectiveUnmodifiableCollections(String filePath) =>
+      optionsConfig.effectiveUnmodifiableCollections(filePath: filePath, defaultValue: true);
 }

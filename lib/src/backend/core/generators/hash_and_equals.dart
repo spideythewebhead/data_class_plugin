@@ -8,11 +8,14 @@ class HashGenerator implements Generator {
   HashGenerator({
     required CodeWriter codeWriter,
     required List<DeclarationInfo> fields,
+    required bool skipCollections,
   })  : _codeWriter = codeWriter,
-        _fields = fields;
+        _fields = fields,
+        _skipCollections = skipCollections;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
+  final bool _skipCollections;
 
   @override
   void execute() {
@@ -24,6 +27,9 @@ class HashGenerator implements Generator {
       ..writeln('runtimeType');
 
     for (final DeclarationInfo field in _fields) {
+      if (_skipCollections && field.type.customDartType.isCollection) {
+        continue;
+      }
       _codeWriter.writeln(',${field.name}');
     }
 

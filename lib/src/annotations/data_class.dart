@@ -44,6 +44,15 @@ import 'package:meta/meta_meta.dart';
 ///
 /// If no value is provided (default), then false is assumed
 ///
+/// [unmodifiableCollections] Wraps collections (List, Map, Set) with the relative [unmodifiable] constructor.
+///
+/// Applies only for file generation mode
+///
+/// If no value is provided (default), then true is assumed
+///
+/// If set to false, then the fields of a collection type
+/// will be excluded from hashCode implementation so the hashCode result will be stable
+///
 /// ```dart
 /// Map<String, dynamic> toJson()
 /// ```
@@ -56,6 +65,7 @@ class DataClass {
     this.$toString,
     this.fromJson,
     this.toJson,
+    this.unmodifiableCollections,
   });
 
   /// If no value is provided (default), then true is assumed
@@ -72,4 +82,10 @@ class DataClass {
 
   /// If no value is provided (default), then false is assumed
   final bool? toJson;
+
+  /// If no value is provided (default), then true is assumed
+  ///
+  /// If set to false, then the fields of a collection type
+  /// will be excluded from hashCode implementation so the hashCode result will be stable
+  final bool? unmodifiableCollections;
 }
