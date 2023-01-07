@@ -9,13 +9,14 @@ class ClassCollectorAstVisitor extends GeneralizingAstVisitor<void> {
 
   final ClassDeclarationNodeMatcher matcher;
 
-  final List<ClassDeclaration> _classNodes = <ClassDeclaration>[];
-  List<ClassDeclaration> get classNodes => List<ClassDeclaration>.unmodifiable(_classNodes);
+  final List<ClassDeclaration> _matchesNodes = <ClassDeclaration>[];
+  List<ClassDeclaration> get matchedNodes => List<ClassDeclaration>.unmodifiable(_matchesNodes);
 
   @override
   void visitClassDeclaration(ClassDeclaration node) {
     if (matcher(node)) {
-      _classNodes.add(node);
+      _matchesNodes.add(node);
+      return;
     }
     node.visitChildren(this);
   }

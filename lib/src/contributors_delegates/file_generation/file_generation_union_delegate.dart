@@ -14,8 +14,7 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
     required super.targetFilePath,
     required super.changeBuilder,
     required super.pluginOptions,
-    required super.classNode,
-    required super.classElement,
+    required super.classNodes,
     required this.compilationUnit,
   });
 
@@ -27,20 +26,21 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
   }
 
   Future<void> _generateConstructor() async {
-    final UnionInternal unionInternalAnnotation = UnionInternal.fromDartObject(
-      classElement.metadata.unionAnnotation!.computeConstantValue(),
-    );
+    await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
+      for (final ClassDeclaration classNode in classNodes) {
+        final ClassElement classElement = classNode.declaredElement!;
 
-    final RedirectedConstructorsVisitor redirectedConstructorsVisitor =
-        RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
-    classNode.visitChildren(redirectedConstructorsVisitor);
+        final UnionInternal unionInternalAnnotation = UnionInternal.fromDartObject(
+          classElement.metadata.unionAnnotation!.computeConstantValue(),
+        );
 
-    final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
-    final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
+        final RedirectedConstructorsVisitor redirectedConstructorsVisitor =
+            RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
+        classNode.visitChildren(redirectedConstructorsVisitor);
 
-    await changeBuilder.addDartFileEdit(
-      targetFilePath,
-      (DartFileEditBuilder fileEditBuilder) {
+        final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
+        final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
+
         if (!classElement.isAbstract) {
           fileEditBuilder.addInsertion(
             classNode.classKeyword.offset,
@@ -49,13 +49,6 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
             },
           );
         }
-
-        addPartDirective(
-          classElement: classElement,
-          directives: compilationUnit.directives,
-          fileEditBuilder: fileEditBuilder,
-          targetFilePath: targetFilePath,
-        );
 
         if (unionInternalAnnotation.fromJson ??
             pluginOptions.union.effectiveFromJson(relativeFilePath)) {
@@ -82,8 +75,15 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
         }
 
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
-      },
-    );
+      }
+
+      addPartDirective(
+        partElements: classNodes[0].declaredElement!.library.parts,
+        directives: compilationUnit.directives,
+        fileEditBuilder: fileEditBuilder,
+        targetFilePath: targetFilePath,
+      );
+    });
   }
 
   void _generateFromJsonFunction({

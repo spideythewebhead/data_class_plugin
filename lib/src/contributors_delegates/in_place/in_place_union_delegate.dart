@@ -2,7 +2,6 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
-import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/annotations/union_internal.dart';
@@ -20,12 +19,11 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
     required super.targetFilePath,
     required super.changeBuilder,
     required super.pluginOptions,
-    required super.classNode,
-    required super.classElement,
-    required this.assistRequest,
+    required super.classNodes,
+    required this.compilationUnit,
   });
 
-  final DartAssistRequest assistRequest;
+  final CompilationUnit compilationUnit;
 
   @override
   Future<void> generate() async {
@@ -33,17 +31,18 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
   }
 
   Future<void> _generateConstructor() async {
-    final UnionInternal unionInternalAnnotation = UnionInternal.fromDartObject(
-      classElement.metadata.unionAnnotation!.computeConstantValue(),
-    );
+    await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
+      for (final ClassDeclaration classNode in classNodes) {
+        final ClassElement classElement = classNode.declaredElement!;
 
-    final RedirectedConstructorsVisitor redirectedConstructorsVisitor =
-        RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
-    classNode.visitChildren(redirectedConstructorsVisitor);
+        final UnionInternal unionInternalAnnotation = UnionInternal.fromDartObject(
+          classElement.metadata.unionAnnotation!.computeConstantValue(),
+        );
 
-    await changeBuilder.addDartFileEdit(
-      targetFilePath,
-      (DartFileEditBuilder fileEditBuilder) {
+        final RedirectedConstructorsVisitor redirectedConstructorsVisitor =
+            RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
+        classNode.visitChildren(redirectedConstructorsVisitor);
+
         if (!classElement.isAbstract) {
           fileEditBuilder.addInsertion(
             classNode.classKeyword.offset,
@@ -101,8 +100,8 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         );
 
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
-      },
-    );
+      }
+    });
   }
 
   void _generateMaybeWhenFunction({
@@ -182,7 +181,7 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
       final ClassAstVisitor classVisitor = ClassAstVisitor(matcher: (ClassDeclaration node) {
         return redirectedCtor.name == node.name.lexeme;
       });
-      assistRequest.result.unit.visitChildren(classVisitor);
+      compilationUnit.visitChildren(classVisitor);
 
       SourceRange? sourceRange;
       if (classVisitor.classNode != null) {

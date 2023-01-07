@@ -15,8 +15,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     required super.targetFilePath,
     required super.changeBuilder,
     required super.pluginOptions,
-    required super.classNode,
-    required super.classElement,
+    required super.classNodes,
     required this.compilationUnit,
   });
 
@@ -24,142 +23,149 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
 
   @override
   Future<void> generate() async {
-    final DataClassInternal dataClassAnnotation = DataClassInternal.fromDartObject(
-      classElement.metadata.dataClassAnnotation!.computeConstantValue(),
-    );
-
-    final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
-    final SourceRange? copyWithSourceRange = classNode.members.copyWithSourceRange;
-    final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
-    final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
-
-    final List<FieldElement> fields = classElement.fields.where((FieldElement field) {
-      return field.getter != null &&
-          field.getter!.name != 'hashCode' &&
-          field.getter!.isGetter &&
-          field.getter!.isAbstract;
-    }).toList(growable: false);
-
     await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
-      if (!classElement.isAbstract) {
-        fileEditBuilder.addInsertion(
-          classNode.classKeyword.offset,
-          (DartEditBuilder builder) {
-            builder.write('abstract ');
-          },
+      for (final ClassDeclaration classNode in classNodes) {
+        final ClassElement classElement = classNode.declaredElement!;
+
+        final DataClassInternal dataClassAnnotation = DataClassInternal.fromDartObject(
+          classElement.metadata.dataClassAnnotation!.computeConstantValue(),
         );
+
+        final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
+        final SourceRange? copyWithSourceRange = classNode.members.copyWithSourceRange;
+        final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
+        final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
+
+        final List<FieldElement> fields = classElement.fields.where((FieldElement field) {
+          return field.getter != null &&
+              field.getter!.name != 'hashCode' &&
+              field.getter!.isGetter &&
+              field.getter!.isAbstract;
+        }).toList(growable: false);
+
+        final List<FieldDeclaration> finalFieldsDeclarations = classNode.members
+            .where((ClassMember member) {
+              return member is FieldDeclaration && member.fields.isFinal;
+            })
+            .toList(growable: false)
+            .cast<FieldDeclaration>();
+
+        if (!classElement.isAbstract) {
+          fileEditBuilder.addInsertion(
+            classNode.classKeyword.offset,
+            (DartEditBuilder builder) {
+              builder.write('abstract ');
+            },
+          );
+        }
+
+        _updateFinalFieldsToGetters(
+          classNode: classNode,
+          finalFieldsDeclarations: finalFieldsDeclarations,
+          fileEditBuilder: fileEditBuilder,
+        );
+
+        void createFactoryConstructor(DartEditBuilder builder) {
+          _createFactoryConstructor(
+            classElement: classElement,
+            builder: builder,
+            fields: fields,
+            finalFieldsDeclarations: finalFieldsDeclarations,
+          );
+        }
+
+        if (constructorSourceRange != null) {
+          fileEditBuilder.addReplacement(
+            constructorSourceRange,
+            createFactoryConstructor,
+          );
+        } else {
+          fileEditBuilder.addInsertion(
+            classNode.leftBracket.offset + 1,
+            createFactoryConstructor,
+          );
+        }
+
+        if (dataClassAnnotation.fromJson ??
+            pluginOptions.dataClass.effectiveFromJson(relativeFilePath)) {
+          void createFromJson(DartEditBuilder builder) {
+            _createFromJson(
+              classElement: classElement,
+              builder: builder,
+            );
+          }
+
+          if (fromJsonSourceRange != null) {
+            fileEditBuilder.addReplacement(fromJsonSourceRange, createFromJson);
+          } else {
+            fileEditBuilder.addInsertion(
+              classNode.rightBracket.offset,
+              createFromJson,
+            );
+          }
+        } else if (fromJsonSourceRange != null) {
+          fileEditBuilder.addDeletion(fromJsonSourceRange);
+        }
+
+        if (dataClassAnnotation.copyWith ??
+            pluginOptions.dataClass.effectiveCopyWith(relativeFilePath)) {
+          void createCopyWith(DartEditBuilder builder) {
+            _createCopyWith(
+              classElement: classElement,
+              fields: fields,
+              builder: builder,
+            );
+          }
+
+          if (copyWithSourceRange != null) {
+            fileEditBuilder.addReplacement(copyWithSourceRange, createCopyWith);
+          } else {
+            fileEditBuilder.addInsertion(
+              classNode.rightBracket.offset,
+              createCopyWith,
+            );
+          }
+        } else if (copyWithSourceRange != null) {
+          fileEditBuilder.addDeletion(copyWithSourceRange);
+        }
+
+        if (dataClassAnnotation.toJson ??
+            pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
+          void createToJson(DartEditBuilder builder) {
+            _createToJson(
+              className: classElement.name,
+              builder: builder,
+            );
+          }
+
+          if (toJsonSourceRange != null) {
+            fileEditBuilder.addReplacement(toJsonSourceRange, createToJson);
+          } else {
+            fileEditBuilder.addInsertion(
+              classNode.rightBracket.offset,
+              createToJson,
+            );
+          }
+        } else if (toJsonSourceRange != null) {
+          fileEditBuilder.addDeletion(toJsonSourceRange);
+        }
+
+        fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
       }
 
-      final List<FieldDeclaration> finalFieldsDeclarations = classNode.members
-          .where((ClassMember member) {
-            return member is FieldDeclaration && member.fields.isFinal;
-          })
-          .toList(growable: false)
-          .cast<FieldDeclaration>();
-
-      _updateFinalFieldsToGetters(
-        finalFieldsDeclarations: finalFieldsDeclarations,
-        fileEditBuilder: fileEditBuilder,
-      );
-
       addPartDirective(
-        classElement: classElement,
+        partElements: classNodes[0].declaredElement!.library.parts,
         directives: compilationUnit.directives,
         fileEditBuilder: fileEditBuilder,
         targetFilePath: targetFilePath,
       );
-
-      void createFactoryConstructor(DartEditBuilder builder) {
-        _createFactoryConstructor(
-          classElement: classElement,
-          builder: builder,
-          fields: fields,
-          finalFieldsDeclarations: finalFieldsDeclarations,
-        );
-      }
-
-      if (constructorSourceRange != null) {
-        fileEditBuilder.addReplacement(
-          constructorSourceRange,
-          createFactoryConstructor,
-        );
-      } else {
-        fileEditBuilder.addInsertion(
-          classNode.leftBracket.offset + 1,
-          createFactoryConstructor,
-        );
-      }
-
-      if (dataClassAnnotation.fromJson ??
-          pluginOptions.dataClass.effectiveFromJson(relativeFilePath)) {
-        void createFromJson(DartEditBuilder builder) {
-          _createFromJson(
-            classElement: classElement,
-            builder: builder,
-          );
-        }
-
-        if (fromJsonSourceRange != null) {
-          fileEditBuilder.addReplacement(fromJsonSourceRange, createFromJson);
-        } else {
-          fileEditBuilder.addInsertion(
-            classNode.rightBracket.offset,
-            createFromJson,
-          );
-        }
-      } else if (fromJsonSourceRange != null) {
-        fileEditBuilder.addDeletion(fromJsonSourceRange);
-      }
-
-      if (dataClassAnnotation.copyWith ??
-          pluginOptions.dataClass.effectiveCopyWith(relativeFilePath)) {
-        void createCopyWith(DartEditBuilder builder) {
-          _createCopyWith(
-            classElement: classElement,
-            fields: fields,
-            builder: builder,
-          );
-        }
-
-        if (copyWithSourceRange != null) {
-          fileEditBuilder.addReplacement(copyWithSourceRange, createCopyWith);
-        } else {
-          fileEditBuilder.addInsertion(
-            classNode.rightBracket.offset,
-            createCopyWith,
-          );
-        }
-      } else if (copyWithSourceRange != null) {
-        fileEditBuilder.addDeletion(copyWithSourceRange);
-      }
-
-      if (dataClassAnnotation.toJson ?? pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
-        void createToJson(DartEditBuilder builder) {
-          _createToJson(
-            className: classElement.name,
-            builder: builder,
-          );
-        }
-
-        if (toJsonSourceRange != null) {
-          fileEditBuilder.addReplacement(toJsonSourceRange, createToJson);
-        } else {
-          fileEditBuilder.addInsertion(
-            classNode.rightBracket.offset,
-            createToJson,
-          );
-        }
-      } else if (toJsonSourceRange != null) {
-        fileEditBuilder.addDeletion(toJsonSourceRange);
-      }
-
-      fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
     });
   }
 
   void _updateFinalFieldsToGetters({
-    required List<FieldDeclaration> finalFieldsDeclarations,
-    required DartFileEditBuilder fileEditBuilder,
+    required final ClassDeclaration classNode,
+    required final List<FieldDeclaration> finalFieldsDeclarations,
+    required final DartFileEditBuilder fileEditBuilder,
   }) {
     final List<FormalParameter> formalParameters =
         (classNode.members.firstWhereOrNull((ClassMember member) {
