@@ -2,10 +2,10 @@
 
 part of 'enum_options.dart';
 
-class _$EnumOptionsImpl with EnumOptions {
+class _$EnumOptionsImpl extends EnumOptions {
   const _$EnumOptionsImpl({
     this.optionsConfig = const <String, OptionConfig>{},
-  });
+  }) : super.ctor();
 
   @override
   final Map<String, OptionConfig> optionsConfig;

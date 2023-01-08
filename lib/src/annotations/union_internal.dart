@@ -2,11 +2,11 @@ import 'package:analyzer/dart/constant/value.dart';
 
 class UnionInternal {
   const UnionInternal({
-    required this.copyWith,
-    required this.hashAndEquals,
-    required this.$toString,
-    required this.fromJson,
-    required this.toJson,
+    this.copyWith,
+    this.hashAndEquals,
+    this.$toString,
+    this.fromJson,
+    this.toJson,
   });
 
   final bool? copyWith;

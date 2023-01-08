@@ -40,10 +40,10 @@ GetUserResult _$GetUserResultFromJson(Map<dynamic, dynamic> json) {
   }
 }
 
-class GetUserResultData with GetUserResult {
+class GetUserResultData extends GetUserResult {
   GetUserResultData({
     required this.user,
-  });
+  }) : super._();
 
   final User user;
 
@@ -78,11 +78,11 @@ class GetUserResultData with GetUserResult {
   }
 }
 
-class GetUserResultError with GetUserResult {
+class GetUserResultError extends GetUserResult {
   GetUserResultError({
     this.exception,
     this.message,
-  });
+  }) : super._();
 
   final Exception? exception;
 

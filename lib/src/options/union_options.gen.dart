@@ -2,10 +2,10 @@
 
 part of 'union_options.dart';
 
-class _$UnionOptionsImpl with UnionOptions {
+class _$UnionOptionsImpl extends UnionOptions {
   const _$UnionOptionsImpl({
     this.optionsConfig = const <String, OptionConfig>{},
-  });
+  }) : super.ctor();
 
   @override
   final Map<String, OptionConfig> optionsConfig;

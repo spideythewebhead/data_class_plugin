@@ -35,6 +35,7 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
         RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
     classNode.visitChildren(redirectedConstructorsVisitor);
 
+    final SourceRange? privateConstructor = classNode.members.getSourceRangeForConstructor('_');
     final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
     final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
 
@@ -47,6 +48,26 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
             (DartEditBuilder builder) {
               builder.write('abstract ');
             },
+          );
+        }
+
+        void createDefaultConstructor(DartEditBuilder builder) {
+          _createDefaultConstructor(
+            classElement: classElement,
+            builder: builder,
+            constructorName: '_',
+          );
+        }
+
+        if (privateConstructor != null) {
+          fileEditBuilder.addReplacement(
+            privateConstructor,
+            createDefaultConstructor,
+          );
+        } else {
+          fileEditBuilder.addInsertion(
+            classNode.leftBracket.offset + 1,
+            createDefaultConstructor,
           );
         }
 
@@ -84,6 +105,19 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
         fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
       },
     );
+  }
+
+  void _createDefaultConstructor({
+    required final ClassElement classElement,
+    required final DartEditBuilder builder,
+    required final String constructorName,
+  }) {
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final bool isConst = defaultConstructor?.isConst ?? true;
+    builder
+      ..writeln()
+      ..writeln('${isConst ? 'const' : ''} ${classElement.name}.$constructorName();')
+      ..writeln();
   }
 
   void _generateFromJsonFunction({

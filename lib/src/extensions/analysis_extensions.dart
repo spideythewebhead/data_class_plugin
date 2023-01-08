@@ -191,4 +191,8 @@ extension InterfaceTypeX on InterfaceType {
   ClassElement? get classElement {
     return element is ClassElement ? element as ClassElement : null;
   }
+
+  bool hasMethod(String methodName) {
+    return null != methods.firstWhereOrNull((MethodElement member) => member.name == methodName);
+  }
 }

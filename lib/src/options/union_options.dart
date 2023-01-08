@@ -6,6 +6,8 @@ part 'union_options.gen.dart';
 
 @DataClass()
 abstract class UnionOptions {
+  const UnionOptions.ctor();
+
   /// Default constructor
   const factory UnionOptions({
     Map<String, OptionConfig> optionsConfig,

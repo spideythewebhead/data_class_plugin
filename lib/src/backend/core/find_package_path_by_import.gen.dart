@@ -2,8 +2,8 @@
 
 part of 'find_package_path_by_import.dart';
 
-class _$NoDartToolDirectoryFoundExceptionImpl with NoDartToolDirectoryFoundException {
-  const _$NoDartToolDirectoryFoundExceptionImpl();
+class _$NoDartToolDirectoryFoundExceptionImpl extends NoDartToolDirectoryFoundException {
+  const _$NoDartToolDirectoryFoundExceptionImpl() : super.ctor();
 
   @override
   bool operator ==(Object? other) {
@@ -29,10 +29,10 @@ class _$NoDartToolDirectoryFoundExceptionImpl with NoDartToolDirectoryFoundExcep
   }
 }
 
-class _$PackageNotInstalledExceptionImpl with PackageNotInstalledException {
+class _$PackageNotInstalledExceptionImpl extends PackageNotInstalledException {
   _$PackageNotInstalledExceptionImpl({
     required this.packageName,
-  });
+  }) : super.ctor();
 
   @override
   final String packageName;
@@ -48,13 +48,13 @@ class _$PackageNotInstalledExceptionImpl with PackageNotInstalledException {
   }
 }
 
-class _$PackageInfoImpl with PackageInfo {
+class _$PackageInfoImpl extends PackageInfo {
   _$PackageInfoImpl({
     required this.name,
     required this.rootUri,
     required this.packageUri,
     required this.languageVersion,
-  });
+  }) : super.ctor();
 
   @override
   final String name;

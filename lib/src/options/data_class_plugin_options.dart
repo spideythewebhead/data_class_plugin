@@ -27,6 +27,8 @@ enum CodeGenerationMode {
 
 @DataClass()
 abstract class DataClassPluginOptions {
+  const DataClassPluginOptions.ctor();
+
   /// Default constructor
   const factory DataClassPluginOptions({
     CodeGenerationMode generationMode,
