@@ -10,6 +10,7 @@ void createConstructor({
   required final List<DeclarationInfo> fields,
   required final String generatedClassName,
   final bool shouldAnnotateFieldsWithOverride = true,
+  final String? superConstructorName,
 }) {
   codeWriter.write(constructor?.constKeyword?.lexeme ?? '');
   codeWriter.write(' $generatedClassName(');
@@ -47,7 +48,7 @@ void createConstructor({
   }
 
   codeWriter
-    ..writeln(');')
+    ..writeln('): super.${superConstructorName ?? 'ctor'}();')
     ..writeln();
 
   for (final DeclarationInfo field in fields) {

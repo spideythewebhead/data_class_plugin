@@ -4,3 +4,9 @@ file_generation_paths:
   - "lib/**"
 
 generated_file_line_length: 100
+
+data_class:
+  options_config:
+    copy_with:
+      disabled:
+        - "lib/super_class.dart"

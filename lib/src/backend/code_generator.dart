@@ -364,10 +364,19 @@ class CodeGenerator {
       final String classTypeParametersSource = classDeclaration.typeParameters?.toSource() ?? '';
       final String generatedClassName = '_\$${className}Impl';
 
-      final ConstructorDeclaration? defaultConstructor =
+      final ConstructorDeclaration? defaultFactoryConstructor =
           classDeclaration.members.firstWhereOrNull((ClassMember member) {
-        return member is ConstructorDeclaration && member.name == null;
+        return member is ConstructorDeclaration &&
+            member.factoryKeyword != null &&
+            member.name == null;
       }) as ConstructorDeclaration?;
+
+      final String? superConstructorName =
+          (classDeclaration.members.firstWhereOrNull((ClassMember member) {
+        return member is ConstructorDeclaration && member.parameters.parameters.isEmpty;
+      }) as ConstructorDeclaration?)
+              ?.name
+              ?.lexeme;
 
       final List<DeclarationInfo> fields = classDeclaration.members
           .where((ClassMember member) {
@@ -382,7 +391,7 @@ class CodeGenerator {
               name: methodDecl.name.lexeme,
               type: methodDecl.returnType,
               metadata: methodDecl.metadata,
-              isRequired: defaultConstructor?.parameters.parameters
+              isRequired: defaultFactoryConstructor?.parameters.parameters
                       .firstWhereOrNull((FormalParameter parameter) =>
                           parameter.name?.lexeme == methodDecl.name.lexeme)
                       ?.isRequired ??
@@ -395,13 +404,14 @@ class CodeGenerator {
           AnnotationValueExtractor(classDeclaration.dataClassAnnotation);
 
       codeWriter.writeln(
-          'class $generatedClassName$classTypeParametersSource with $className$classTypeParametersSource {');
+          'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersSource {');
 
       createConstructor(
         codeWriter: codeWriter,
-        constructor: defaultConstructor,
+        constructor: defaultFactoryConstructor,
         fields: fields,
         generatedClassName: generatedClassName,
+        superConstructorName: superConstructorName,
       );
 
       if (classDeclaration.members.hasFactory('fromJson')) {
@@ -545,7 +555,7 @@ class CodeGenerator {
         }).toList(growable: false);
 
         codeWriter.writeln(
-            'class $generatedClassName$classTypeParametersSource with $className$classTypeParametersSource {');
+            'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersSource {');
 
         createConstructor(
           codeWriter: codeWriter,
@@ -553,6 +563,7 @@ class CodeGenerator {
           fields: fields,
           generatedClassName: generatedClassName,
           shouldAnnotateFieldsWithOverride: false,
+          superConstructorName: '_',
         );
 
         if (unionAnnotationValueExtractor.getBool('fromJson') ??

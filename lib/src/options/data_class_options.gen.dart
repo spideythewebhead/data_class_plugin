@@ -2,10 +2,10 @@
 
 part of 'data_class_options.dart';
 
-class _$DataClassOptionsImpl with DataClassOptions {
+class _$DataClassOptionsImpl extends DataClassOptions {
   const _$DataClassOptionsImpl({
     this.optionsConfig = const <String, OptionConfig>{},
-  });
+  }) : super.ctor();
 
   @override
   final Map<String, OptionConfig> optionsConfig;

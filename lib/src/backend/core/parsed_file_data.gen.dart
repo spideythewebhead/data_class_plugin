@@ -2,12 +2,12 @@
 
 part of 'parsed_file_data.dart';
 
-class _$ParsedFileDataImpl with ParsedFileData {
+class _$ParsedFileDataImpl extends ParsedFileData {
   _$ParsedFileDataImpl({
     required this.absolutePath,
     required this.compilationUnit,
     required this.lastModifiedAt,
-  });
+  }) : super.ctor();
 
   @override
   final String absolutePath;

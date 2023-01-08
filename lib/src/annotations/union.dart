@@ -56,7 +56,7 @@ class Union {
   ///
   /// **Applies only to generation mode = file**, for now
   ///
-  /// If non provided a method will not be generated
+  /// If none provided a method will not be generated
   final String? unionJsonKey;
 
   /// If no [UnionJsonKeyValue] is matched then use this fallback value

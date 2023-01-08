@@ -4,6 +4,8 @@ part 'options_config.gen.dart';
 
 @DataClass()
 abstract class OptionConfig {
+  const OptionConfig.ctor();
+
   /// Default constructor
   const factory OptionConfig({
     bool? defaultValue,

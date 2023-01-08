@@ -9,6 +9,8 @@ part 'union.gen.dart';
   unionFallbackJsonValue: 'error',
 )
 abstract class GetUserResult {
+  const GetUserResult._();
+
   /// Creates an instance of [GetUserResult] from [json]
   factory GetUserResult.fromJson(Map<dynamic, dynamic> json) => _$GetUserResultFromJson(json);
 

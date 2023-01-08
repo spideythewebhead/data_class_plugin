@@ -20,6 +20,9 @@ extension ElementX on Element {
   bool get hasDefaultValueAnnotation => defaultValueAnnotation != null;
   ElementAnnotation? get defaultValueAnnotation =>
       metadata.getAnnotation(AnnotationType.defaultValue);
+
+  bool get hasJsonKeyAnnotation => jsonKeyAnnotation != null;
+  ElementAnnotation? get jsonKeyAnnotation => metadata.getAnnotation(AnnotationType.jsonKey);
 }
 
 extension ClassDeclarationX on ClassDeclaration {

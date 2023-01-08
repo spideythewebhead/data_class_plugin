@@ -2,12 +2,12 @@
 
 part of 'data_class.dart';
 
-class _$UserImpl with User {
+class _$UserImpl extends User {
   _$UserImpl({
     required this.id,
     required this.username,
     this.email = '',
-  });
+  }) : super.ctor();
 
   @override
   final String id;

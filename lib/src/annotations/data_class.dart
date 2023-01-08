@@ -44,8 +44,17 @@ import 'package:meta/meta_meta.dart';
 ///
 /// If no value is provided (default), then false is assumed
 ///
+/// [constructorName] Name for the default constructor to be used
+///
+/// If no value is provided (default), then "ctor" will be used
+///
+/// _Note: This is only available on file generation mode_
+///
 /// ```dart
-/// Map<String, dynamic> toJson()
+/// @DataClass()
+/// class User {
+///   User.ctor();
+/// }
 /// ```
 @Target(<TargetKind>{TargetKind.classType})
 class DataClass {
@@ -56,6 +65,7 @@ class DataClass {
     this.$toString,
     this.fromJson,
     this.toJson,
+    this.constructorName,
   });
 
   /// If no value is provided (default), then true is assumed
@@ -72,4 +82,9 @@ class DataClass {
 
   /// If no value is provided (default), then false is assumed
   final bool? toJson;
+
+  /// Default constructor name
+  ///
+  /// If none provided 'ctor' will be used
+  final String? constructorName;
 }

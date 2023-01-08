@@ -5,6 +5,8 @@ part 'parsed_file_data.gen.dart';
 
 @DataClass(copyWith: false)
 abstract class ParsedFileData {
+  ParsedFileData.ctor();
+
   /// Default constructor
   factory ParsedFileData({
     required String absolutePath,

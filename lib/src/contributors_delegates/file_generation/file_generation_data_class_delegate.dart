@@ -40,6 +40,26 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
           field.getter!.isAbstract;
     }).toList(growable: false);
 
+    final Set<String> classFieldsNames = <String>{
+      for (final FieldElement field in fields) field.name,
+    };
+
+    final List<FieldElement> superClassFields;
+
+    if (classElement.supertype?.element is ClassElement &&
+        (classElement.supertype?.element.hasDataClassAnnotation ?? false)) {
+      final ClassElement superClass = classElement.supertype?.element as ClassElement;
+      superClassFields = superClass.fields.where((FieldElement field) {
+        return field.getter != null &&
+            field.getter!.name != 'hashCode' &&
+            field.getter!.isGetter &&
+            field.getter!.isAbstract &&
+            !classFieldsNames.contains(field.name);
+      }).toList(growable: false);
+    } else {
+      superClassFields = const <FieldElement>[];
+    }
+
     await changeBuilder.addDartFileEdit(targetFilePath, (DartFileEditBuilder fileEditBuilder) {
       if (!classElement.isAbstract) {
         fileEditBuilder.addInsertion(
@@ -47,6 +67,29 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
           (DartEditBuilder builder) {
             builder.write('abstract ');
           },
+        );
+      }
+
+      void createDefaultConstructor(DartEditBuilder builder) {
+        _createDefaultConstructor(
+          classElement: classElement,
+          builder: builder,
+          constructorName: dataClassAnnotation.constructorName ?? 'ctor',
+        );
+      }
+
+      final SourceRange? defaultConstructorSourceRange = classNode.members
+          .getSourceRangeForConstructor(dataClassAnnotation.constructorName ?? 'ctor');
+
+      if (defaultConstructorSourceRange != null) {
+        fileEditBuilder.addReplacement(
+          defaultConstructorSourceRange,
+          createDefaultConstructor,
+        );
+      } else {
+        fileEditBuilder.addInsertion(
+          classNode.leftBracket.offset + 1,
+          createDefaultConstructor,
         );
       }
 
@@ -74,6 +117,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
           classElement: classElement,
           builder: builder,
           fields: fields,
+          superClassFields: superClassFields,
           finalFieldsDeclarations: finalFieldsDeclarations,
         );
       }
@@ -87,6 +131,14 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
         fileEditBuilder.addInsertion(
           classNode.leftBracket.offset + 1,
           createFactoryConstructor,
+        );
+      }
+
+      if (superClassFields.isNotEmpty) {
+        _writeSuperClassFields(
+          constructorSourceRange: constructorSourceRange,
+          fileEditBuilder: fileEditBuilder,
+          superClassFields: superClassFields,
         );
       }
 
@@ -117,6 +169,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
           _createCopyWith(
             classElement: classElement,
             fields: fields,
+            superClassFields: superClassFields,
             builder: builder,
           );
         }
@@ -136,7 +189,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
       if (dataClassAnnotation.toJson ?? pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
         void createToJson(DartEditBuilder builder) {
           _createToJson(
-            className: classElement.name,
+            classElement: classElement,
             builder: builder,
           );
         }
@@ -155,6 +208,66 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
 
       fileEditBuilder.format(SourceRange(classNode.offset, classNode.length));
     });
+  }
+
+  void _writeSuperClassFields({
+    required final SourceRange? constructorSourceRange,
+    required final DartFileEditBuilder fileEditBuilder,
+    required final List<FieldElement> superClassFields,
+  }) {
+    final int offset;
+
+    if (constructorSourceRange != null) {
+      offset = 1 + constructorSourceRange.offset + constructorSourceRange.length;
+    } else {
+      offset = 1 + classNode.leftBracket.offset;
+    }
+
+    fileEditBuilder.addInsertion(offset, (DartEditBuilder builder) {
+      builder.writeln();
+
+      for (final FieldElement field in superClassFields) {
+        builder.writeln('@override');
+
+        if (field.getter!.hasDefaultValueAnnotation) {
+          builder.writeln(field.getter!.defaultValueAnnotation!.toSource());
+        }
+
+        if (field.getter!.hasJsonKeyAnnotation) {
+          builder.writeln(field.getter!.jsonKeyAnnotation!.toSource());
+        }
+
+        builder
+          ..writeln(
+              '${field.type.typeStringValue(enclosingImports: classElement.library.libraryImports)} get ${field.name};')
+          ..writeln();
+      }
+    });
+  }
+
+  void _createDefaultConstructor({
+    required final ClassElement classElement,
+    required final DartEditBuilder builder,
+    required final String constructorName,
+  }) {
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final bool isConst = defaultConstructor?.isConst ?? true;
+    builder
+      ..writeln()
+      ..writeln('${isConst ? 'const' : ''} ${classElement.name}.$constructorName()');
+
+    if (classElement.supertype != null) {
+      final ConstructorElement? emptyCtor = classElement.supertype!.constructors.firstWhereOrNull(
+          (ConstructorElement ctor) => !ctor.isFactory && ctor.parameters.isEmpty);
+
+      if (emptyCtor != null && emptyCtor.name.isNotEmpty) {
+        builder.write(': super.${emptyCtor.name}()');
+      }
+    }
+
+    builder
+      ..writeln(';')
+      ..writeln();
   }
 
   void _updateFinalFieldsToGetters({
@@ -209,6 +322,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     required final ClassElement classElement,
     required final DartEditBuilder builder,
     required final List<FieldElement> fields,
+    required final List<FieldElement> superClassFields,
     required final List<FieldDeclaration> finalFieldsDeclarations,
   }) {
     final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
@@ -221,7 +335,10 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
       ..writeln('/// Default constructor')
       ..writeln('${isConst ? 'const' : ''} factory ${classElement.name}(');
 
-    if (fields.isNotEmpty || finalFieldsDeclarations.isNotEmpty) {
+    final bool shouldAddBrace =
+        fields.isNotEmpty || finalFieldsDeclarations.isNotEmpty || superClassFields.isNotEmpty;
+
+    if (shouldAddBrace) {
       builder.write('{');
     }
 
@@ -235,7 +352,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
       }
     }
 
-    for (final FieldElement field in fields) {
+    for (final FieldElement field in <FieldElement>[...superClassFields, ...fields]) {
       if (!(field.type.isDynamic ||
           field.type.isNullable ||
           field.getter!.hasDefaultValueAnnotation)) {
@@ -248,7 +365,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
         ..writeln(' ${field.name},');
     }
 
-    if (fields.isNotEmpty || finalFieldsDeclarations.isNotEmpty) {
+    if (shouldAddBrace) {
       builder.write('}');
     }
 
@@ -257,24 +374,34 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
 
   void _createCopyWith({
     required final ClassElement classElement,
-    required final List<VariableElement> fields,
+    required final List<FieldElement> fields,
+    required final List<FieldElement> superClassFields,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Creates a new instance of [${classElement.name}] with optional new values')
-      ..writeln('${classElement.thisType} copyWith(');
+      ..writeln('/// Creates a new instance of [${classElement.name}] with optional new values');
 
-    if (fields.isNotEmpty) {
+    if (classElement.supertype?.hasMethod('copyWith') ?? false) {
+      builder.writeln('@override');
+    }
+
+    builder.writeln('${classElement.thisType} copyWith(');
+
+    final bool shouldAddBrace = fields.isNotEmpty || superClassFields.isNotEmpty;
+
+    if (shouldAddBrace) {
       builder.write('{');
+    }
 
-      for (final VariableElement field in fields) {
-        final String typeStringValue =
-            field.type.typeStringValue(enclosingImports: classElement.library.libraryImports);
-        final bool isNullable = typeStringValue.endsWith('?');
-        builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
-      }
+    for (final VariableElement field in <FieldElement>[...superClassFields, ...fields]) {
+      final String typeStringValue =
+          field.type.typeStringValue(enclosingImports: classElement.library.libraryImports);
+      final bool isNullable = typeStringValue.endsWith('?');
+      builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
+    }
 
+    if (shouldAddBrace) {
       builder.write('}');
     }
 
@@ -296,12 +423,17 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
   }
 
   void _createToJson({
-    required final String className,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Converts [$className] to a [Map] json')
-      ..writeln('Map<String, dynamic> toJson();');
+      ..writeln('/// Converts [${classElement.name}] to a [Map] json');
+
+    if (classElement.supertype?.hasMethod('toJson') ?? false) {
+      builder.writeln('@override');
+    }
+
+    builder.writeln('Map<String, dynamic> toJson();');
   }
 }
