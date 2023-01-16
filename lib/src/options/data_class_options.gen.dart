@@ -4,11 +4,14 @@ part of 'data_class_options.dart';
 
 class _$DataClassOptionsImpl extends DataClassOptions {
   const _$DataClassOptionsImpl({
-    this.optionsConfig = const <String, OptionConfig>{},
-  }) : super.ctor();
+    Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
+  })  : _optionsConfig = optionsConfig,
+        super.ctor();
 
   @override
-  final Map<String, OptionConfig> optionsConfig;
+  Map<String, OptionConfig> get optionsConfig =>
+      Map<String, OptionConfig>.unmodifiable(_optionsConfig);
+  final Map<String, OptionConfig> _optionsConfig;
 
   factory _$DataClassOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$DataClassOptionsImpl(

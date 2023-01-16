@@ -41,6 +41,10 @@ extension OptionsGlobMatch on Map<String, OptionConfig> {
     return _effectiveValue('hash_and_equals', filePath, defaultValue);
   }
 
+  bool effectiveUnmodifiableCollections({required String filePath, required bool defaultValue}) {
+    return _effectiveValue('unmodifiable_collections', filePath, defaultValue);
+  }
+
   bool _effectiveValue(
     String method,
     String filePath,

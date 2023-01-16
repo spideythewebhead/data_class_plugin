@@ -4,11 +4,14 @@ part of 'union_options.dart';
 
 class _$UnionOptionsImpl extends UnionOptions {
   const _$UnionOptionsImpl({
-    this.optionsConfig = const <String, OptionConfig>{},
-  }) : super.ctor();
+    Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
+  })  : _optionsConfig = optionsConfig,
+        super.ctor();
 
   @override
-  final Map<String, OptionConfig> optionsConfig;
+  Map<String, OptionConfig> get optionsConfig =>
+      Map<String, OptionConfig>.unmodifiable(_optionsConfig);
+  final Map<String, OptionConfig> _optionsConfig;
 
   factory _$UnionOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$UnionOptionsImpl(

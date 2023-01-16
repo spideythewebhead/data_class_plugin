@@ -5,14 +5,17 @@ part of 'json_options.dart';
 class _$JsonOptionsImpl extends JsonOptions {
   const _$JsonOptionsImpl({
     this.keyNameConvention,
-    this.nameConventionGlobs = const <String, List<String>>{},
-  }) : super.ctor();
+    Map<String, List<String>> nameConventionGlobs = const <String, List<String>>{},
+  })  : _nameConventionGlobs = nameConventionGlobs,
+        super.ctor();
 
   @override
   final String? keyNameConvention;
 
   @override
-  final Map<String, List<String>> nameConventionGlobs;
+  Map<String, List<String>> get nameConventionGlobs =>
+      Map<String, List<String>>.unmodifiable(_nameConventionGlobs);
+  final Map<String, List<String>> _nameConventionGlobs;
 
   factory _$JsonOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$JsonOptionsImpl(

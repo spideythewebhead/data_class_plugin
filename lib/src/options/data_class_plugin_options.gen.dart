@@ -5,19 +5,22 @@ part of 'data_class_plugin_options.dart';
 class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
   const _$DataClassPluginOptionsImpl({
     this.generationMode = CodeGenerationMode.inPlace,
-    this.allowedFilesGenerationPaths = const <Glob>[],
+    List<Glob> allowedFilesGenerationPaths = const <Glob>[],
     this.generatedFileLineLength = 80,
     this.json = const JsonOptions(),
     this.dataClass = const DataClassOptions(),
     this.$enum = const EnumOptions(),
     this.union = const UnionOptions(),
-  }) : super.ctor();
+  })  : _allowedFilesGenerationPaths = allowedFilesGenerationPaths,
+        super.ctor();
 
   @override
   final CodeGenerationMode generationMode;
 
   @override
-  final List<Glob> allowedFilesGenerationPaths;
+  List<Glob> get allowedFilesGenerationPaths =>
+      List<Glob>.unmodifiable(_allowedFilesGenerationPaths);
+  final List<Glob> _allowedFilesGenerationPaths;
 
   @override
   final int generatedFileLineLength;

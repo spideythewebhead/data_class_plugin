@@ -49,6 +49,14 @@ import 'package:meta/meta_meta.dart';
 /// If no value is provided (default), then "ctor" will be used
 ///
 /// _Note: This is only available on file generation mode_
+/// [unmodifiableCollections] Wraps collections (List, Map, Set) with the relative [unmodifiable] constructor.
+///
+/// Applies only for file generation mode
+///
+/// If no value is provided (default), then true is assumed
+///
+/// If set to false, then the fields of a collection type
+/// will be excluded from hashCode implementation so the hashCode result will be stable
 ///
 /// ```dart
 /// @DataClass()
@@ -66,6 +74,7 @@ class DataClass {
     this.fromJson,
     this.toJson,
     this.constructorName,
+    this.unmodifiableCollections,
   });
 
   /// If no value is provided (default), then true is assumed
@@ -87,4 +96,10 @@ class DataClass {
   ///
   /// If none provided 'ctor' will be used
   final String? constructorName;
+
+  /// If no value is provided (default), then true is assumed
+  ///
+  /// If set to false, then the fields of a collection type
+  /// will be excluded from hashCode implementation so the hashCode result will be stable
+  final bool? unmodifiableCollections;
 }

@@ -25,6 +25,7 @@ class Union {
     this.toJson,
     this.unionJsonKey,
     this.unionFallbackJsonValue,
+    this.unmodifiableCollections,
   });
 
   /// Toggles code generation for copyWith
@@ -61,6 +62,8 @@ class Union {
 
   /// If no [UnionJsonKeyValue] is matched then use this fallback value
   final String? unionFallbackJsonValue;
+
+  final bool? unmodifiableCollections;
 }
 
 class UnionJsonKeyValue {
