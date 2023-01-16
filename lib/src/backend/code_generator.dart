@@ -264,7 +264,7 @@ class CodeGenerator {
     });
     compilationUnit.visitChildren(classCollectorVisitor);
 
-    final List<ClassDeclaration> classDeclarations = classCollectorVisitor.classNodes;
+    final List<ClassDeclaration> classDeclarations = classCollectorVisitor.matchedNodes;
 
     if (classDeclarations.isEmpty) {
       try {

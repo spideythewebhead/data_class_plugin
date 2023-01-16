@@ -1,6 +1,5 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
@@ -11,9 +10,10 @@ import 'package:data_class_plugin/src/contributors_delegates/in_place/in_place_u
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
+import 'package:data_class_plugin/src/visitors/visitors.dart';
 
 class UnionAssistContributor extends Object
-    with AssistContributorMixin, ClassAstVisitorMixin, RelativeFilePathMixin
+    with AssistContributorMixin, RelativeFilePathMixin
     implements AssistContributor {
   UnionAssistContributor(
     this.targetFilePath, {
@@ -23,7 +23,6 @@ class UnionAssistContributor extends Object
   @override
   final String targetFilePath;
 
-  @override
   late final DartAssistRequest assistRequest;
 
   @override
@@ -45,38 +44,34 @@ class UnionAssistContributor extends Object
   }
 
   Future<void> _generateUnion() async {
-    final ClassDeclaration? classNode = findClassDeclaration();
-    if (classNode == null || classNode.members.isEmpty || classNode.declaredElement == null) {
-      return;
-    }
-
-    final ClassElement classElement = classNode.declaredElement!;
-    if (!classElement.hasUnionAnnotation) {
-      return;
-    }
-
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     final DataClassPluginOptions pluginOptions =
         _pluginOptions ?? await session.analysisContext.contextRoot.root.getPluginOptions();
+
+    final ClassCollectorAstVisitor visitor =
+        ClassCollectorAstVisitor(matcher: (ClassDeclaration node) => node.hasUnionAnnotation);
+    assistRequest.result.unit.visitChildren(visitor);
+
+    if (visitor.matchedNodes.isEmpty) {
+      return;
+    }
 
     final CodeGenerationDelegate delegate =
         pluginOptions.generationMode == CodeGenerationMode.inPlace
             ? InPlaceUnionDelegate(
                 relativeFilePath: relativeFilePath,
                 targetFilePath: targetFilePath,
-                classElement: classElement,
-                classNode: classNode,
+                classNodes: visitor.matchedNodes,
                 pluginOptions: pluginOptions,
                 changeBuilder: changeBuilder,
-                assistRequest: assistRequest,
+                compilationUnit: assistRequest.result.unit,
               )
             : FileGenerationUnionDelegate(
                 relativeFilePath: relativeFilePath,
                 targetFilePath: targetFilePath,
                 changeBuilder: changeBuilder,
                 pluginOptions: pluginOptions,
-                classNode: classNode,
-                classElement: classElement,
+                classNodes: visitor.matchedNodes,
                 compilationUnit: assistRequest.result.unit,
               );
 
