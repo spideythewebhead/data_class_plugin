@@ -34,14 +34,14 @@ File getDataClassPluginOptionsFile(String root) {
 
 void addPartDirective({
   required String targetFilePath,
-  required ClassElement classElement,
   required DartFileEditBuilder fileEditBuilder,
   required List<Directive> directives,
+  required List<PartElement> partElements,
 }) {
   final String targetPartName = path.basename(targetFilePath).replaceFirst('.dart', '.gen.dart');
 
   bool shouldAddPart = true;
-  for (final PartElement part in classElement.library.parts) {
+  for (final PartElement part in partElements) {
     final DirectiveUri partUri = part.uri;
     if (partUri is DirectiveUriWithRelativeUri) {
       if (targetPartName == partUri.relativeUriString) {
