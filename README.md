@@ -419,8 +419,8 @@ data_class:
     # For each of the provided methods you can provide a configuration
     # The configuration can be an enabled or disabled field that contains a list of globs
     # Default values for each options
-    # copy_with (true), hash_and_equals (true), to_string (true), from_json (false), to_json (false)
-    <copy_with | hash_and_equals | to_string | from_json | to_json>:
+    # copy_with (true), hash_and_equals (true), to_string (true), from_json (false),to_json (false), unmodifiable_collections (true)
+    <copy_with | hash_and_equals | to_string | from_json | to_json | unmodifiable_collections>:
       default: boolean
       enabled:
         - "a/glob/here"
@@ -434,8 +434,8 @@ union:
     # For each of the provided methods you can provide a configuration
     # The configuration can be an enabled or disabled field that contains a list of globs
     # Default values for each options
-    # copy_with (false), hash_and_equals (true), to_string (true)  from_json(false), to_json (false)
-    <copy_with | hash_and_equals | to_string | from_json | to_json>:
+    # copy_with (false), hash_and_equals (true), to_string (true)  from_json(false), to_json (false), unmodifiable_collections (true)
+    <copy_with | hash_and_equals | to_string | from_json | to_json | unmodifiable_collections>:
       default: boolean
       enabled:
         - "a/glob/here"

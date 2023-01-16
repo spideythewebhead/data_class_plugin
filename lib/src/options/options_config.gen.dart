@@ -5,18 +5,22 @@ part of 'options_config.dart';
 class _$OptionConfigImpl extends OptionConfig {
   const _$OptionConfigImpl({
     this.defaultValue,
-    this.enabled = const <String>[],
-    this.disabled = const <String>[],
-  }) : super.ctor();
+    List<String> enabled = const <String>[],
+    List<String> disabled = const <String>[],
+  })  : _enabled = enabled,
+        _disabled = disabled,
+        super.ctor();
 
   @override
   final bool? defaultValue;
 
   @override
-  final List<String> enabled;
+  List<String> get enabled => List<String>.unmodifiable(_enabled);
+  final List<String> _enabled;
 
   @override
-  final List<String> disabled;
+  List<String> get disabled => List<String>.unmodifiable(_disabled);
+  final List<String> _disabled;
 
   factory _$OptionConfigImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$OptionConfigImpl(

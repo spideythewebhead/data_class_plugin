@@ -4,11 +4,14 @@ part of 'enum_options.dart';
 
 class _$EnumOptionsImpl extends EnumOptions {
   const _$EnumOptionsImpl({
-    this.optionsConfig = const <String, OptionConfig>{},
-  }) : super.ctor();
+    Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
+  })  : _optionsConfig = optionsConfig,
+        super.ctor();
 
   @override
-  final Map<String, OptionConfig> optionsConfig;
+  Map<String, OptionConfig> get optionsConfig =>
+      Map<String, OptionConfig>.unmodifiable(_optionsConfig);
+  final Map<String, OptionConfig> _optionsConfig;
 
   factory _$EnumOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$EnumOptionsImpl(
