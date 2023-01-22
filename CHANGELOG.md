@@ -1,3 +1,22 @@
+## 0.0.9
+
+- General
+  - Update README.md
+  - Update pub packages
+  - Improve logging for file gen mode
+- Fixes/Enhancements
+  - Add support for unmodifiable collections in file gen mode [(issue #196)](https://github.com/spideythewebhead/data_class_plugin/issues/196)
+  - Add constructor name option for file gen mode [(issue #202)](https://github.com/spideythewebhead/data_class_plugin/issues/202)
+  - Automatically convert final fields to getters [(issue #200)](https://github.com/spideythewebhead/data_class_plugin/issues/200)
+  - Update generated code for file gen mode [(issue #198)](https://github.com/spideythewebhead/data_class_plugin/issues/198)
+  - File gen watch mode not working on windows [(issue #194)](https://github.com/spideythewebhead/data_class_plugin/issues/194)
+  - Actions for unions in file gen mode are not updating code correctly [(issue #191)](https://github.com/spideythewebhead/data_class_plugin/issues/191)
+  - Fix nullability checks in toJson generation [(issue #190)](https://github.com/spideythewebhead/data_class_plugin/issues/190)
+  - Main union classes should be abstract [(issue #188)](https://github.com/spideythewebhead/data_class_plugin/issues/188)
+  - Missing '?' on nullable objects when generating 'toJson()' [(issue #186)](https://github.com/spideythewebhead/data_class_plugin/issues/186)
+  - Add override annotation on 'toJson' method when extending a class that has it [(issue #184)](https://github.com/spideythewebhead/data_class_plugin/issues/184)
+  - Fix error message for 'Exception: No json converter found for Type' [(issue #181)](https://github.com/spideythewebhead/data_class_plugin/issues/181)
+
 ## 0.0.8
 
 - Bump data_class_plugin version in tools/analyzer_plugin
