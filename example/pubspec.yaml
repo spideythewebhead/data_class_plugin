@@ -10,7 +10,6 @@ environment:
 dependencies:
   data_class_plugin:
     path: ../
-    version: ^0.0.8
 
 dev_dependencies:
   lints: ^2.0.1
