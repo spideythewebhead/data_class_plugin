@@ -1,3 +1,9 @@
+## 0.1.0
+
+- Fixes a crash on file generation mode when adding a new dependency to a target file [(issue #215)](https://github.com/spideythewebhead/data_class_plugin/issues/215)
+- Regenerate all dataclasses/unions in a file [(issue #210)](https://github.com/spideythewebhead/data_class_plugin/issues/210)
+- Lower "path" dependency to version 1.8.2 [(issue #214)](https://github.com/spideythewebhead/data_class_plugin/issues/214)
+
 ## 0.0.9
 
 - General
