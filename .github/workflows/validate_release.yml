@@ -20,7 +20,7 @@ jobs:
       - name: 🎯 Setup Dart
         uses: dart-lang/setup-dart@v1.4
         with:
-          sdk: stable
+          sdk: "2.18.6"
 
       - name: 📦 Install Dependencies
         run: dart pub get
