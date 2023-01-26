@@ -12,6 +12,6 @@ class DependencyGraph {
   }
 
   bool hasDependency(String dependant, String dependencyName) {
-    return _dependencies[dependant]!.contains(dependencyName);
+    return _dependencies[dependant]?.contains(dependencyName) ?? false;
   }
 }
