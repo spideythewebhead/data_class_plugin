@@ -15,7 +15,7 @@ dependencies:
   analyzer_plugin: ">=0.10.0 <1.0.0"
   args: ^2.3.1
   dart_style: ^2.2.4
-  meta: ^1.8.0
+  meta: ^1.9.0
   yaml: ^3.1.1
   glob: ^2.1.1
   path: ^1.8.2
