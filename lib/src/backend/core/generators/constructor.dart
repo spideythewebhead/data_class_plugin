@@ -102,8 +102,17 @@ class ConstructorGenerator implements Generator {
         _codeWriter
           ..writeln()
           ..writeln(_shouldAnnotateFieldsWithOverride ? '@override' : '')
-          ..write('${customDartType.fullTypeName} get ${field.name} => ')
-          ..writeln('${customDartType.fullTypeName}.unmodifiable(_${field.name});')
+          ..write('${customDartType.fullTypeName} get ${field.name} => ');
+
+        if (customDartType.isNullable) {
+          final String notNullableType =
+              customDartType.fullTypeName.substring(0, customDartType.fullTypeName.length - 1);
+          _codeWriter.write('_${field.name} ?? $notNullableType.unmodifiable(_${field.name}!);');
+        } else {
+          _codeWriter.writeln('${customDartType.fullTypeName}.unmodifiable(_${field.name});');
+        }
+
+        _codeWriter
           ..writeln('final ${customDartType.fullTypeName} _${field.name};')
           ..writeln();
         continue;
