@@ -80,20 +80,18 @@ class GetUserResultData extends GetUserResult {
 
 class GetUserResultError extends GetUserResult {
   GetUserResultError({
-    this.exception,
+    required this.statusCode,
     this.message,
   }) : super._();
 
-  final Exception? exception;
+  final int statusCode;
 
   final String? message;
 
   factory GetUserResultError.fromJson(Map<dynamic, dynamic> json) {
     return GetUserResultError(
-      exception: json['exception'] == null
-          ? null
-          : jsonConverterRegistrant.find(Exception).fromJson(json['exception']) as Exception,
-      message: json['message'] == null ? null : json['message'] as String,
+      statusCode: json['statusCode'] as int,
+      message: json['message'] as String?,
     );
   }
 
@@ -101,7 +99,7 @@ class GetUserResultError extends GetUserResult {
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
-      exception,
+      statusCode,
       message,
     ]);
   }
@@ -111,7 +109,7 @@ class GetUserResultError extends GetUserResult {
     return identical(this, other) ||
         other is GetUserResultError &&
             runtimeType == other.runtimeType &&
-            exception == other.exception &&
+            statusCode == other.statusCode &&
             message == other.message;
   }
 
@@ -120,7 +118,7 @@ class GetUserResultError extends GetUserResult {
     String toStringOutput = 'GetUserResultError{<optimized out>}';
     assert(() {
       toStringOutput =
-          'GetUserResultError@<$hexIdentity>{exception: $exception, message: $message}';
+          'GetUserResultError@<$hexIdentity>{statusCode: $statusCode, message: $message}';
       return true;
     }());
     return toStringOutput;

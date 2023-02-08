@@ -22,7 +22,7 @@ class _$UserImpl extends User {
     return _$UserImpl(
       id: json['id'] as String,
       username: json['username'] as String,
-      email: json['email'] == null ? '' : json['email'] as String,
+      email: json['email'] as String? ?? '',
     );
   }
 
