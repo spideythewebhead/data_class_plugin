@@ -20,7 +20,7 @@ class _$UnionOptionsImpl extends UnionOptions {
           : <String, OptionConfig>{
               for (final MapEntry<dynamic, dynamic> e0
                   in (json['options_config'] as Map<dynamic, dynamic>).entries)
-                e0.key: OptionConfig.fromJson(e0.value),
+                e0.key as String: OptionConfig.fromJson(e0.value),
             },
     );
   }

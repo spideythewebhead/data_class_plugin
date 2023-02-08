@@ -24,7 +24,7 @@ class _$OptionConfigImpl extends OptionConfig {
 
   factory _$OptionConfigImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$OptionConfigImpl(
-      defaultValue: json['default'] == null ? null : json['default'] as bool,
+      defaultValue: json['default'] as bool?,
       enabled: json['enabled'] == null
           ? const <String>[]
           : <String>[
