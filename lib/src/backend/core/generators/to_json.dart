@@ -136,7 +136,7 @@ class ToJsonGenerator implements Generator {
       return;
     }
 
-    _logger.warning('WARNING: No "toJson" method found for type ${dartType.name}');
+    _logger.warning('No "toJson" method found for type ${dartType.name}');
 
     if (dartType.isNullable) {
       _writeNullableParsingPrefix(parentVariableName: parentVariableName);
@@ -146,12 +146,31 @@ class ToJsonGenerator implements Generator {
         .writeln('jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),');
   }
 
+  bool _shouldSkipForCollection(final CustomDartType originalDartType) {
+    CustomDartType dartType = originalDartType;
+    while (true) {
+      if (dartType.isList) {
+        dartType = dartType.typeArguments[0];
+      } else if (dartType.isMap) {
+        dartType = dartType.typeArguments[1];
+      } else {
+        break;
+      }
+    }
+    return dartType.isPrimary;
+  }
+
   Future<void> _encodeList({
     required final CustomDartType dartType,
     required final String parentVariableName,
     required final int depthIndex,
     required final bool requiresBangOperator,
   }) async {
+    if (_shouldSkipForCollection(dartType)) {
+      _codeWriter.writeln(parentVariableName);
+      return;
+    }
+
     if (dartType.isNullable) {
       _writeNullableParsingPrefix(
         parentVariableName: parentVariableName,
@@ -182,6 +201,11 @@ class ToJsonGenerator implements Generator {
     required final bool requiresBangOperator,
   }) async {
     if (!dartType.typeArguments[0].isPrimary) {
+      return;
+    }
+
+    if (_shouldSkipForCollection(dartType)) {
+      _codeWriter.writeln(parentVariableName);
       return;
     }
 

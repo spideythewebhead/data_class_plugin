@@ -125,7 +125,7 @@ class FromJsonGenerator implements Generator {
       return;
     }
 
-    if (dartType.isNullable || defaultValue != null) {
+    if (!dartType.isPrimary && (dartType.isNullable || defaultValue != null)) {
       _writeNullableCheck(
         variableName: parentVariableName,
         defaultValue: defaultValue,
@@ -136,6 +136,17 @@ class FromJsonGenerator implements Generator {
       dartType: dartType,
       parentVariableName: parentVariableName,
     );
+
+    if (dartType.isPrimary && defaultValue != null) {
+      if (dartType.isNullable) {
+        _logger.warning('Declared a nullable type ${dartType.fullTypeName} with default');
+      } else {
+        _codeWriter.writeln('?');
+      }
+      _codeWriter.write(' ?? $defaultValue');
+    }
+
+    _codeWriter.writeln(',');
   }
 
   Future<void> _parsePrimary({
@@ -143,18 +154,18 @@ class FromJsonGenerator implements Generator {
     required final String parentVariableName,
   }) async {
     if (dartType.isDynamic) {
-      _codeWriter.writeln('$parentVariableName,');
+      _codeWriter.writeln(parentVariableName);
       return;
     }
 
     if (dartType.isPrimary) {
-      _codeWriter.writeln('$parentVariableName as ${dartType.name},');
+      _codeWriter.write('$parentVariableName as ${dartType.fullTypeName}');
       return;
     }
 
     if (dartType.isDateTime || dartType.isDuration || dartType.isUri) {
-      _codeWriter.writeln(
-          'jsonConverterRegistrant.find(${dartType.name}).fromJson($parentVariableName) as ${dartType.name},');
+      _codeWriter.write(
+          'jsonConverterRegistrant.find(${dartType.name}).fromJson($parentVariableName) as ${dartType.name}');
       return;
     }
 
@@ -165,14 +176,14 @@ class FromJsonGenerator implements Generator {
             typeDeclarationNode.members.hasFactory('fromJson') ||
         typeDeclarationNode is EnumDeclaration &&
             typeDeclarationNode.members.hasFactory('fromJson')) {
-      _codeWriter.writeln('${dartType.name}.fromJson($parentVariableName),');
+      _codeWriter.write('${dartType.name}.fromJson($parentVariableName)');
       return;
     }
 
-    _logger.warning('WARNING: No "fromJson" factory found for type ${dartType.name}');
+    _logger.warning('No "fromJson" factory found for type "${dartType.name}"');
 
-    _codeWriter.writeln(
-        'jsonConverterRegistrant.find(${dartType.name}).fromJson($parentVariableName) as ${dartType.name},');
+    _codeWriter.write(
+        'jsonConverterRegistrant.find(${dartType.name}).fromJson($parentVariableName) as ${dartType.name}');
   }
 
   Future<void> _parseList({
@@ -202,6 +213,8 @@ class FromJsonGenerator implements Generator {
     required final int depthIndex,
   }) async {
     if (!dartType.typeArguments[0].isString) {
+      _logger.error(
+          'Key of type "${dartType.typeArguments[0].fullTypeName}" can not be used as a map key in json conversion');
       return;
     }
 
@@ -212,7 +225,7 @@ class FromJsonGenerator implements Generator {
     _codeWriter
       ..writeln(
           'for (final MapEntry<dynamic, dynamic> $loopVariableName in ($parentVariableName as Map<dynamic, dynamic>).entries)')
-      ..write('$loopVariableName.key: ');
+      ..write('$loopVariableName.key as String: ');
 
     await _parse(
       dartType: dartType.typeArguments[1],

@@ -21,7 +21,7 @@ abstract class GetUserResult {
 
   @UnionJsonKeyValue('error')
   factory GetUserResult.error({
-    Exception? exception,
+    required int statusCode,
     String? message,
   }) = GetUserResultError;
 }

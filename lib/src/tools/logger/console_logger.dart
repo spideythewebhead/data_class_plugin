@@ -40,13 +40,13 @@ class ConsoleLogger extends Logger {
     final StackTrace? st,
     final bool isFatal = false,
   ]) {
-    _sink.writeln('$error'.red());
+    log('$error'.red(), LogSeverity.error);
 
     if (st != null) {
-      _sink.writeln(Ansi.horizontalLine());
-      _sink.writeln('Stacktrace:'.red().bold());
-      _sink.writeln('$st'.red());
-      _sink.writeln(Ansi.horizontalLine());
+      log(Ansi.horizontalLine(), LogSeverity.error);
+      log('Stacktrace:'.red().bold(), LogSeverity.error);
+      log('$st'.red(), LogSeverity.error);
+      log(Ansi.horizontalLine(), LogSeverity.error);
     }
   }
 
