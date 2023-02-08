@@ -77,4 +77,7 @@ class _$UserImpl extends User {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => User;
 }

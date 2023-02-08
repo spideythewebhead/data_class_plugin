@@ -32,4 +32,7 @@ class _$JsonOptionsImpl extends JsonOptions {
             },
     );
   }
+
+  @override
+  Type get runtimeType => JsonOptions;
 }

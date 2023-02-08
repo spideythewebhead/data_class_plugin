@@ -24,4 +24,7 @@ class _$UnionOptionsImpl extends UnionOptions {
             },
     );
   }
+
+  @override
+  Type get runtimeType => UnionOptions;
 }

@@ -54,4 +54,7 @@ class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
       union: json['union'] == null ? const UnionOptions() : UnionOptions.fromJson(json['union']),
     );
   }
+
+  @override
+  Type get runtimeType => DataClassPluginOptions;
 }

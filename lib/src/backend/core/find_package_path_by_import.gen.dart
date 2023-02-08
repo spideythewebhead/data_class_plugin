@@ -27,6 +27,9 @@ class _$NoDartToolDirectoryFoundExceptionImpl extends NoDartToolDirectoryFoundEx
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => NoDartToolDirectoryFoundException;
 }
 
 class _$PackageNotInstalledExceptionImpl extends PackageNotInstalledException {
@@ -46,6 +49,9 @@ class _$PackageNotInstalledExceptionImpl extends PackageNotInstalledException {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => PackageNotInstalledException;
 }
 
 class _$PackageInfoImpl extends PackageInfo {
@@ -87,4 +93,7 @@ class _$PackageInfoImpl extends PackageInfo {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => PackageInfo;
 }
