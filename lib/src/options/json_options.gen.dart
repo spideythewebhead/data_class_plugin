@@ -19,14 +19,13 @@ class _$JsonOptionsImpl extends JsonOptions {
 
   factory _$JsonOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$JsonOptionsImpl(
-      keyNameConvention:
-          json['key_name_convention'] == null ? null : json['key_name_convention'] as String,
+      keyNameConvention: json['key_name_convention'] as String?,
       nameConventionGlobs: json['key_name_conventions'] == null
           ? const <String, List<String>>{}
           : <String, List<String>>{
               for (final MapEntry<dynamic, dynamic> e0
                   in (json['key_name_conventions'] as Map<dynamic, dynamic>).entries)
-                e0.key: <String>[
+                e0.key as String: <String>[
                   for (final dynamic i1 in (e0.value as List<dynamic>)) i1 as String,
                 ],
             },
