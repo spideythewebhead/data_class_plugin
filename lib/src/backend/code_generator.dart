@@ -488,6 +488,11 @@ class CodeGenerator {
         ).execute();
       }
 
+      codeWriter
+        ..writeln('')
+        ..writeln('@override')
+        ..writeln('Type get runtimeType => $className$classTypeParametersSource;');
+
       codeWriter.writeln('}');
     }
   }

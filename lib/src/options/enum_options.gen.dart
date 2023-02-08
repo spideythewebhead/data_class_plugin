@@ -24,4 +24,7 @@ class _$EnumOptionsImpl extends EnumOptions {
             },
     );
   }
+
+  @override
+  Type get runtimeType => EnumOptions;
 }

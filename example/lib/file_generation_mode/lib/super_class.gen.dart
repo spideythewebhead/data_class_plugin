@@ -41,6 +41,9 @@ class _$TriangleImpl extends Triangle {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => Triangle;
 }
 
 class _$RectangleImpl extends Rectangle {
@@ -82,6 +85,9 @@ class _$RectangleImpl extends Rectangle {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => Rectangle;
 }
 
 class _$CircleImpl extends Circle {
@@ -115,6 +121,9 @@ class _$CircleImpl extends Circle {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => Circle;
 }
 
 class _$UserImpl extends User {
@@ -171,6 +180,9 @@ class _$UserImpl extends User {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => User;
 }
 
 class _$AdminImpl extends Admin {
@@ -235,4 +247,7 @@ class _$AdminImpl extends Admin {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => Admin;
 }

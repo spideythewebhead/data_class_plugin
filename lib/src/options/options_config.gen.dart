@@ -37,4 +37,7 @@ class _$OptionConfigImpl extends OptionConfig {
             ],
     );
   }
+
+  @override
+  Type get runtimeType => OptionConfig;
 }

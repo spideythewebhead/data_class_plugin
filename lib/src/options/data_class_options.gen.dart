@@ -24,4 +24,7 @@ class _$DataClassOptionsImpl extends DataClassOptions {
             },
     );
   }
+
+  @override
+  Type get runtimeType => DataClassOptions;
 }

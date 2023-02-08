@@ -48,4 +48,7 @@ class _$ParsedFileDataImpl extends ParsedFileData {
     }());
     return toStringOutput;
   }
+
+  @override
+  Type get runtimeType => ParsedFileData;
 }
