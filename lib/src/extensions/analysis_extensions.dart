@@ -196,3 +196,7 @@ extension InterfaceTypeX on InterfaceType {
     return null != methods.firstWhereOrNull((MethodElement member) => member.name == methodName);
   }
 }
+
+extension ConstructorDeclarationX on ConstructorDeclaration {
+  bool get hasParameters => parameters.parameters.isNotEmpty;
+}

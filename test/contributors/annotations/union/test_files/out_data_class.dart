@@ -19,14 +19,14 @@ abstract class AsyncResult<T> {
   /// Executes one of the provided callbacks based on a type match
   R when<R>({
     required R Function(AsyncResultData<T> value) data,
-    required R Function(AsyncResultLoading<T> value) loading,
+    required R Function() loading,
     required R Function(AsyncResultError<T> value) error,
   }) {
     if (this is AsyncResultData<T>) {
       return data(this as AsyncResultData<T>);
     }
     if (this is AsyncResultLoading<T>) {
-      return loading(this as AsyncResultLoading<T>);
+      return loading();
     }
     if (this is AsyncResultError<T>) {
       return error(this as AsyncResultError<T>);
@@ -39,7 +39,7 @@ abstract class AsyncResult<T> {
   /// If no match is found [orElse] is executed
   R maybeWhen<R>({
     R Function(AsyncResultData<T> value)? data,
-    R Function(AsyncResultLoading<T> value)? loading,
+    R Function()? loading,
     R Function(AsyncResultError<T> value)? error,
     required R Function() orElse,
   }) {
@@ -47,7 +47,7 @@ abstract class AsyncResult<T> {
       return data?.call(this as AsyncResultData<T>) ?? orElse();
     }
     if (this is AsyncResultLoading<T>) {
-      return loading?.call(this as AsyncResultLoading<T>) ?? orElse();
+      return loading?.call() ?? orElse();
     }
     if (this is AsyncResultError<T>) {
       return error?.call(this as AsyncResultError<T>) ?? orElse();

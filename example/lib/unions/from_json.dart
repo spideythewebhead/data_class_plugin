@@ -36,14 +36,14 @@ abstract class Response {
   /// Executes one of the provided callbacks based on a type match
   R when<R>({
     required R Function(ResponseOk value) ok,
-    required R Function(ResponseUnauthorized value) unauthorized,
+    required R Function() unauthorized,
     required R Function(ResponseError value) error,
   }) {
     if (this is ResponseOk) {
       return ok(this as ResponseOk);
     }
     if (this is ResponseUnauthorized) {
-      return unauthorized(this as ResponseUnauthorized);
+      return unauthorized();
     }
     if (this is ResponseError) {
       return error(this as ResponseError);
@@ -56,7 +56,7 @@ abstract class Response {
   /// If no match is found [orElse] is executed
   R maybeWhen<R>({
     R Function(ResponseOk value)? ok,
-    R Function(ResponseUnauthorized value)? unauthorized,
+    R Function()? unauthorized,
     R Function(ResponseError value)? error,
     required R Function() orElse,
   }) {
@@ -64,7 +64,7 @@ abstract class Response {
       return ok?.call(this as ResponseOk) ?? orElse();
     }
     if (this is ResponseUnauthorized) {
-      return unauthorized?.call(this as ResponseUnauthorized) ?? orElse();
+      return unauthorized?.call() ?? orElse();
     }
     if (this is ResponseError) {
       return error?.call(this as ResponseError) ?? orElse();

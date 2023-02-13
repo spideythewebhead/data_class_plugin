@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
 import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/extensions/extensions.dart';
 
 class UnionWhenGenerator implements Generator {
   UnionWhenGenerator({
@@ -26,8 +27,12 @@ class UnionWhenGenerator implements Generator {
       ..write('R when<R>({');
 
     for (final ConstructorDeclaration ctor in _factoriesWithRedirectedConstructors) {
-      _codeWriter.writeln(
-          'required R Function(${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource value) ${ctor.name!.lexeme},');
+      if (ctor.hasParameters) {
+        _codeWriter.writeln(
+            'required R Function(${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource value) ${ctor.name!.lexeme},');
+      } else {
+        _codeWriter.writeln('required R Function() ${ctor.name!.lexeme},');
+      }
     }
 
     _codeWriter.writeln('}) {');
@@ -37,7 +42,8 @@ class UnionWhenGenerator implements Generator {
           '${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource';
       _codeWriter
         ..writeln('if (this is $implementerName) {')
-        ..writeln('return ${ctor.name!.lexeme}(this as $implementerName);')
+        ..writeln('return ${ctor.name!.lexeme}'
+            "(${ctor.hasParameters ? 'this as $implementerName' : ''});")
         ..writeln('}');
     }
 
@@ -48,8 +54,12 @@ class UnionWhenGenerator implements Generator {
       ..write('R maybeWhen<R>({');
 
     for (final ConstructorDeclaration ctor in _factoriesWithRedirectedConstructors) {
-      _codeWriter.writeln(
-          'R Function(${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource value)? ${ctor.name!.lexeme},');
+      if (ctor.hasParameters) {
+        _codeWriter.writeln(
+            'R Function(${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource value)? ${ctor.name!.lexeme},');
+      } else {
+        _codeWriter.writeln('R Function()? ${ctor.name!.lexeme},');
+      }
     }
 
     _codeWriter
@@ -61,7 +71,8 @@ class UnionWhenGenerator implements Generator {
           '${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource';
       _codeWriter
         ..writeln('if (${ctor.name!.lexeme} != null && this is $implementerName) {')
-        ..writeln('return ${ctor.name!.lexeme}(this as $implementerName);')
+        ..writeln('return ${ctor.name!.lexeme}'
+            "(${ctor.hasParameters ? 'this as $implementerName' : ''});")
         ..writeln('}');
     }
 
