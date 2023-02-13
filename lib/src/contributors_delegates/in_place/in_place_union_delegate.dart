@@ -452,7 +452,11 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         continue;
       }
 
-      builder.writeln('required R Function($redirectedCtor value) ${ctor.name},');
+      if (ctor.parameters.isNotEmpty) {
+        builder.writeln('required R Function($redirectedCtor value) ${ctor.name},');
+      } else {
+        builder.writeln('required R Function() ${ctor.name},');
+      }
     }
 
     builder.writeln('}) {');
@@ -465,8 +469,9 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
       }
 
       builder.writeln('if (this is $redirectedCtor) {'
-          'return ${ctor.name}(this as $redirectedCtor);'
-          '}');
+          'return ${ctor.name}('
+          "${ctor.parameters.isNotEmpty ? 'this as $redirectedCtor' : ''}"
+          ');}');
     }
 
     builder
@@ -497,7 +502,11 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
         continue;
       }
 
-      builder.writeln('R Function($redirectedCtor value)? ${ctor.name},');
+      if (ctor.parameters.isNotEmpty) {
+        builder.writeln('R Function($redirectedCtor value)? ${ctor.name},');
+      } else {
+        builder.writeln('R Function()? ${ctor.name},');
+      }
     }
 
     builder
@@ -512,7 +521,9 @@ class InPlaceUnionDelegate extends ClassGenerationDelegate {
       }
 
       builder.writeln('if (this is $redirectedCtor) {'
-          'return ${ctor.name}?.call(this as $redirectedCtor) ?? orElse();'
+          'return ${ctor.name}?.call('
+          "${ctor.parameters.isNotEmpty ? 'this as $redirectedCtor' : ''}"
+          ') ?? orElse();'
           '}');
     }
 
