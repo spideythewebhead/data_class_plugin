@@ -5,10 +5,10 @@ class UserJsonConverter implements JsonConverter<User, Map<String, dynamic>> {
   const UserJsonConverter();
 
   @override
-  User fromJson(Map<String, dynamic> json) {
+  User fromJson(Map<String, dynamic> value, Map<dynamic, dynamic> json, String keyName) {
     return User(
-      id: json['id'] as String,
-      username: json['username'] as String,
+      id: value['id'] as String,
+      username: value['username'] as String,
     );
   }
 
@@ -88,7 +88,7 @@ class UserResponse {
     return UserResponse(
       users: <User>[
         for (final dynamic i0 in (json['users'] as List<dynamic>))
-          jsonConverterRegistrant.find(User).fromJson(i0) as User,
+          jsonConverterRegistrant.find(User).fromJson(i0, json, 'users') as User,
       ],
     );
   }

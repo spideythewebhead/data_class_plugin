@@ -43,6 +43,8 @@ class FromJsonGenerator implements Generator {
   final DataClassPluginOptions _pluginOptions;
   final String? Function(String fieldName) _getDefaultValueForField;
 
+  late String _currentJsonFieldName;
+
   @override
   void execute() {
     _codeWriter
@@ -60,10 +62,29 @@ class FromJsonGenerator implements Generator {
     _codeWriter.writeln('return $_className(');
 
     for (final VariableElement field in _fields) {
-      final ElementAnnotation? jsonKeyAnnotation = field.metadata
-          .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
-      final JsonKeyInternal jsonKey = JsonKeyInternal //
-          .fromDartObject(jsonKeyAnnotation?.computeConstantValue());
+      JsonKeyInternal? jsonKey;
+      String? customJsonConverter;
+
+      for (final ElementAnnotation annotation in field.metadata) {
+        if (annotation.isJsonKeyAnnotation) {
+          jsonKey = JsonKeyInternal.fromDartObject(annotation.computeConstantValue());
+          continue;
+        }
+
+        final Element? annotationElement = annotation.element;
+        if (annotationElement is! ConstructorElement) {
+          continue;
+        }
+
+        final ClassElement classElement = annotationElement.enclosingElement as ClassElement;
+        for (final InterfaceType interface in classElement.interfaces) {
+          if (interface.element.name == 'JsonConverter') {
+            customJsonConverter = classElement.name;
+            break;
+          }
+        }
+      }
+      jsonKey ??= JsonKeyInternal.fromDartObject(null);
 
       if (jsonKey.ignore) {
         continue;
@@ -77,21 +98,28 @@ class FromJsonGenerator implements Generator {
 
       final String fieldName = field.name;
       final DartType fieldType = field.type;
-      final String jsonFieldName =
-          "json['${jsonKey.name ?? jsonKeyNameConvention.transform(fieldName.escapeDollarSign())}']";
+
+      _currentJsonFieldName =
+          jsonKey.name ?? jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
 
       _codeWriter.write('$fieldName: ');
+
+      if (customJsonConverter != null) {
+        _codeWriter.writeln('const $customJsonConverter()'
+            ".fromJson(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),");
+        continue;
+      }
 
       if (jsonKey.fromJson != null) {
         _codeWriter
           ..write(jsonKey.fromJson!.fullyQualifiedName(enclosingImports: _libraryImports))
-          ..write('(json),');
+          ..write("(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),");
         continue;
       }
 
       _parse(
         nextType: fieldType,
-        parentVariableName: jsonFieldName,
+        parentVariableName: "json['$_currentJsonFieldName']",
         depthIndex: 0,
         defaultValue: _getDefaultValueForField(fieldName),
       );
@@ -208,8 +236,8 @@ class FromJsonGenerator implements Generator {
       }
     }
 
-    _codeWriter.write('jsonConverterRegistrant.find($fieldType).fromJson($parentVariableName) '
-        'as $fieldType,');
+    _codeWriter.write('jsonConverterRegistrant.find($fieldType)'
+        " .fromJson(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName') as $fieldType,");
   }
 
   void _parseList({

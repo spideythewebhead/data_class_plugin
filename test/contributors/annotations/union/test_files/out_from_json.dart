@@ -99,7 +99,7 @@ class ResponseError extends Response {
   /// Creates an instance of [ResponseError] from [json]
   factory ResponseError.fromJson(Map<dynamic, dynamic> json) {
     return ResponseError(
-      type: jsonConverterRegistrant.find(Object).fromJson(json['type']) as Object,
+      type: jsonConverterRegistrant.find(Object).fromJson(json['type'], json, 'type') as Object,
     );
   }
 }

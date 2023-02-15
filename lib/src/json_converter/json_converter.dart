@@ -20,7 +20,7 @@ part 'uri_converter.dart';
 ///   const EnumCategoryConverter();
 ///
 ///   @override
-///   String toJson(Category value) => value.name;
+///   String toJson(Category value, Map<dynamic, dynamic> json, String keyName) => value.name;
 ///
 ///   @override
 ///   Category fromJson(String value) {
@@ -35,7 +35,12 @@ part 'uri_converter.dart';
 /// }
 /// ```
 abstract class JsonConverter<InType, OutType> {
-  InType fromJson(OutType value);
+  InType fromJson(
+    OutType value,
+    Map<dynamic, dynamic> json,
+    String keyName,
+  );
+
   OutType toJson(InType value);
 }
 

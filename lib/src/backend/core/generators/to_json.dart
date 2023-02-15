@@ -16,12 +16,12 @@ class ToJsonGenerator implements Generator {
     required final List<DeclarationInfo> fields,
     required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required ClassOrEnumDeclarationFinder classDeclarationFinder,
-    PluginLogger? logger,
+    required PluginLogger logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
         _classDeclarationFinder = classDeclarationFinder,
-        _logger = logger ?? PluginLogger();
+        _logger = logger;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
@@ -38,8 +38,35 @@ class ToJsonGenerator implements Generator {
       ..writeln('return <String, dynamic>{');
 
     for (final DeclarationInfo field in _fields) {
-      final AnnotationValueExtractor annotationValueExtractor = AnnotationValueExtractor(
-          field.metadata.firstWhereOrNull((Annotation meta) => meta.isJsonKeyAnnotation));
+      AnnotationValueExtractor? annotationValueExtractor;
+      String? customJsonConverter;
+
+      for (final Annotation annotation in field.metadata) {
+        // handle JsonKey
+        if (annotation.isJsonKeyAnnotation) {
+          annotationValueExtractor = AnnotationValueExtractor(annotation);
+          continue;
+        }
+
+        final String className = annotation.name.name;
+        final NamedCompilationUnitMember? node = await _classDeclarationFinder(className);
+
+        // handle JsonConverter interface implementer
+        if (node is ClassDeclaration) {
+          for (final NamedType interface
+              in (node.implementsClause?.interfaces ?? const <NamedType>[])) {
+            if (interface.name.name == 'JsonConverter') {
+              customJsonConverter = className;
+              break;
+            }
+          }
+        }
+      }
+      annotationValueExtractor ??= AnnotationValueExtractor(null);
+
+      if (annotationValueExtractor.getBool('ignored') ?? false) {
+        continue;
+      }
 
       final JsonKeyNameConvention jsonKeyNameConvention =
           _jsonKeyNameConventionGetter(annotationValueExtractor.getEnumValue('nameConvention'));
@@ -50,6 +77,11 @@ class ToJsonGenerator implements Generator {
       final CustomDartType dartType = field.type?.customDartType ?? CustomDartType.dynamic;
 
       _codeWriter.write("'$jsonFieldName': ");
+
+      if (customJsonConverter != null) {
+        _codeWriter.writeln('''const $customJsonConverter().toJson($fieldName),''');
+        continue;
+      }
 
       final String? customFunction = annotationValueExtractor.getFunction('toJson');
       if (customFunction != null) {

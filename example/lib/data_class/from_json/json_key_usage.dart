@@ -1,7 +1,5 @@
 import 'package:data_class_plugin/data_class_plugin.dart';
 
-const String _appId = 'app_id';
-
 @DataClass(
   fromJson: true,
   toJson: false,
@@ -14,7 +12,8 @@ class User {
   User({
     required this.id,
     required this.username,
-  }) : appId = _appId;
+    this.appId = 'app_id',
+  });
 
   @JsonKey<String>(name: '_id')
   final String id;
@@ -28,15 +27,15 @@ class User {
   // fields with initial values are ignored
   final int isSpecial = 0;
 
-  static String _usernameConverter(Map<dynamic, dynamic> json) {
-    return json['username'] ?? json['uname'];
+  static String _usernameConverter(dynamic value, Map<dynamic, dynamic> json, String keyName) {
+    return value ?? '';
   }
 
   /// Creates an instance of [User] from [json]
   factory User.fromJson(Map<dynamic, dynamic> json) {
     return User(
       id: json['_id'] as String,
-      username: User._usernameConverter(json),
+      username: User._usernameConverter(json['username'], json, 'username'),
     );
   }
 }

@@ -32,8 +32,8 @@ class LatLngConverter implements JsonConverter<LatLng, String> {
   }
 
   @override
-  LatLng fromJson(String value) {
-    final values = value.split('|').map(double.parse).toList(growable: false);
+  LatLng fromJson(String value, Map<dynamic, dynamic> json, String keyName) {
+    final List<double> values = value.split('|').map(double.parse).toList(growable: false);
     return LatLng(lat: values[0], lng: values[1]);
   }
 }
@@ -45,9 +45,9 @@ class LatLngConverter implements JsonConverter<LatLng, String> {
   fromJson: true,
   toJson: true,
 )
-class MyClass {
+class ClassWithLatLngField {
   /// Shorthand constructor
-  MyClass({
+  ClassWithLatLngField({
     required this.datetime,
     required this.uri,
     required this.latLng,
@@ -58,16 +58,18 @@ class MyClass {
   final Uri uri;
   final LatLng latLng;
 
-  /// Creates an instance of [MyClass] from [json]
-  factory MyClass.fromJson(Map<dynamic, dynamic> json) {
-    return MyClass(
-      datetime: jsonConverterRegistrant.find(DateTime).fromJson(json['datetime']) as DateTime,
-      uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri']) as Uri,
-      latLng: jsonConverterRegistrant.find(LatLng).fromJson(json['latLng']) as LatLng,
+  /// Creates an instance of [ClassWithLatLngField] from [json]
+  factory ClassWithLatLngField.fromJson(Map<dynamic, dynamic> json) {
+    return ClassWithLatLngField(
+      datetime: jsonConverterRegistrant.find(DateTime).fromJson(json['datetime'], json, 'datetime')
+          as DateTime,
+      uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri'], json, 'uri') as Uri,
+      latLng:
+          jsonConverterRegistrant.find(LatLng).fromJson(json['latLng'], json, 'latLng') as LatLng,
     );
   }
 
-  /// Converts [MyClass] to a [Map] json
+  /// Converts [ClassWithLatLngField] to a [Map] json
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'datetime': jsonConverterRegistrant.find(DateTime).toJson(datetime),
@@ -77,10 +79,52 @@ class MyClass {
   }
 }
 
+@DataClass(
+  $toString: false,
+  copyWith: false,
+  hashAndEquals: false,
+  fromJson: true,
+  toJson: true,
+)
+class ClassWithLatLngConverterAnnotation {
+  /// Shorthand constructor
+  ClassWithLatLngConverterAnnotation({
+    required this.datetime,
+    required this.uri,
+    required this.latLng,
+  });
+
+  // DateTime and Uri are supported out of the box
+  final DateTime datetime;
+  final Uri uri;
+
+  @LatLngConverter()
+  final LatLng latLng;
+
+  /// Creates an instance of [ClassWithLatLngConverterAnnotation] from [json]
+  factory ClassWithLatLngConverterAnnotation.fromJson(Map<dynamic, dynamic> json) {
+    return ClassWithLatLngConverterAnnotation(
+      datetime: jsonConverterRegistrant.find(DateTime).fromJson(json['datetime'], json, 'datetime')
+          as DateTime,
+      uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri'], json, 'uri') as Uri,
+      latLng: const LatLngConverter().fromJson(json['latLng'], json, 'latLng'),
+    );
+  }
+
+  /// Converts [ClassWithLatLngConverterAnnotation] to a [Map] json
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'datetime': jsonConverterRegistrant.find(DateTime).toJson(datetime),
+      'uri': jsonConverterRegistrant.find(Uri).toJson(uri),
+      'latLng': const LatLngConverter().toJson(latLng),
+    };
+  }
+}
+
 void main() {
   jsonConverterRegistrant.register(const LatLngConverter());
 
-  final o = MyClass.fromJson(
+  final ClassWithLatLngField o = ClassWithLatLngField.fromJson(
     <String, dynamic>{
       'datetime': DateTime.now().toIso8601String(),
       'uri': 'https://google.com',

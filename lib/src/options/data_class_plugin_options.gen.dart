@@ -42,7 +42,8 @@ class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
       generationMode: json['generation_mode'] == null
           ? CodeGenerationMode.inPlace
           : CodeGenerationMode.fromJson(json['generation_mode']),
-      allowedFilesGenerationPaths: DataClassPluginOptions._stringsToGlobsFromJson(json),
+      allowedFilesGenerationPaths: const _AllowedFilesGenerationPathFieldJsonConverter()
+          .fromJson(json['file_generation_paths'], json, 'file_generation_paths'),
       generatedFileLineLength: json['generated_file_line_length'] as int? ?? 80,
       json: json['json'] == null ? const JsonOptions() : JsonOptions.fromJson(json['json']),
       dataClass: json['data_class'] == null

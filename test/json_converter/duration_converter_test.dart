@@ -21,7 +21,8 @@ class _TestModel {
   /// Creates an instance of [_TestModel] from [json]
   factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
-      duration: jsonConverterRegistrant.find(Duration).fromJson(json['duration']) as Duration,
+      duration: jsonConverterRegistrant.find(Duration).fromJson(json['duration'], json, 'duration')
+          as Duration,
     );
   }
 

@@ -21,7 +21,7 @@ class _TestModel {
   /// Creates an instance of [_TestModel] from [json]
   factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
-      uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri']) as Uri,
+      uri: jsonConverterRegistrant.find(Uri).fromJson(json['uri'], json, 'uri') as Uri,
     );
   }
 

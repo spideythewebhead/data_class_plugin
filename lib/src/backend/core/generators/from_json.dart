@@ -18,14 +18,14 @@ class FromJsonGenerator implements Generator {
     required String classTypeParametersSource,
     required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required ClassOrEnumDeclarationFinder classDeclarationFinder,
-    PluginLogger? logger,
+    required PluginLogger logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _generatedClassName = generatedClassName,
         _classTypeParametersSource = classTypeParametersSource,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
         _classOrEnumDeclarationFinder = classDeclarationFinder,
-        _logger = logger ?? PluginLogger();
+        _logger = logger;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
@@ -35,6 +35,8 @@ class FromJsonGenerator implements Generator {
   final ClassOrEnumDeclarationFinder _classOrEnumDeclarationFinder;
   final PluginLogger _logger;
 
+  late String _currentJsonFieldName;
+
   @override
   Future<void> execute() async {
     _codeWriter
@@ -42,22 +44,57 @@ class FromJsonGenerator implements Generator {
       ..writeln('return $_generatedClassName$_classTypeParametersSource(');
 
     for (final DeclarationInfo field in _fields) {
-      final AnnotationValueExtractor annotationValueExtractor = AnnotationValueExtractor(
-          field.metadata.firstWhereOrNull((Annotation meta) => meta.isJsonKeyAnnotation));
+      AnnotationValueExtractor? annotationValueExtractor;
+      String? customJsonConverter;
+
+      for (final Annotation annotation in field.metadata) {
+        // handle JsonKey
+        if (annotation.isJsonKeyAnnotation) {
+          annotationValueExtractor = AnnotationValueExtractor(annotation);
+          continue;
+        }
+
+        final String className = annotation.name.name;
+        final NamedCompilationUnitMember? node = await _classOrEnumDeclarationFinder(className);
+
+        // handle JsonConverter interface implementer
+        if (node is ClassDeclaration) {
+          for (final NamedType interface
+              in (node.implementsClause?.interfaces ?? const <NamedType>[])) {
+            if (interface.name.name == 'JsonConverter') {
+              customJsonConverter = className;
+              break;
+            }
+          }
+        }
+      }
+      annotationValueExtractor ??= AnnotationValueExtractor(null);
+
+      if (annotationValueExtractor.getBool('ignored') ?? false) {
+        continue;
+      }
 
       final JsonKeyNameConvention jsonKeyNameConvention =
           _jsonKeyNameConventionGetter(annotationValueExtractor.getEnumValue('nameConvention'));
 
       final String fieldName = field.name;
-      final String jsonFieldName = annotationValueExtractor.getString('name') ??
-          jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
       final CustomDartType dartType = field.type?.customDartType ?? CustomDartType.dynamic;
+
+      _currentJsonFieldName = annotationValueExtractor.getString('name') ??
+          jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
 
       _codeWriter.write('$fieldName: ');
 
+      if (customJsonConverter != null) {
+        _codeWriter.writeln('const $customJsonConverter()'
+            ".fromJson(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),");
+        continue;
+      }
+
       final String? customFunction = annotationValueExtractor.getFunction('fromJson');
       if (customFunction != null) {
-        _codeWriter.writeln('$customFunction(json),');
+        _codeWriter.writeln(
+            "$customFunction(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),");
         continue;
       }
 
@@ -67,7 +104,7 @@ class FromJsonGenerator implements Generator {
       await _parse(
         dartType: dartType,
         depthIndex: 0,
-        parentVariableName: "json['$jsonFieldName']",
+        parentVariableName: "json['$_currentJsonFieldName']",
         defaultValue: defaultValueExtractor.getPositionedArgument(0),
       );
     }
@@ -163,12 +200,6 @@ class FromJsonGenerator implements Generator {
       return;
     }
 
-    if (dartType.isDateTime || dartType.isDuration || dartType.isUri) {
-      _codeWriter.write(
-          'jsonConverterRegistrant.find(${dartType.name}).fromJson($parentVariableName) as ${dartType.name}');
-      return;
-    }
-
     final NamedCompilationUnitMember? typeDeclarationNode =
         await _classOrEnumDeclarationFinder(dartType.name);
 
@@ -182,8 +213,8 @@ class FromJsonGenerator implements Generator {
 
     _logger.warning('No "fromJson" factory found for type "${dartType.name}"');
 
-    _codeWriter.write(
-        'jsonConverterRegistrant.find(${dartType.name}).fromJson($parentVariableName) as ${dartType.name}');
+    _codeWriter.write('jsonConverterRegistrant.find(${dartType.name})'
+        ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as ${dartType.name}");
   }
 
   Future<void> _parseList({
