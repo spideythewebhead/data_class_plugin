@@ -267,13 +267,22 @@ class CodeGenerator {
     final List<ClassDeclaration> classDeclarations = classCollectorVisitor.matchedNodes;
 
     if (classDeclarations.isEmpty) {
-      try {
-        await File(outputFilePath).delete();
-      } catch (_) {
-      } finally {
-        _logger.debug('$indent~ Skipping $relativeFilePath');
+      final File outputFile = File(outputFilePath);
+      if (await outputFile.exists()) {
+        try {
+          await outputFile.delete();
+        } catch (_) {}
       }
-      stopwatch?.stop();
+
+      if (!skipDependencies) {
+        await _rebuildDependants(targetFilePath: targetFilePath, indent: indent);
+      }
+
+      if (reportTime) {
+        stopwatch!.stop();
+        _logger.info(
+            '$indent~ Finished building $relativeFilePath in ${stopwatch.elapsed.inMilliseconds}ms');
+      }
       return;
     }
 
@@ -323,26 +332,19 @@ class CodeGenerator {
         await File(outputFilePath).delete();
       } catch (_) {}
     } else {
-      await File(outputFilePath).writeAsString(DartFormatter(
-        pageWidth: pluginOptions.generatedFileLineLength,
-      ).format(content));
+      try {
+        await File(outputFilePath).writeAsString(DartFormatter(
+          pageWidth: pluginOptions.generatedFileLineLength,
+        ).format(content));
+      } on FormatterException catch (e) {
+        _logger
+          ..error('Invalid code generation for $relativeFilePath')
+          ..writeln(e);
+      }
     }
 
-    final List<String> dependants = _dependencyGraph.getDependants(targetFilePath);
-    if (!skipDependencies && dependants.isNotEmpty) {
-      _logger.debug('  Rebuilding ${dependants.length} depandants..');
-
-      await Future.wait(<Future<void>>[
-        for (final String dependency in dependants)
-          _generateCode(
-            targetFilePath: dependency,
-            outputFilePath: dependency.replaceFirst('.dart', '.gen.dart'),
-            compilationUnit: _filesRegistry[dependency]?.compilationUnit,
-            indent: '  $indent',
-            skipDependencies: true,
-            reportTime: false,
-          )
-      ]);
+    if (!skipDependencies) {
+      await _rebuildDependants(targetFilePath: targetFilePath, indent: indent);
     }
 
     if (reportTime) {
@@ -350,6 +352,29 @@ class CodeGenerator {
       _logger.info(
           '$indent~ Finished building $relativeFilePath in ${stopwatch.elapsed.inMilliseconds}ms');
     }
+  }
+
+  Future<void> _rebuildDependants({
+    required final String targetFilePath,
+    required final String indent,
+  }) async {
+    final List<String> dependants = _dependencyGraph.getDependants(targetFilePath);
+    if (dependants.isEmpty) {
+      return;
+    }
+
+    _logger.debug('  Rebuilding ${dependants.length} depandants..');
+    await Future.wait(<Future<void>>[
+      for (final String dependency in dependants)
+        _generateCode(
+          targetFilePath: dependency,
+          outputFilePath: dependency.replaceFirst('.dart', '.gen.dart'),
+          compilationUnit: _filesRegistry[dependency]?.compilationUnit,
+          indent: '  $indent',
+          skipDependencies: true,
+          reportTime: false,
+        )
+    ]);
   }
 
   Future<void> _generateDataClasses({
@@ -436,6 +461,7 @@ class CodeGenerator {
               targetFilePath: targetFilePath,
             );
           },
+          logger: _logger,
         ).execute();
       }
 
@@ -452,6 +478,7 @@ class CodeGenerator {
               targetFilePath: targetFilePath,
             );
           },
+          logger: _logger,
         ).execute();
       }
 

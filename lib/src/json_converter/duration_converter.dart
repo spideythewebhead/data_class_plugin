@@ -4,10 +4,12 @@ class _DurationJsonConverter implements JsonConverter<Duration, String> {
   const _DurationJsonConverter();
 
   @override
+  @pragma('vm:prefer-inline')
   String toJson(Duration value) => value.toString();
 
   @override
-  Duration fromJson(String value) {
+  @pragma('vm:prefer-inline')
+  Duration fromJson(String value, Map<dynamic, dynamic> json, String keyName) {
     final List<String> parts = value.split(':');
 
     int hours = 0;

@@ -8,7 +8,7 @@ class User {
 
   final String username;
 
-  static const none = User(username: '');
+  static const User none = User(username: '');
 }
 
 @Union(

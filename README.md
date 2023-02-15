@@ -305,6 +305,17 @@ enum Category {
 
 <img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/007.png" width="400">
 
+## Json Converters
+
+The plugin exposes a json converter registrant that be used through out the app to register your custom converters. This eliminates the need to annotate every single field with a custom converter like (json_serializable).
+
+By default the plugin provides 3 converters for the following classes: Duration, DateTime, Uri.  
+In case you want to override the default implementation of these converters you can do it by registering your custom converter with `jsonConverterRegistrant.register(cosnt MyCustomConverter())`. For more info on how to create and register a converter, see this [example](example/lib/json_converter.dart)
+
+In case you want to provide a custom implementation for a single field that might contain complex logic for parsing/conversion you can use a [JsonConverter](lib/src/json_converter/json_converter.dart) implementation and annotate the specific field with the implementer class.
+See [example](example/lib/json_converter.dart) on `ClassWithLatLngConverterAnnotation` class.
+
+If implementing a `JsonConverter` is too complex for your case you can use the `JsonKey` `fromJson/toJson` functions.
 
 ## New mode (File generation)
 

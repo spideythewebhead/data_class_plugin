@@ -13,12 +13,12 @@ class ColorsConverter implements JsonConverter<Colors, String> {
   const ColorsConverter();
 
   @override
-  String toJson(Colors value) => value.name;
-
-  @override
-  Colors fromJson(String value) {
+  Colors fromJson(String value, Map<dynamic, dynamic> json, String keyName) {
     return Colors.values.firstWhere((Colors c) => c.name == value);
   }
+
+  @override
+  String toJson(Colors value) => value.name;
 }
 
 @DataClass(
@@ -46,7 +46,8 @@ class _TestModel {
   /// Creates an instance of [_TestModel] from [json]
   factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
-      colors: jsonConverterRegistrant.find(Colors).fromJson(json['colors']) as Colors,
+      colors:
+          jsonConverterRegistrant.find(Colors).fromJson(json['colors'], json, 'colors') as Colors,
     );
   }
 }

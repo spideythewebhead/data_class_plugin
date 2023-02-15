@@ -47,18 +47,8 @@ abstract class DataClassPluginOptions {
   @DefaultValue(CodeGenerationMode.inPlace)
   CodeGenerationMode get generationMode;
 
-  static List<Glob> _stringsToGlobsFromJson(Map<dynamic, dynamic> json) {
-    if (json['file_generation_paths'] == null) {
-      return const <Glob>[];
-    }
-
-    final List<dynamic> paths = json['file_generation_paths'] as List<dynamic>;
-    return List<Glob>.unmodifiable(<Glob>[
-      for (final String path in paths) Glob(path),
-    ]);
-  }
-
-  @JsonKey(fromJson: DataClassPluginOptions._stringsToGlobsFromJson)
+  @JsonKey(name: 'file_generation_paths')
+  @_AllowedFilesGenerationPathFieldJsonConverter()
   @DefaultValue(<Glob>[])
   List<Glob> get allowedFilesGenerationPaths;
 
@@ -85,5 +75,26 @@ abstract class DataClassPluginOptions {
     } catch (_) {
       return const DataClassPluginOptions();
     }
+  }
+}
+
+class _AllowedFilesGenerationPathFieldJsonConverter
+    implements JsonConverter<List<Glob>, List<dynamic>?> {
+  const _AllowedFilesGenerationPathFieldJsonConverter();
+
+  @override
+  List<Glob> fromJson(List<dynamic>? value, Map<dynamic, dynamic> json, String keyName) {
+    if (value == null) {
+      return const <Glob>[];
+    }
+
+    return List<Glob>.unmodifiable(<Glob>[
+      for (final String path in value) Glob(path),
+    ]);
+  }
+
+  @override
+  List<dynamic> toJson(List<Glob> value) {
+    throw UnimplementedError();
   }
 }

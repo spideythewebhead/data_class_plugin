@@ -77,8 +77,9 @@ class _$PackageInfoImpl extends PackageInfo {
   factory _$PackageInfoImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$PackageInfoImpl(
       name: json['name'] as String,
-      rootUri: jsonConverterRegistrant.find(Uri).fromJson(json['rootUri']) as Uri,
-      packageUri: jsonConverterRegistrant.find(Uri).fromJson(json['packageUri']) as Uri,
+      rootUri: jsonConverterRegistrant.find(Uri).fromJson(json['rootUri'], json, 'rootUri') as Uri,
+      packageUri:
+          jsonConverterRegistrant.find(Uri).fromJson(json['packageUri'], json, 'packageUri') as Uri,
       languageVersion: json['languageVersion'] as String,
     );
   }

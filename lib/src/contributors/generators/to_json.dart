@@ -51,10 +51,29 @@ class ToJsonGenerator implements Generator {
       ..writeln('return <String, dynamic>{');
 
     for (final VariableElement field in _fields) {
-      final ElementAnnotation? jsonKeyAnnotation = field.metadata
-          .firstWhereOrNull((ElementAnnotation annotation) => annotation.isJsonKeyAnnotation);
-      final JsonKeyInternal jsonKey = JsonKeyInternal //
-          .fromDartObject(jsonKeyAnnotation?.computeConstantValue());
+      JsonKeyInternal? jsonKey;
+      String? customJsonConverter;
+
+      for (final ElementAnnotation annotation in field.metadata) {
+        if (annotation.isJsonKeyAnnotation) {
+          jsonKey = JsonKeyInternal.fromDartObject(annotation.computeConstantValue());
+          continue;
+        }
+
+        final Element? annotationElement = annotation.element;
+        if (annotationElement is! ConstructorElement) {
+          continue;
+        }
+
+        final ClassElement classElement = annotationElement.enclosingElement as ClassElement;
+        for (final InterfaceType interface in classElement.interfaces) {
+          if (interface.element.name == 'JsonConverter') {
+            customJsonConverter = classElement.name;
+            break;
+          }
+        }
+      }
+      jsonKey ??= JsonKeyInternal.fromDartObject(null);
 
       if (jsonKey.ignore) {
         continue;
@@ -68,6 +87,11 @@ class ToJsonGenerator implements Generator {
 
       _codeWriter.write(
           "'${jsonKey.name ?? jsonKeyNameConvention.transform(field.name.escapeDollarSign())}': ");
+
+      if (customJsonConverter != null) {
+        _codeWriter.writeln('const $customJsonConverter().toJson(${field.name}),');
+        continue;
+      }
 
       if (jsonKey.toJson != null) {
         _codeWriter
