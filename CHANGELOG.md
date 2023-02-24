@@ -1,3 +1,13 @@
+## 0.2.0
+
+- Override runtimeType for generated classes [(issue #228)](https://github.com/spideythewebhead/data_class_plugin/issues/228)
+- Simplify the json methods for primitive types [(issue #231)](https://github.com/spideythewebhead/data_class_plugin/issues/231)
+- Fix nullable immutable collections [(issue #227)](https://github.com/spideythewebhead/data_class_plugin/issues/227)
+- Remove union parameter in when/maybeWhen when union has no fields [(issue #235)](https://github.com/spideythewebhead/data_class_plugin/issues/235)
+
+Breaking change
+- Improve from/to json in JsonKey [(issue #234)](https://github.com/spideythewebhead/data_class_plugin/issues/234)
+
 ## 0.1.0
 
 - Fixes a crash on file generation mode when adding a new dependency to a target file [(issue #215)](https://github.com/spideythewebhead/data_class_plugin/issues/215)
