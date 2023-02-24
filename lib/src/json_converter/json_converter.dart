@@ -34,36 +34,36 @@ part 'uri_converter.dart';
 ///     .register(const EnumCategoryConverter());
 /// }
 /// ```
-abstract class JsonConverter<InType, OutType> {
-  InType fromJson(
-    OutType value,
+abstract class JsonConverter<FieldType, JsonType> {
+  FieldType fromJson(
+    JsonType value,
     Map<dynamic, dynamic> json,
     String keyName,
   );
 
-  OutType toJson(InType value);
+  JsonType toJson(FieldType value);
 }
 
 class JsonConverterRegistrant {
   final Map<Type, JsonConverter<Object?, Object?>> _converters =
       <Type, JsonConverter<Object?, Object?>>{};
 
-  void register<InType extends Object, OutType extends Object>(
-    JsonConverter<InType, OutType> converter,
+  void register<FieldType extends Object, JsonType extends Object>(
+    JsonConverter<FieldType, JsonType> converter,
   ) {
-    _converters[InType] = converter;
+    _converters[FieldType] = converter;
   }
 
   @visibleForTesting
-  void unregister<InType extends Object, OutType extends Object>(
-    JsonConverter<InType, OutType> converter,
+  void unregister<FieldType extends Object, JsonType extends Object>(
+    JsonConverter<FieldType, JsonType> converter,
   ) {
     _converters.removeWhere((_, JsonConverter<Object?, Object?> value) {
       return value == converter;
     });
   }
 
-  JsonConverter<Object?, Object?> find<InType>(InType type) {
+  JsonConverter<Object?, Object?> find<FieldType>(FieldType type) {
     final JsonConverter<Object?, Object?>? converter = _converters[type];
     if (converter == null) {
       throw Exception("No json converter found for type '$type'");

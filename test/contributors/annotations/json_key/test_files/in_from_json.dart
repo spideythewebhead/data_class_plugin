@@ -19,7 +19,7 @@ class User {
   @JsonKey<String>(fromJson: _usernameConverter)
   final String username;
 
-  static String _usernameConverter(Map<dynamic, dynamic> json) {
+  static String _usernameConverter(dynamic value, Map<dynamic, dynamic> json, String keyName) {
     return json['username'] ?? json['uname'];
   }
 }
