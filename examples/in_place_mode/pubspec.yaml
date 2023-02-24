@@ -1,4 +1,4 @@
-name: example
+name: in_place_mode
 description: Example app for data_class_plugin
 version: 1.0.0
 publish_to: "none"
@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   data_class_plugin:
-    path: ../
+    path: ../..
 
 dev_dependencies:
   lints: ^2.0.1
