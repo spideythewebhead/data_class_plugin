@@ -51,20 +51,20 @@ extension AnsiText on String {
     }
 
     final String colorCode = type == AnsiColorType.foreground ? color.foreground : color.background;
-    return '$colorCode${this}$reset';
+    return '$colorCode$this$reset';
   }
 
-  String coloredByCode(String color) => color.isEmpty ? this : '$color${this}$reset';
+  String coloredByCode(String color) => color.isEmpty ? this : '$color$this$reset';
 
-  String bold() => '$escape[1m${this}$escape[22m';
+  String bold() => '$escape[1m$this$escape[22m';
 
-  String italic() => '$escape[3m${this}$escape[23m';
+  String italic() => '$escape[3m$this$escape[23m';
 
-  String underline() => '$escape[4m${this}$escape[24m';
+  String underline() => '$escape[4m$this$escape[24m';
 
-  String blinking() => '$escape[5m${this}$escape[25m';
+  String blinking() => '$escape[5m$this$escape[25m';
 
-  String strikethrough() => '$escape[9m${this}$escape[29m';
+  String strikethrough() => '$escape[9m$this$escape[29m';
 
   String pad(AnsiAlignment padding, int width) =>
       padding == AnsiAlignment.left ? padRight(width) : padLeft(width);
