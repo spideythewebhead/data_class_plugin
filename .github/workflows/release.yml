@@ -10,7 +10,8 @@ jobs:
     with:
       working_directory: ./
 
-  validate-release:
+  release:
+    needs: validate-plugin
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +21,7 @@ jobs:
       - name: 🎯 Setup Dart
         uses: dart-lang/setup-dart@v1.4
         with:
-          sdk: "2.18.6"
+          sdk: "2.19.2"
 
       - name: 📦 Install Dependencies
         run: dart pub get
@@ -34,10 +35,10 @@ jobs:
       - name: Publish --dry-run
         run: dart run ./github_scripts/dry_publish.dart
 
-      # - name: ⚙ Setup Pub Credentials
-      #   run: |
-      #     mkdir -p ~/.config/dart
-      #     echo "${PUB_DEV_CREDENTIALS}" | base64 --decode >> ~/.config/dart/pub-credentials.json
+      - name: ⚙ Setup Pub Credentials
+        run: |
+          mkdir -p ~/.config/dart
+          echo "${{secrets.PUBDEV}}" | base64 --decode >> ~/.config/dart/pub-credentials.json
 
-      # - name: 🚀 Publish Package
-      #   run: pub publish -f
+      - name: 🚀 Publish Package
+        run: pub publish -f

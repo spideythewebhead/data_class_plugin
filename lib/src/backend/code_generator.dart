@@ -83,7 +83,8 @@ class CodeGenerator {
     final DataClassPluginOptions pluginOptions =
         await DataClassPluginOptions.fromFile(getDataClassPluginOptionsFile(directory.path));
 
-    final Iterable<File> dartFiles = directory.listSync(recursive: true) //
+    final Iterable<File> dartFiles = directory
+        .listSync(recursive: true) //
         .where((FileSystemEntity entity) {
       if (entity is! File || !_dartFileNameMatcher.hasMatch(path.basename(entity.path))) {
         return false;
