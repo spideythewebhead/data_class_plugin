@@ -92,7 +92,7 @@ packages:
   data_class_plugin:
     dependency: "direct main"
     description:
-      path: "../.."
+      path: "../../package"
       relative: true
     source: path
     version: "0.2.0"

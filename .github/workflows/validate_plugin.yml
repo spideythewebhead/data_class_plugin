@@ -22,7 +22,7 @@ on:
       working_directory:
         required: false
         type: string
-        default: "."
+        default: "./package"
 
 jobs:
   build:

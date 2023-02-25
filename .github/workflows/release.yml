@@ -8,11 +8,15 @@ jobs:
   validate-plugin:
     uses: ./.github/workflows/validate_plugin.yml
     with:
-      working_directory: ./
+      working_directory: ./package
 
   release:
     needs: validate-plugin
+
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./package
 
     steps:
       - name: 📚 Git Checkout
@@ -33,7 +37,7 @@ jobs:
         run: pana --line-length 100 --no-warning --exit-code-threshold 19 .
 
       - name: Publish --dry-run
-        run: dart run ./github_scripts/dry_publish.dart
+        run: dart run ../github_scripts/dry_publish.dart
 
       - name: ⚙ Setup Pub Credentials
         run: |
