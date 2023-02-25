@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   data_class_plugin:
-    path: ../..
+    path: ../../package
 
 dev_dependencies:
   lints: ^2.0.1

@@ -3,24 +3,30 @@ enable-beta-ecosystems: true
 
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directory: "."
     schedule:
-      interval: "weekly"
+      interval: "monthly"
 
   - package-ecosystem: "pub"
-    directory: "/"
+    directory: "./package"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     versioning-strategy: increase
 
   - package-ecosystem: "pub"
-    directory: "/example"
+    directory: "./examples/file_generation_mode"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     versioning-strategy: increase
 
   - package-ecosystem: "pub"
-    directory: "/tools/analyzer_plugin"
+    directory: "./examples/in_place_mode"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    versioning-strategy: increase
+
+  - package-ecosystem: "pub"
+    directory: "./package/tools/analyzer_plugin"
+    schedule:
+      interval: "monthly"
     versioning-strategy: increase
