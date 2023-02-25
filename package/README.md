@@ -45,7 +45,7 @@ to get access on the source code, parse it and provide actions based on that.
 1. In your project's pubspec.yaml add on `dependencies` the following
    ```yaml
    dependencies:
-     data_class_plugin: ^0.0.1
+     data_class_plugin: ^0.2.0
    ```
 1. Update your `analysis_options.yaml` _(in case you don't have it, just create a new one)_
 
@@ -496,7 +496,7 @@ enum:
 >```
 
 ## Examples
-You can find a variety of examples in the [Example](https://github.com/spideythewebhead/dart_data_class_plugin/tree/main/example/lib) folder and the source code from the Live Demo, as it was presented in the Flutter Greek Community, [here](https://github.com/spideythewebhead/fluttergr).
+You can find a variety of examples in the [examples](https://github.com/spideythewebhead/dart_data_class_plugin/tree/main/examples) folder and the source code from the Live Demo, as it was presented in the Flutter Greek Community, [here](https://github.com/spideythewebhead/fluttergr).
 
 ## Development
 
