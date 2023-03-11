@@ -45,4 +45,4 @@ jobs:
           echo "${{secrets.PUBDEV}}" | base64 --decode >> ~/.config/dart/pub-credentials.json
 
       - name: 🚀 Publish Package
-        run: pub publish -f
+        run: dart pub publish -f
