@@ -80,7 +80,7 @@ packages:
       sha256: "624fe7e042d137c4b7f8433ea679b2fe2da0806e2adab015ee66b7c7a451825f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.1"
   file:
     dependency: transitive
     description:

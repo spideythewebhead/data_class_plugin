@@ -1,3 +1,9 @@
+## 0.2.1
+
+- Add null value support on copyWith for nullable fields [(issue #258)](https://github.com/spideythewebhead/data_class_plugin/issues/258)
+- Deprecate "in_place" mode
+- Set "file" mode as default option
+
 ## 0.2.0
 
 - Override runtimeType for generated classes [(issue #228)](https://github.com/spideythewebhead/data_class_plugin/issues/228)
@@ -6,6 +12,7 @@
 - Remove union parameter in when/maybeWhen when union has no fields [(issue #235)](https://github.com/spideythewebhead/data_class_plugin/issues/235)
 
 Breaking change
+
 - Improve from/to json in JsonKey [(issue #234)](https://github.com/spideythewebhead/data_class_plugin/issues/234)
 
 ## 0.1.0
@@ -86,7 +93,6 @@ Breaking change
 
 - Updates for README.md
 - Updated examples
-
 
 ## 0.0.1
 

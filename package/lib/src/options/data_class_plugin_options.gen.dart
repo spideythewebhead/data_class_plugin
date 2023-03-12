@@ -4,7 +4,7 @@ part of 'data_class_plugin_options.dart';
 
 class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
   const _$DataClassPluginOptionsImpl({
-    this.generationMode = CodeGenerationMode.inPlace,
+    this.generationMode = CodeGenerationMode.file,
     List<Glob> allowedFilesGenerationPaths = const <Glob>[],
     this.generatedFileLineLength = 80,
     this.json = const JsonOptions(),
@@ -40,7 +40,7 @@ class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
   factory _$DataClassPluginOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$DataClassPluginOptionsImpl(
       generationMode: json['generation_mode'] == null
-          ? CodeGenerationMode.inPlace
+          ? CodeGenerationMode.file
           : CodeGenerationMode.fromJson(json['generation_mode']),
       allowedFilesGenerationPaths: const _AllowedFilesGenerationPathFieldJsonConverter()
           .fromJson(json['file_generation_paths'], json, 'file_generation_paths'),

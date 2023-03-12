@@ -12,22 +12,24 @@
 
 > This package is experimental and still under development, thus do not use it for applications in production.
 
+NOTE: **The "in_place" mode has been deprecated and no new features will be added. It's recommended to use it only for prototyping and use "file" mode for production level projects.**
+
 ---
 
 ### Table of contents
 
 - [How it works](#how-it-works)
 - [Installation](#installation)
+- [File generation](#file-generation)
 - [Generate the code you want](#generate-the-code-you-want)
-   - [DataClass Annotation](#dataclass-annotation)
-   - [Union Annotation](#union-annotation)
-   - [Enum Annotation](#enum-annotation)
-   - [Enums](#enums)
-- [New mode (File generation)](#new-mode-file-generation)
+  - [DataClass Annotation](#dataclass-annotation)
+  - [Union Annotation](#union-annotation)
+  - [Enum Annotation](#enum-annotation)
+  - [Enums](#enums)
 - [Configuration](#configuration)
-   - [Configuration file](#configuration-file)
-   - [Available options](#available-options)
-   - [Configuration examples](#configuration-examples)
+  - [Configuration file](#configuration-file)
+  - [Available options](#available-options)
+  - [Configuration examples](#configuration-examples)
 - [Notes](#notes)
 - [Examples](#examples)
 - [Development](#development)
@@ -37,7 +39,7 @@
 
 ## How it works
 
-**Data Class Plugin** uses the [analyzer](https://pub.dev/packages/analyzer) system and [analyzer plugin](https://pub.dev/packages/analyzer_plugin) 
+**Data Class Plugin** uses the [analyzer](https://pub.dev/packages/analyzer) system and [analyzer plugin](https://pub.dev/packages/analyzer_plugin)
 to get access on the source code, parse it and provide actions based on that.
 
 ## Installation
@@ -194,7 +196,6 @@ Available union annotation toggles are:
 
 ### Enum Annotation
 
-
 1. Create an enumeration with the last field closed by semicolon and annotate it with the `@Enum()` annotation.
 
    ```dart
@@ -317,7 +318,7 @@ See [example](example/lib/json_converter.dart) on `ClassWithLatLngConverterAnnot
 
 If implementing a `JsonConverter` is too complex for your case you can use the `JsonKey` `fromJson/toJson` functions.
 
-## New mode (File generation)
+## File generation
 
 In this mode most of the code generation happens on a generated file.
 
@@ -378,7 +379,7 @@ To create a custom configuration you need to add a file named `data_class_plugin
 #### Available options
 
 1. `json`
-   
+
    Set the default naming convention for json keys.
 
    You can also override the default naming convention for the specified directories.
@@ -387,18 +388,17 @@ To create a custom configuration you need to add a file named `data_class_plugin
 
 1. `data_class`
 
-   Set the default values for the provided methods of the `@DataClass` annotation, 
+   Set the default values for the provided methods of the `@DataClass` annotation,
    by specifying the directories where they will be enabled or disabled.
 
 1. `enum`
 
-   Set the default values for the provided methods of the `@Enum` annotation, 
+   Set the default values for the provided methods of the `@Enum` annotation,
    by specifying the directories where they will be enabled or disabled.
 
 #### Configuration examples
 
 ```yaml
-
 generation_mode: in_place (default) | file
 
 # This option is **required** if **generation_mode** is "file"
@@ -476,26 +476,29 @@ enum:
 > If the generated method doesn't exist it will be placed in the end of the class/enum body (before `}`), otherwise it will be re-generated to be up-to-date with current snapshot of the code (fields, annotations configuration).
 
 > The constructor is always generated at the start of the body (after `{`) for classes.
->```dart
->class MyClass {
+>
+> ```dart
+> class MyClass {
 >   // constructor will be generated here
->   
+>
 >   final int a;
->}
->```
+> }
+> ```
 
 > The constructor is always generated after the semicolon (`;`) in the values declaration for enums.
->```dart
->enum MyEnum {
+>
+> ```dart
+> enum MyEnum {
 >   a,
 >   b,
 >   c;
->   
+>
 >   // constructor will be generated here
->}
->```
+> }
+> ```
 
 ## Examples
+
 You can find a variety of examples in the [examples](https://github.com/spideythewebhead/dart_data_class_plugin/tree/main/examples) folder and the source code from the Live Demo, as it was presented in the Flutter Greek Community, [here](https://github.com/spideythewebhead/fluttergr).
 
 ## Development

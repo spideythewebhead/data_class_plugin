@@ -44,7 +44,7 @@ abstract class DataClassPluginOptions {
   factory DataClassPluginOptions.fromJson(Map<dynamic, dynamic> json) =
       _$DataClassPluginOptionsImpl.fromJson;
 
-  @DefaultValue(CodeGenerationMode.inPlace)
+  @DefaultValue(CodeGenerationMode.file)
   CodeGenerationMode get generationMode;
 
   @JsonKey(name: 'file_generation_paths')
