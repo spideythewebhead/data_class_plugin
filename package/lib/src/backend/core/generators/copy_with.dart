@@ -1,3 +1,4 @@
+import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
 import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
 import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
 import 'package:data_class_plugin/src/common/code_writer.dart';
@@ -28,15 +29,13 @@ class CopyWithGenerator implements Generator {
     if (_fields.isNotEmpty) {
       _codeWriter.write('{');
       for (final DeclarationInfo field in _fields) {
-        final String typeName = field.type?.toSource() ?? 'dynamic';
-        final bool isNullableType = typeName != 'dynamic' && typeName.endsWith('?');
+        final CustomDartType customDartType = field.type.customDartType;
 
-        _codeWriter
-          ..write('final ')
-          ..write('$typeName${isNullableType ? '' : '?'}')
-          ..write(' ')
-          ..write(field.name)
-          ..write(',');
+        if (customDartType.isNullable) {
+          _codeWriter.write('final Object? ${field.name} = const Object(),');
+        } else {
+          _codeWriter.write('final ${customDartType.fullTypeName}? ${field.name},');
+        }
       }
       _codeWriter.write('}');
     }
@@ -46,8 +45,16 @@ class CopyWithGenerator implements Generator {
       ..writeln('return $_generatedClassName(');
 
     for (final DeclarationInfo field in _fields) {
+      final CustomDartType customDartType = field.type.customDartType;
       final String fieldName = field.name;
-      _codeWriter.writeln('$fieldName: $fieldName ?? this.$fieldName,');
+
+      if (customDartType.isNullable) {
+        _codeWriter
+          ..write('$fieldName: identical($fieldName, const Object())')
+          ..write(' ? this.$fieldName : ($fieldName as ${customDartType.fullTypeName}),');
+      } else {
+        _codeWriter.writeln('$fieldName: $fieldName ?? this.$fieldName,');
+      }
     }
 
     _codeWriter
