@@ -1,3 +1,10 @@
+## 0.2.2
+
+- Fix deepEquality crashing if Map key type was not a string [(issue #265)](https://github.com/spideythewebhead/data_class_plugin/issues/265) 
+- Fix `this` keyword string interpolation breaking compilation for dart 2.18.x [(issue #267)](https://github.com/spideythewebhead/data_class_plugin/issues/267)
+- Add support for multiple UnionJsonKeyValue annotations for a factory [(issue #270)](https://github.com/spideythewebhead/data_class_plugin/issues/269)
+
+
 ## 0.2.1
 
 - Add null value support on copyWith for nullable fields [(issue #258)](https://github.com/spideythewebhead/data_class_plugin/issues/258)
