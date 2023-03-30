@@ -86,6 +86,10 @@ extension AnnotationNodeListX on NodeList<Annotation> {
     return firstWhereOrNull((Annotation a) => a.name.name == annotation.name);
   }
 
+  List<Annotation> getAllAnnotationsByType(AnnotationType annotation) {
+    return where((Annotation a) => a.name.name == annotation.name).toList(growable: false);
+  }
+
   List<Annotation> get annotations {
     return where((Annotation annotation) {
       return AnnotationType.values

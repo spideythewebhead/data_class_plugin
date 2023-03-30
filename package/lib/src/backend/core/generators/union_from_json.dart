@@ -38,11 +38,6 @@ class UnionFromJsonGenerator implements Generator {
       ..writeln("switch (json['$unionJsonKey']) {");
 
     for (final ConstructorDeclaration ctor in _factoriesWithRedirectedConstructors) {
-      String? jsonKeyValue =
-          AnnotationValueExtractor(ctor.metadata.getAnnotation(AnnotationType.unionJsonKeyValue))
-              .getPositionedArgument(0)
-              ?.toSource();
-
       if (ctor.name!.lexeme == unionFallbackJsonValue) {
         defaultFallbackConstructor =
             '${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource';
@@ -50,10 +45,23 @@ class UnionFromJsonGenerator implements Generator {
         continue;
       }
 
-      _codeWriter
-        ..writeln('case ${jsonKeyValue ?? "'${ctor.name!.lexeme}'"}:')
-        ..writeln(
-            'return ${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource.fromJson(json);');
+      final List<Annotation> unionJsonKeyValueAnnotations =
+          ctor.metadata.getAllAnnotationsByType(AnnotationType.unionJsonKeyValue);
+      for (final Annotation annotation in unionJsonKeyValueAnnotations) {
+        final String? jsonKeyValue =
+            AnnotationValueExtractor(annotation).getPositionedArgument(0)?.toSource();
+        if (jsonKeyValue == null) {
+          continue;
+        }
+        _codeWriter.writeln('case $jsonKeyValue:');
+      }
+
+      if (unionJsonKeyValueAnnotations.isEmpty) {
+        _codeWriter.writeln("case '${ctor.name}':");
+      }
+
+      _codeWriter.writeln(
+          'return ${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource.fromJson(json);');
     }
 
     if (unionFallbackJsonValue != null && defaultFallbackConstructor == null) {
