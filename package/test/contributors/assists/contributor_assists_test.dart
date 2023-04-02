@@ -94,7 +94,7 @@ void main() async {
     plugin: plugin,
     analysis: analysis,
     shouldHaveContributors: <Type>[
-      UnionAssistContributor,
+      DataClassAssistContributor,
     ],
     filepath: unionAnnotationPath,
     offsetProvider: (CompilationUnit unit) {

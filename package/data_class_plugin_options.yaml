@@ -2,7 +2,8 @@ generation_mode: file
 
 file_generation_paths:
   - "lib/src/options/**"
-  - "lib/src/backend/**"
+  - "lib/src/backend/core/find_package_path_by_import.dart"
+  - "lib/src/backend/core/parsed_file_data.dart"
   - "lib/src/exceptions.dart"
 
 generated_file_line_length: 100

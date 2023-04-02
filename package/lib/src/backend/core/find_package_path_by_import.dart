@@ -79,8 +79,11 @@ abstract class PackageInfo {
   }) = _$PackageInfoImpl;
 
   String get name;
+
   Uri get rootUri;
+
   Uri get packageUri;
+
   String get languageVersion;
 
   /// Creates an instance of [PackageInfo] from [json]

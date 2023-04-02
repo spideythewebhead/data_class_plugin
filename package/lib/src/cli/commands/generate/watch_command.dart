@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:data_class_plugin/src/backend/code_generator.dart';
 import 'package:data_class_plugin/src/cli/commands/base_command.dart';
-import 'package:data_class_plugin/src/cli/commands/extensions.dart';
+import 'package:data_class_plugin/src/cli/commands/mixins.dart';
 
-class WatchCommand extends BaseCommand with FileGenerationCommandMixin {
+class WatchCommand extends BaseCommand with UtilsCommandMixin {
   WatchCommand({
     required super.logger,
     required this.directory,

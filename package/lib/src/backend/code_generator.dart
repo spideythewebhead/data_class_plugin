@@ -55,6 +55,8 @@ class CodeGenerator {
 
   StreamSubscription<WatchEvent>? _watchSubscription;
 
+  List<String> get registeredFiles => _filesRegistry.keys.toList(growable: false);
+
   /// Watches this project for any files changes and rebuilds when necessary
   Future<void> watchProject({
     void Function()? onReady,
@@ -72,13 +74,20 @@ class CodeGenerator {
     return completer.future;
   }
 
-  void dispose() {
-    _watchSubscription?.cancel();
+  Future<void> dispose() async {
+    await _watchSubscription?.cancel();
   }
 
   /// Indexes the project and creates links between source files
-  Future<void> indexProject() async {
+  ///
+  /// [force] clears any previous indexing
+  Future<void> indexProject({bool forceClear = false}) async {
     _logger.info('~ Indexing project..');
+
+    if (forceClear) {
+      _filesRegistry.clear();
+      _dependencyGraph.clear();
+    }
 
     final Stopwatch stopwatch = Stopwatch()..start();
 

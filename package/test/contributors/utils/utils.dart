@@ -58,7 +58,6 @@ const List<Type> availableContributors = <Type>[
   ShorthandConstructorAssistContributor,
   ToStringAssistContributor,
   DataClassAssistContributor,
-  UnionAssistContributor,
   EnumAnnotationAssistContributor,
   EnumConstructorAssistContributor,
   EnumToJsonAssistContributor,
@@ -94,9 +93,9 @@ Future<void> testContributorAssists({
               .unit;
     });
 
-    test('should have 8/${availableContributors.length} contributors', () {
+    test('should have 7/${availableContributors.length} contributors', () {
       expect(contributors, isNotEmpty);
-      expect(contributors.length, 8);
+      expect(contributors.length, 7);
       expect(contributors.length == availableContributors.length, true);
     });
 
