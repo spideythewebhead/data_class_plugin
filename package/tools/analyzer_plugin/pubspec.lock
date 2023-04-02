@@ -77,10 +77,10 @@ packages:
     dependency: "direct main"
     description:
       name: data_class_plugin
-      sha256: e0db98a254eb0346c628ce441649207789dcd7e20dd8f8583bba308fb6a0a131
+      sha256: "516eb1d4b96a05a5429ed857b978d7a1d68ef5d646f439f5240d528c818ce3c9"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1"
+    version: "0.2.2"
   file:
     dependency: transitive
     description:

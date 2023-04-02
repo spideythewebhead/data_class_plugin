@@ -76,6 +76,6 @@ class UnionAssistContributor extends Object
               );
 
     await delegate.generate();
-    addAssist(AvailableAssists.union, changeBuilder);
+    addAssist(AvailableAssists.dataAndUnionClass, changeBuilder);
   }
 }

@@ -6,7 +6,7 @@ import 'package:data_class_plugin/src/exceptions.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:path/path.dart' as path;
 
-mixin FileGenerationCommandMixin on Command<dynamic> {
+mixin UtilsCommandMixin on Command<dynamic> {
   Directory get directory;
 
   void ensureHasPubspec() {

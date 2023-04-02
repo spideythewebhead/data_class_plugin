@@ -6,7 +6,9 @@ import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dar
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors_delegates/code_generation_delegate.dart';
 import 'package:data_class_plugin/src/contributors_delegates/file_generation/file_generation_data_class_delegate.dart';
+import 'package:data_class_plugin/src/contributors_delegates/file_generation/file_generation_union_delegate.dart';
 import 'package:data_class_plugin/src/contributors_delegates/in_place/in_place_data_class_delegate.dart';
+import 'package:data_class_plugin/src/contributors_delegates/in_place/in_place_union_delegate.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
@@ -40,11 +42,13 @@ class DataClassAssistContributor extends Object
   ) async {
     assistRequest = request;
     this.collector = collector;
-    await _generateDataClass();
+    final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
+    await _generateDataClass(changeBuilder);
+    await _generateUnion(changeBuilder);
+    addAssist(AvailableAssists.dataAndUnionClass, changeBuilder);
   }
 
-  Future<void> _generateDataClass() async {
-    final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
+  Future<void> _generateDataClass(final ChangeBuilder changeBuilder) async {
     final DataClassPluginOptions pluginOptions =
         _pluginOptions ?? await session.analysisContext.contextRoot.root.getPluginOptions();
 
@@ -75,6 +79,39 @@ class DataClassAssistContributor extends Object
               );
 
     await delegate.generate();
-    addAssist(AvailableAssists.dataClass, changeBuilder);
+  }
+
+  Future<void> _generateUnion(final ChangeBuilder changeBuilder) async {
+    final DataClassPluginOptions pluginOptions =
+        _pluginOptions ?? await session.analysisContext.contextRoot.root.getPluginOptions();
+
+    final ClassCollectorAstVisitor visitor =
+        ClassCollectorAstVisitor(matcher: (ClassDeclaration node) => node.hasUnionAnnotation);
+    assistRequest.result.unit.visitChildren(visitor);
+
+    if (visitor.matchedNodes.isEmpty) {
+      return;
+    }
+
+    final CodeGenerationDelegate delegate =
+        pluginOptions.generationMode == CodeGenerationMode.inPlace
+            ? InPlaceUnionDelegate(
+                relativeFilePath: relativeFilePath,
+                targetFilePath: targetFilePath,
+                classNodes: visitor.matchedNodes,
+                pluginOptions: pluginOptions,
+                changeBuilder: changeBuilder,
+                compilationUnit: assistRequest.result.unit,
+              )
+            : FileGenerationUnionDelegate(
+                relativeFilePath: relativeFilePath,
+                targetFilePath: targetFilePath,
+                changeBuilder: changeBuilder,
+                pluginOptions: pluginOptions,
+                classNodes: visitor.matchedNodes,
+                compilationUnit: assistRequest.result.unit,
+              );
+
+    await delegate.generate();
   }
 }

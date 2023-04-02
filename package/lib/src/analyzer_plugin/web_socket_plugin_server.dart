@@ -28,7 +28,6 @@ class WebSocketPluginServer implements PluginCommunicationChannel {
 
   Future<void> _init() async {
     server = await HttpServer.bind(address, port);
-    logger.writeln('> listening on $address at port $port');
     server.transform(WebSocketTransformer()).listen(_handleClientAdded);
   }
 

@@ -19,6 +19,7 @@ abstract class BaseCommand extends Command<void> {
   Future<void> run() async {
     await init();
     await execute();
+    await dispose();
   }
 
   Future<void> dispose() async {}
