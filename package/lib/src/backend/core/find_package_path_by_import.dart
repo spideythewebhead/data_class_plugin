@@ -51,11 +51,11 @@ Future<String?> findDartFileFromUri({
     throw PackageNotInstalledException(packageName: packageName);
   }
 
-  return Uri.parse(path.join(
+  return path.join(
     path.isRelative(targetPackage.rootUri.path) ? projectDirectoryPath : targetPackage.rootUri.path,
-    targetPackage.packageUri.path,
-    uri.substring(1 + uri.indexOf('/')),
-  )).toString();
+    path.normalize(targetPackage.packageUri.path),
+    path.basename(uri),
+  );
 }
 
 @DataClass(copyWith: false)
