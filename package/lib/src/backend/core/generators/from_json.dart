@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:data_class_plugin/src/backend/core/custom_dart_object.dart';
 import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
+import 'package:data_class_plugin/src/backend/core/declaration_finder.dart';
 import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
 import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
 import 'package:data_class_plugin/src/backend/core/typedefs.dart';
@@ -15,14 +16,14 @@ class FromJsonGenerator implements Generator {
     required CodeWriter codeWriter,
     required List<DeclarationInfo> fields,
     required String generatedClassName,
-    required String classTypeParametersSource,
+    required String classTypeParametersWithoutConstraints,
     required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required ClassOrEnumDeclarationFinder classDeclarationFinder,
     required PluginLogger logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _generatedClassName = generatedClassName,
-        _classTypeParametersSource = classTypeParametersSource,
+        _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
         _classOrEnumDeclarationFinder = classDeclarationFinder,
         _logger = logger;
@@ -30,7 +31,7 @@ class FromJsonGenerator implements Generator {
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
   final String _generatedClassName;
-  final String _classTypeParametersSource;
+  final String _classTypeParametersWithoutConstraints;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
   final ClassOrEnumDeclarationFinder _classOrEnumDeclarationFinder;
   final PluginLogger _logger;
@@ -41,7 +42,7 @@ class FromJsonGenerator implements Generator {
   Future<void> execute() async {
     _codeWriter
       ..writeln('factory $_generatedClassName.fromJson(Map<dynamic, dynamic> json) {')
-      ..writeln('return $_generatedClassName$_classTypeParametersSource(');
+      ..writeln('return $_generatedClassName$_classTypeParametersWithoutConstraints(');
 
     for (final DeclarationInfo field in _fields) {
       AnnotationValueExtractor? annotationValueExtractor;
@@ -55,7 +56,8 @@ class FromJsonGenerator implements Generator {
         }
 
         final String className = annotation.name.name;
-        final NamedCompilationUnitMember? node = await _classOrEnumDeclarationFinder(className);
+        final NamedCompilationUnitMember? node = await _classOrEnumDeclarationFinder(className)
+            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
 
         // handle JsonConverter interface implementer
         if (node is ClassDeclaration) {
@@ -201,7 +203,8 @@ class FromJsonGenerator implements Generator {
     }
 
     final NamedCompilationUnitMember? typeDeclarationNode =
-        await _classOrEnumDeclarationFinder(dartType.name);
+        await _classOrEnumDeclarationFinder(dartType.name)
+            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
 
     if (typeDeclarationNode is ClassDeclaration &&
             typeDeclarationNode.members.hasFactory('fromJson') ||
@@ -211,7 +214,7 @@ class FromJsonGenerator implements Generator {
       return;
     }
 
-    _logger.warning('No "fromJson" factory found for type "${dartType.name}"');
+    _logger.warning('~ No "fromJson" factory found for type "${dartType.name}"');
 
     _codeWriter.write('jsonConverterRegistrant.find(${dartType.name})'
         ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as ${dartType.name}");

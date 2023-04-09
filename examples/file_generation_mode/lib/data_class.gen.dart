@@ -1,5 +1,7 @@
 // AUTO GENERATED - DO NOT MODIFY
 
+// ignore_for_file: library_private_types_in_public_api, unused_element, unused_field
+
 part of 'data_class.dart';
 
 class _$UserImpl extends User {
@@ -36,19 +38,6 @@ class _$UserImpl extends User {
   }
 
   @override
-  _$UserImpl copyWith({
-    final String? id,
-    final String? username,
-    final String? email,
-  }) {
-    return _$UserImpl(
-      id: id ?? this.id,
-      username: username ?? this.username,
-      email: email ?? this.email,
-    );
-  }
-
-  @override
   bool operator ==(Object? other) {
     return identical(this, other) ||
         other is User &&
@@ -80,4 +69,65 @@ class _$UserImpl extends User {
 
   @override
   Type get runtimeType => User;
+}
+
+class _$UserCopyWithProxy {
+  _$UserCopyWithProxy(this._value);
+
+  final User _value;
+
+  @pragma('vm:prefer-inline')
+  User id(String newValue) => this(id: newValue);
+
+  @pragma('vm:prefer-inline')
+  User username(String newValue) => this(username: newValue);
+
+  @pragma('vm:prefer-inline')
+  User email(String newValue) => this(email: newValue);
+
+  @pragma('vm:prefer-inline')
+  User call({
+    final String? id,
+    final String? username,
+    final String? email,
+  }) {
+    return _$UserImpl(
+      id: id ?? _value.id,
+      username: username ?? _value.username,
+      email: email ?? _value.email,
+    );
+  }
+}
+
+class $UserCopyWithProxyChain<$Result> {
+  $UserCopyWithProxyChain(this._value, this._chain);
+
+  final User _value;
+  final $Result Function(User update) _chain;
+
+  @pragma('vm:prefer-inline')
+  $Result id(String newValue) => this(id: newValue);
+
+  @pragma('vm:prefer-inline')
+  $Result username(String newValue) => this(username: newValue);
+
+  @pragma('vm:prefer-inline')
+  $Result email(String newValue) => this(email: newValue);
+
+  @pragma('vm:prefer-inline')
+  $Result call({
+    final String? id,
+    final String? username,
+    final String? email,
+  }) {
+    return _chain(_$UserImpl(
+      id: id ?? _value.id,
+      username: username ?? _value.username,
+      email: email ?? _value.email,
+    ));
+  }
+}
+
+extension $UserExtension on User {
+  _$UserCopyWithProxy get copyWith => _$UserCopyWithProxy(this);
 }

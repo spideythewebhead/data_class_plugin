@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:data_class_plugin/src/backend/core/custom_dart_object.dart';
 import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
+import 'package:data_class_plugin/src/backend/core/declaration_finder.dart';
 import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
 import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
 import 'package:data_class_plugin/src/backend/core/typedefs.dart';
@@ -49,7 +50,8 @@ class ToJsonGenerator implements Generator {
         }
 
         final String className = annotation.name.name;
-        final NamedCompilationUnitMember? node = await _classDeclarationFinder(className);
+        final NamedCompilationUnitMember? node = await _classDeclarationFinder(className)
+            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
 
         // handle JsonConverter interface implementer
         if (node is ClassDeclaration) {
@@ -159,7 +161,8 @@ class ToJsonGenerator implements Generator {
     }
 
     final NamedCompilationUnitMember? typeDeclarationNode =
-        await _classDeclarationFinder(dartType.name);
+        await _classDeclarationFinder(dartType.name)
+            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
 
     if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasMethod('toJson') ||
         typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasMethod('toJson')) {

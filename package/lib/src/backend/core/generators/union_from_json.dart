@@ -7,20 +7,23 @@ import 'package:data_class_plugin/src/extensions/extensions.dart';
 
 class UnionFromJsonGenerator implements Generator {
   UnionFromJsonGenerator({
-    required CodeWriter codeWriter,
-    required String className,
-    required String classTypeParametersSource,
-    required List<ConstructorDeclaration> factoriesWithRedirectedConstructors,
-    required AnnotationValueExtractor unionAnnotationValueExtractor,
+    required final CodeWriter codeWriter,
+    required final String className,
+    required final String classTypeParametersSource,
+    required final String classTypeParametersWithoutConstraints,
+    required final List<ConstructorDeclaration> factoriesWithRedirectedConstructors,
+    required final AnnotationValueExtractor unionAnnotationValueExtractor,
   })  : _codeWriter = codeWriter,
         _className = className,
         _classTypeParametersSource = classTypeParametersSource,
+        _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
         _factoriesWithRedirectedConstructors = factoriesWithRedirectedConstructors,
         _unionAnnotationValueExtractor = unionAnnotationValueExtractor;
 
   final CodeWriter _codeWriter;
   final String _className;
   final String _classTypeParametersSource;
+  final String _classTypeParametersWithoutConstraints;
   final List<ConstructorDeclaration> _factoriesWithRedirectedConstructors;
   final AnnotationValueExtractor _unionAnnotationValueExtractor;
 
@@ -34,13 +37,13 @@ class UnionFromJsonGenerator implements Generator {
 
     _codeWriter
       ..writeln(
-          '$_className$_classTypeParametersSource _\$${_className}FromJson$_classTypeParametersSource(Map<dynamic, dynamic> json) {')
+          '$_className$_classTypeParametersSource _\$${_className}FromJson$_classTypeParametersWithoutConstraints(Map<dynamic, dynamic> json) {')
       ..writeln("switch (json['$unionJsonKey']) {");
 
     for (final ConstructorDeclaration ctor in _factoriesWithRedirectedConstructors) {
       if (ctor.name!.lexeme == unionFallbackJsonValue) {
         defaultFallbackConstructor =
-            '${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource';
+            '${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersWithoutConstraints';
         // this will be included on the default branch
         continue;
       }
@@ -61,7 +64,7 @@ class UnionFromJsonGenerator implements Generator {
       }
 
       _codeWriter.writeln(
-          'return ${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersSource.fromJson(json);');
+          'return ${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersWithoutConstraints.fromJson(json);');
     }
 
     if (unionFallbackJsonValue != null && defaultFallbackConstructor == null) {

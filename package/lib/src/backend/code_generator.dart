@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/backend/core/custom_dart_object.dart';
 import 'package:data_class_plugin/src/backend/core/declaration_finder.dart';
 import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
@@ -49,6 +50,7 @@ class CodeGenerator {
   late final DeclarationFinder _declarationFinder = DeclarationFinder(
     projectDirectoryPath: directory.path,
     parsedFilesRegistry: _filesRegistry,
+    dependencyGraph: _dependencyGraph,
   );
 
   StreamSubscription<WatchEvent>? _watchSubscription;
@@ -304,6 +306,9 @@ class CodeGenerator {
     codeWriter
       ..writeln('// AUTO GENERATED - DO NOT MODIFY')
       ..writeln()
+      ..writeln(
+          '// ignore_for_file: library_private_types_in_public_api, unused_element, unused_field')
+      ..writeln()
       ..writeln("part of '${path.basename(targetFilePath)}';")
       ..writeln();
 
@@ -389,6 +394,11 @@ class CodeGenerator {
   }) async {
     for (final ClassDeclaration classDeclaration in classDeclarations) {
       final String className = classDeclaration.name.lexeme;
+      final String classTypeParametersWithoutConstraints = <String>[
+        for (final TypeParameter typeParam
+            in (classDeclaration.typeParameters?.typeParameters ?? const <TypeParameter>[]))
+          typeParam.name.lexeme
+      ].join(', ').wrapWithAngleBracketsIfNotEmpty();
       final String classTypeParametersSource = classDeclaration.typeParameters?.toSource() ?? '';
       final String generatedClassName = '_\$${className}Impl';
 
@@ -436,7 +446,7 @@ class CodeGenerator {
               pluginOptions.dataClass.effectiveUnmodifiableCollections(targetFileRelativePath);
 
       codeWriter.writeln(
-          'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersSource {');
+          'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersWithoutConstraints {');
 
       ConstructorGenerator(
         codeWriter: codeWriter,
@@ -447,17 +457,17 @@ class CodeGenerator {
         unmodifiableCollections: unmodifiableCollections,
       ).execute();
 
-      if (classDeclaration.members.hasFactory('fromJson')) {
+      if (dataClassAnnotationValueExtractor.getBool('fromJson') ??
+          pluginOptions.dataClass.effectiveFromJson(targetFileRelativePath)) {
         await FromJsonGenerator(
           codeWriter: codeWriter,
           fields: fields,
           generatedClassName: generatedClassName,
-          classTypeParametersSource: classTypeParametersSource,
+          classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: (String name) {
             return _declarationFinder.findClassOrEnumDeclarationByName(
               name,
-              dependencyGraph: _dependencyGraph,
               compilationUnit: compilationUnit,
               targetFilePath: targetFilePath,
             );
@@ -466,7 +476,8 @@ class CodeGenerator {
         ).execute();
       }
 
-      if (classDeclaration.hasMethod('toJson')) {
+      if (dataClassAnnotationValueExtractor.getBool('toJson') ??
+          pluginOptions.dataClass.effectiveToJson(targetFileRelativePath)) {
         await ToJsonGenerator(
           codeWriter: codeWriter,
           fields: fields,
@@ -474,7 +485,6 @@ class CodeGenerator {
           classDeclarationFinder: (String name) {
             return _declarationFinder.findClassOrEnumDeclarationByName(
               name,
-              dependencyGraph: _dependencyGraph,
               compilationUnit: compilationUnit,
               targetFilePath: targetFilePath,
             );
@@ -483,20 +493,12 @@ class CodeGenerator {
         ).execute();
       }
 
-      if (dataClassAnnotationValueExtractor.getBool('copyWith') ??
-          pluginOptions.dataClass.effectiveCopyWith(targetFileRelativePath)) {
-        CopyWithGenerator(
-          codeWriter: codeWriter,
-          fields: fields,
-          generatedClassName: '$generatedClassName$classTypeParametersSource',
-        ).execute();
-      }
-
       if (dataClassAnnotationValueExtractor.getBool('hashAndEquals') ??
           pluginOptions.dataClass.effectiveHashAndEquals(targetFileRelativePath)) {
         EqualsGenerator(
           codeWriter: codeWriter,
-          className: '$className$classTypeParametersSource',
+          className: className,
+          classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
           fields: fields,
         ).execute();
 
@@ -519,9 +521,70 @@ class CodeGenerator {
       codeWriter
         ..writeln('')
         ..writeln('@override')
-        ..writeln('Type get runtimeType => $className$classTypeParametersSource;');
+        ..writeln('Type get runtimeType => $className$classTypeParametersWithoutConstraints;');
 
       codeWriter.writeln('}');
+
+      bool? supportsCopyWith;
+      // Check if super class is a data class and supports copyWith
+      // If that case is true then override the config for copyWith for the current class
+      // as it would not make sense to have copyWith for super class and not a subclass
+      if (classDeclaration.extendsClause?.superclass != null) {
+        final String superClassName = classDeclaration.extendsClause!.superclass.name.name;
+        final ClassOrEnumDeclarationMatch? superClassMatch =
+            await _declarationFinder.findClassOrEnumDeclarationByName(
+          superClassName,
+          compilationUnit: compilationUnit,
+          targetFilePath: targetFilePath,
+        );
+
+        final NamedCompilationUnitMember? superClassDeclaration = superClassMatch?.node;
+        if (superClassDeclaration is ClassDeclaration &&
+            superClassDeclaration.hasDataClassAnnotation) {
+          final AnnotationValueExtractor annotationValueExtractor = AnnotationValueExtractor(
+              superClassDeclaration.metadata.getAnnotation(AnnotationType.dataClass));
+
+          if (annotationValueExtractor.getBool('copyWith') == true ||
+              pluginOptions.dataClass.effectiveCopyWith(superClassMatch!.filePath)) {
+            supportsCopyWith = true;
+          }
+        }
+
+        if (supportsCopyWith != null) {
+          _logger.warning(
+              '~ Overriden copyWith configuration for class <$className> based on super class <$superClassName>');
+        }
+      }
+      supportsCopyWith ??= dataClassAnnotationValueExtractor.getBool('copyWith') ??
+          pluginOptions.dataClass
+              .effectiveCopyWith(path.relative(targetFileRelativePath, from: directory.path));
+
+      if (supportsCopyWith) {
+        await CopyWithGenerator(
+          codeWriter: codeWriter,
+          fields: fields,
+          className: className,
+          generatedClassName: generatedClassName,
+          classTypeParametersSource: classTypeParametersSource,
+          classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
+          classDeclarationFinder: (String name) {
+            return _declarationFinder.findClassOrEnumDeclarationByName(
+              name,
+              compilationUnit: compilationUnit,
+              targetFilePath: targetFilePath,
+            );
+          },
+          projectDirectoryPath: directory.path,
+          pluginOptions: pluginOptions,
+        ).execute();
+
+        codeWriter
+          ..writeln(
+              'extension \$${className}Extension$classTypeParametersSource on $className$classTypeParametersWithoutConstraints {')
+          ..writeln(
+              '_\$${className}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _\$${className}CopyWithProxy$classTypeParametersWithoutConstraints(this);')
+          ..writeln('}');
+      }
     }
   }
 
@@ -551,6 +614,11 @@ class CodeGenerator {
         continue;
       }
 
+      final String classTypeParametersWithoutConstraints = <String>[
+        for (final TypeParameter typeParam
+            in (classDeclaration.typeParameters?.typeParameters ?? const <TypeParameter>[]))
+          typeParam.name.lexeme
+      ].join(', ').wrapWithAngleBracketsIfNotEmpty();
       final String classTypeParametersSource = classDeclaration.typeParameters?.toSource() ?? '';
       final AnnotationValueExtractor unionAnnotationValueExtractor =
           AnnotationValueExtractor(classDeclaration.unionAnnotation);
@@ -559,6 +627,7 @@ class CodeGenerator {
         codeWriter: codeWriter,
         className: className,
         classTypeParametersSource: classTypeParametersSource,
+        classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
         factoriesWithRedirectedConstructors: factoriesWithRedirectedConstructors,
       ).execute();
 
@@ -568,6 +637,7 @@ class CodeGenerator {
           codeWriter: codeWriter,
           className: className,
           classTypeParametersSource: classTypeParametersSource,
+          classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
           factoriesWithRedirectedConstructors: factoriesWithRedirectedConstructors,
           unionAnnotationValueExtractor: unionAnnotationValueExtractor,
         ).execute();
@@ -600,7 +670,7 @@ class CodeGenerator {
                 pluginOptions.union.effectiveUnmodifiableCollections(targetFileRelativePath);
 
         codeWriter.writeln(
-            'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersSource {');
+            'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersWithoutConstraints {');
 
         ConstructorGenerator(
           codeWriter: codeWriter,
@@ -618,12 +688,11 @@ class CodeGenerator {
             codeWriter: codeWriter,
             fields: fields,
             generatedClassName: generatedClassName,
-            classTypeParametersSource: classTypeParametersSource,
+            classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
             jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
             classDeclarationFinder: (String name) {
               return _declarationFinder.findClassOrEnumDeclarationByName(
                 name,
-                dependencyGraph: _dependencyGraph,
                 compilationUnit: compilationUnit,
                 targetFilePath: targetFilePath,
               );
@@ -641,22 +710,11 @@ class CodeGenerator {
             classDeclarationFinder: (String name) {
               return _declarationFinder.findClassOrEnumDeclarationByName(
                 name,
-                dependencyGraph: _dependencyGraph,
                 compilationUnit: compilationUnit,
                 targetFilePath: targetFilePath,
               );
             },
             logger: _logger,
-          ).execute();
-        }
-
-        if (unionAnnotationValueExtractor.getBool('copyWith') ??
-            pluginOptions.union.effectiveCopyWith(targetFileRelativePath)) {
-          CopyWithGenerator(
-            codeWriter: codeWriter,
-            fields: fields,
-            generatedClassName: '$generatedClassName$classTypeParametersSource',
-            shouldAnnotateWithOverride: false,
           ).execute();
         }
 
@@ -670,7 +728,8 @@ class CodeGenerator {
 
           EqualsGenerator(
             codeWriter: codeWriter,
-            className: '$generatedClassName$classTypeParametersSource',
+            className: generatedClassName,
+            classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
             fields: fields,
           ).execute();
         }
@@ -685,6 +744,35 @@ class CodeGenerator {
         }
 
         codeWriter.writeln('}');
+
+        if (unionAnnotationValueExtractor.getBool('copyWith') ??
+            pluginOptions.dataClass
+                .effectiveCopyWith(path.relative(targetFileRelativePath, from: directory.path))) {
+          await CopyWithGenerator(
+            codeWriter: codeWriter,
+            fields: fields,
+            className: generatedClassName,
+            generatedClassName: generatedClassName,
+            classTypeParametersSource: classTypeParametersSource,
+            classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
+            classDeclarationFinder: (String name) {
+              return _declarationFinder.findClassOrEnumDeclarationByName(
+                name,
+                compilationUnit: compilationUnit,
+                targetFilePath: targetFilePath,
+              );
+            },
+            projectDirectoryPath: directory.path,
+            pluginOptions: pluginOptions,
+          ).execute();
+
+          codeWriter
+            ..writeln(
+                'extension \$${generatedClassName}Extension$classTypeParametersSource on $generatedClassName$classTypeParametersWithoutConstraints {')
+            ..writeln(
+                '_\$${generatedClassName}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _\$${generatedClassName}CopyWithProxy$classTypeParametersWithoutConstraints(this);')
+            ..writeln('}');
+        }
       }
     }
   }

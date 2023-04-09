@@ -42,15 +42,18 @@ class HashGenerator implements Generator {
 
 class EqualsGenerator implements Generator {
   EqualsGenerator({
-    required CodeWriter codeWriter,
-    required String className,
-    required List<DeclarationInfo> fields,
+    required final CodeWriter codeWriter,
+    required final String className,
+    required final String classTypeParametersWithoutConstraints,
+    required final List<DeclarationInfo> fields,
   })  : _codeWriter = codeWriter,
         _className = className,
+        _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
         _fields = fields;
 
   final CodeWriter _codeWriter;
   final String _className;
+  final String _classTypeParametersWithoutConstraints;
   final List<DeclarationInfo> _fields;
 
   @override
@@ -60,7 +63,7 @@ class EqualsGenerator implements Generator {
       ..writeln('@override')
       ..writeln('bool operator ==(Object? other) {')
       ..writeln(
-          'return identical(this, other) || other is $_className && runtimeType == other.runtimeType');
+          'return identical(this, other) || other is $_className$_classTypeParametersWithoutConstraints && runtimeType == other.runtimeType');
 
     for (final DeclarationInfo field in _fields) {
       if (field.metadata.any((Annotation element) => element.name.name == 'SkipHash')) {
