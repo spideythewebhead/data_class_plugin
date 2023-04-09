@@ -161,26 +161,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
           fileEditBuilder.addDeletion(fromJsonSourceRange);
         }
 
-        if (dataClassAnnotation.copyWith ??
-            pluginOptions.dataClass.effectiveCopyWith(relativeFilePath)) {
-          void createCopyWith(DartEditBuilder builder) {
-            _createCopyWith(
-              classElement: classElement,
-              builder: builder,
-              fields: fields,
-              superClassFields: superClassFields,
-            );
-          }
-
-          if (copyWithSourceRange != null) {
-            fileEditBuilder.addReplacement(copyWithSourceRange, createCopyWith);
-          } else {
-            fileEditBuilder.addInsertion(
-              classNode.rightBracket.offset,
-              createCopyWith,
-            );
-          }
-        } else if (copyWithSourceRange != null) {
+        if (copyWithSourceRange != null) {
           fileEditBuilder.addDeletion(copyWithSourceRange);
         }
 
@@ -380,42 +361,6 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     }
 
     builder.writeln(') = _\$${classElement.name}Impl$optionalTypeParameters;');
-  }
-
-  void _createCopyWith({
-    required final ClassElement classElement,
-    required final List<FieldElement> fields,
-    required final List<FieldElement> superClassFields,
-    required final DartEditBuilder builder,
-  }) {
-    builder
-      ..writeln()
-      ..writeln('/// Creates a new instance of [${classElement.name}] with optional new values');
-
-    if (classElement.supertype?.hasMethod('copyWith') ?? false) {
-      builder.writeln('@override');
-    }
-
-    builder.writeln('${classElement.thisType} copyWith(');
-
-    final bool shouldAddBrace = fields.isNotEmpty || superClassFields.isNotEmpty;
-
-    if (shouldAddBrace) {
-      builder.write('{');
-    }
-
-    for (final VariableElement field in <FieldElement>[...superClassFields, ...fields]) {
-      final String typeStringValue =
-          field.type.typeStringValue(enclosingImports: classElement.library.libraryImports);
-      final bool isNullable = typeStringValue.endsWith('?');
-      builder.writeln('final $typeStringValue${isNullable ? '' : '?'} ${field.name},');
-    }
-
-    if (shouldAddBrace) {
-      builder.write('}');
-    }
-
-    builder.writeln(');');
   }
 
   void _createFromJson({

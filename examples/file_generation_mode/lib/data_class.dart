@@ -25,13 +25,6 @@ abstract class User {
   /// Creates an instance of [User] from [json]
   factory User.fromJson(Map<dynamic, dynamic> json) = _$UserImpl.fromJson;
 
-  /// Creates a new instance of [User] with optional new values
-  User copyWith({
-    final String? id,
-    final String? username,
-    final String? email,
-  });
-
   /// Converts [User] to a [Map] json
   Map<String, dynamic> toJson();
 }

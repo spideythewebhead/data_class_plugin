@@ -11,41 +11,43 @@ import 'package:path/path.dart' as path;
 
 class DeclarationFinder {
   DeclarationFinder({
-    required String projectDirectoryPath,
-    required ParsedFilesRegistry parsedFilesRegistry,
+    required final String projectDirectoryPath,
+    required final ParsedFilesRegistry parsedFilesRegistry,
+    required final DependencyGraph dependencyGraph,
   })  : _projectDirectoryPath = projectDirectoryPath,
-        _parsedFilesRegistry = parsedFilesRegistry;
+        _parsedFilesRegistry = parsedFilesRegistry,
+        _dependencyGraph = dependencyGraph;
 
   final String _projectDirectoryPath;
   final ParsedFilesRegistry _parsedFilesRegistry;
+  final DependencyGraph _dependencyGraph;
 
-  Future<NamedCompilationUnitMember?> findClassOrEnumDeclarationByName(
+  Future<ClassOrEnumDeclarationMatch?> findClassOrEnumDeclarationByName(
     String name, {
-    required DependencyGraph dependencyGraph,
     required CompilationUnit compilationUnit,
     required String targetFilePath,
   }) async {
     return await _findClassOrEnumDeclarationByName(
       name,
-      dependencyGraph: dependencyGraph,
       compilationUnit: compilationUnit,
       targetFilePath: targetFilePath,
       currentDirectoryPath: File(targetFilePath).parent.absolute.path,
     );
   }
 
-  Future<NamedCompilationUnitMember?> _findClassOrEnumDeclarationByName(
+  Future<ClassOrEnumDeclarationMatch?> _findClassOrEnumDeclarationByName(
     String name, {
-    required DependencyGraph dependencyGraph,
     required CompilationUnit compilationUnit,
     required String targetFilePath,
     required String currentDirectoryPath,
   }) async {
     NamedCompilationUnitMember? nodeDeclaration =
-        await _findClassOrEnumDeclaration(name: name, unit: compilationUnit);
-
+        _findClassOrEnumDeclaration(name: name, unit: compilationUnit);
     if (nodeDeclaration != null) {
-      return nodeDeclaration;
+      return ClassOrEnumDeclarationMatch(
+        node: nodeDeclaration,
+        filePath: targetFilePath,
+      );
     }
 
     final List<ParsedFileData> parsedFiles = <ParsedFileData>[];
@@ -78,8 +80,8 @@ class DeclarationFinder {
 
       final DateTime lastModifiedAt = await dartFile.lastModified();
 
-      if (!dependencyGraph.hasDependency(targetFilePath, dartFilePath)) {
-        dependencyGraph.add(targetFilePath, dartFilePath);
+      if (!_dependencyGraph.hasDependency(targetFilePath, dartFilePath)) {
+        _dependencyGraph.add(targetFilePath, dartFilePath);
       }
 
       if (!_parsedFilesRegistry.containsKey(dartFilePath) ||
@@ -95,36 +97,35 @@ class DeclarationFinder {
     }
 
     for (final ParsedFileData parsedFileData in parsedFiles) {
-      nodeDeclaration = await _findClassOrEnumDeclaration(
+      nodeDeclaration = _findClassOrEnumDeclaration(
         name: name,
         unit: parsedFileData.compilationUnit,
       );
-
       if (nodeDeclaration != null) {
-        break;
+        return ClassOrEnumDeclarationMatch(
+          node: nodeDeclaration,
+          filePath: parsedFileData.absolutePath,
+        );
       }
 
-      nodeDeclaration = await _recursivelyExploreExports(
+      final ClassOrEnumDeclarationMatch? match = await _recursivelyExploreExports(
         name,
         currentDirectoryPath: File(parsedFileData.absolutePath).parent.absolute.path,
         compilationUnit: parsedFileData.compilationUnit,
       );
-
-      if (nodeDeclaration != null) {
-        break;
+      if (match != null) {
+        return match;
       }
     }
 
-    return nodeDeclaration;
+    return null;
   }
 
-  Future<NamedCompilationUnitMember?> _recursivelyExploreExports(
+  Future<ClassOrEnumDeclarationMatch?> _recursivelyExploreExports(
     String name, {
     required String currentDirectoryPath,
     required CompilationUnit compilationUnit,
   }) async {
-    NamedCompilationUnitMember? nodeDeclaration;
-
     for (final Directive directive in compilationUnit.directives) {
       if (directive is! ExportDirective) {
         continue;
@@ -142,41 +143,52 @@ class DeclarationFinder {
 
       final ParsedFileData parsedFileData = _parsedFilesRegistry[exportDartFilePath]!;
 
-      nodeDeclaration =
-          await _findClassOrEnumDeclaration(name: name, unit: parsedFileData.compilationUnit);
-
+      NamedCompilationUnitMember? nodeDeclaration =
+          _findClassOrEnumDeclaration(name: name, unit: parsedFileData.compilationUnit);
       if (nodeDeclaration != null) {
-        break;
+        return ClassOrEnumDeclarationMatch(
+          node: nodeDeclaration,
+          filePath: parsedFileData.absolutePath,
+        );
       }
 
-      nodeDeclaration = await _recursivelyExploreExports(
+      final ClassOrEnumDeclarationMatch? match = await _recursivelyExploreExports(
         name,
         currentDirectoryPath: File(exportDartFilePath).parent.absolute.path,
         compilationUnit: parsedFileData.compilationUnit,
       );
-
-      if (nodeDeclaration != null) {
-        break;
-      }
-    }
-
-    return nodeDeclaration;
-  }
-
-  Future<NamedCompilationUnitMember?> _findClassOrEnumDeclaration({
-    required String name,
-    required CompilationUnit unit,
-  }) async {
-    for (final CompilationUnitMember member in unit.declarations) {
-      if (member is ClassDeclaration && member.name.lexeme == name) {
-        return member;
-      }
-
-      if (member is EnumDeclaration && member.name.lexeme == name) {
-        return member;
+      if (match != null) {
+        return match;
       }
     }
 
     return null;
   }
+
+  NamedCompilationUnitMember? _findClassOrEnumDeclaration({
+    required String name,
+    required CompilationUnit unit,
+  }) {
+    for (final CompilationUnitMember declaration in unit.declarations) {
+      if (declaration is ClassDeclaration && declaration.name.lexeme == name) {
+        return declaration;
+      }
+
+      if (declaration is EnumDeclaration && declaration.name.lexeme == name) {
+        return declaration;
+      }
+    }
+    return null;
+  }
+}
+
+class ClassOrEnumDeclarationMatch {
+  /// Shorthand constructor
+  ClassOrEnumDeclarationMatch({
+    required this.node,
+    required this.filePath,
+  });
+
+  final NamedCompilationUnitMember node;
+  final String filePath;
 }

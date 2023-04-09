@@ -1,3 +1,3 @@
-import 'package:analyzer/dart/ast/ast.dart';
+import 'package:data_class_plugin/src/backend/core/declaration_finder.dart';
 
-typedef ClassOrEnumDeclarationFinder = Future<NamedCompilationUnitMember?> Function(String name);
+typedef ClassOrEnumDeclarationFinder = Future<ClassOrEnumDeclarationMatch?> Function(String name);
