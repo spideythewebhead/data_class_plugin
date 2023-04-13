@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:data_class_plugin/data_class_plugin.dart';
+import 'package:data_class_plugin/src/exceptions.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:path/path.dart' as path;
 
@@ -32,7 +33,7 @@ Future<String?> findDartFileFromUri({
       File(path.join(projectDirectoryPath, '.dart_tool', 'package_config.json'));
 
   if (!await packageConfigFile.exists()) {
-    throw const NoDartToolDirectoryFoundException();
+    throw const DcpException.dartToolFolderNotFound();
   }
 
   final Map<dynamic, dynamic> packageConfigJson =
@@ -48,7 +49,7 @@ Future<String?> findDartFileFromUri({
       packages.firstWhereOrNull((PackageInfo package) => package.name == packageName);
 
   if (targetPackage == null) {
-    throw PackageNotInstalledException(packageName: packageName);
+    throw DcpException.packageNotFound(packageName: packageName);
   }
 
   return path.join(
@@ -58,29 +59,6 @@ Future<String?> findDartFileFromUri({
     // we need to extract the 'path/to/file.dart'
     uri.substring(1 + uri.indexOf('/')),
   );
-}
-
-@DataClass(copyWith: false)
-abstract class NoDartToolDirectoryFoundException implements Exception {
-  const NoDartToolDirectoryFoundException.ctor();
-
-  /// Default constructor
-  const factory NoDartToolDirectoryFoundException() = _$NoDartToolDirectoryFoundExceptionImpl;
-}
-
-@DataClass(
-  copyWith: false,
-  hashAndEquals: false,
-)
-abstract class PackageNotInstalledException implements Exception {
-  PackageNotInstalledException.ctor();
-
-  /// Default constructor
-  factory PackageNotInstalledException({
-    required String packageName,
-  }) = _$PackageNotInstalledExceptionImpl;
-
-  String get packageName;
 }
 
 @DataClass(
