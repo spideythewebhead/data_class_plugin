@@ -3,6 +3,7 @@ generation_mode: file
 file_generation_paths:
   - "lib/src/options/**"
   - "lib/src/backend/**"
+  - "lib/src/exceptions.dart"
 
 generated_file_line_length: 100
 
@@ -29,6 +30,13 @@ data_class:
     to_string:
       disabled:
         - "lib/src/options/*.dart"
+
+union:
+  options_config:
+    copy_with:
+      default: false
+    to_string:
+      default: false
 
 enum:
   options_config:

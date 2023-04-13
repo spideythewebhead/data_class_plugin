@@ -2,58 +2,6 @@
 
 part of 'find_package_path_by_import.dart';
 
-class _$NoDartToolDirectoryFoundExceptionImpl extends NoDartToolDirectoryFoundException {
-  const _$NoDartToolDirectoryFoundExceptionImpl() : super.ctor();
-
-  @override
-  bool operator ==(Object? other) {
-    return identical(this, other) ||
-        other is NoDartToolDirectoryFoundException && runtimeType == other.runtimeType;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-    ]);
-  }
-
-  @override
-  String toString() {
-    String toStringOutput = 'NoDartToolDirectoryFoundException{<optimized out>}';
-    assert(() {
-      toStringOutput = 'NoDartToolDirectoryFoundException@<$hexIdentity>{}';
-      return true;
-    }());
-    return toStringOutput;
-  }
-
-  @override
-  Type get runtimeType => NoDartToolDirectoryFoundException;
-}
-
-class _$PackageNotInstalledExceptionImpl extends PackageNotInstalledException {
-  _$PackageNotInstalledExceptionImpl({
-    required this.packageName,
-  }) : super.ctor();
-
-  @override
-  final String packageName;
-
-  @override
-  String toString() {
-    String toStringOutput = 'PackageNotInstalledException{<optimized out>}';
-    assert(() {
-      toStringOutput = 'PackageNotInstalledException@<$hexIdentity>{packageName: $packageName}';
-      return true;
-    }());
-    return toStringOutput;
-  }
-
-  @override
-  Type get runtimeType => PackageNotInstalledException;
-}
-
 class _$PackageInfoImpl extends PackageInfo {
   _$PackageInfoImpl({
     required this.name,

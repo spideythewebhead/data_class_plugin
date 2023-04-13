@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:data_class_plugin/src/cli/commands/exceptions.dart';
 import 'package:data_class_plugin/src/common/utils.dart';
+import 'package:data_class_plugin/src/exceptions.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:path/path.dart' as path;
 
@@ -16,7 +16,7 @@ mixin FileGenerationCommandMixin on Command<dynamic> {
             entity is File && path.basename(entity.path) == 'pubspec.yaml');
 
     if (!hasPubspecYaml) {
-      throw const NoPubspecFoundException();
+      throw const DcpException.pubspecYamlNotFound();
     }
   }
 
@@ -25,7 +25,7 @@ mixin FileGenerationCommandMixin on Command<dynamic> {
       getDataClassPluginOptionsFile(directory.path),
     );
     if (pluginOptions.generationMode == CodeGenerationMode.inPlace) {
-      throw const RequiresFileGenerationModeException();
+      throw const DcpException.requiresFileGenerationMode();
     }
   }
 }
