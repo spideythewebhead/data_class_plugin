@@ -1,14 +1,14 @@
-import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
 import 'package:data_class_plugin/src/common/utils.dart';
 import 'package:data_class_plugin/src/contributors_delegates/class_generation_delegate.dart';
 import 'package:data_class_plugin/src/exceptions.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
+import 'package:tachyon/tachyon.dart';
 
 class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
   FileGenerationDataClassDelegate({
@@ -342,17 +342,17 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     }
 
     for (final FieldDeclaration fieldDeclaration in finalFieldsDeclarations) {
-      final CustomDartType customDartType = fieldDeclaration.fields.type.customDartType;
-      if (!(customDartType.isDynamic || customDartType.isNullable)) {
+      final TachyonDartType dartType = fieldDeclaration.fields.type.customDartType;
+      if (!(dartType.isDynamic || dartType.isNullable)) {
         builder.write('required');
       }
       for (final VariableDeclaration variableDeclaration in fieldDeclaration.fields.variables) {
-        builder.writeln(' ${customDartType.fullTypeName} ${variableDeclaration.name.lexeme},');
+        builder.writeln(' ${dartType.fullTypeName} ${variableDeclaration.name.lexeme},');
       }
     }
 
     for (final FieldElement field in <FieldElement>[...superClassFields, ...fields]) {
-      if (!(field.type.isDynamic ||
+      if (!(field.type is DynamicType ||
           field.type.isNullable ||
           field.getter!.hasDefaultValueAnnotation)) {
         builder.write('required');

@@ -7,10 +7,10 @@ abstract class AvailableAssists {
     'Generate shorthand constructor',
   );
 
-  static const AssistKind dataAndUnionClass = AssistKind(
+  static const AssistKind dataAndUnionClasses = AssistKind(
     'dataAndUnionClass',
     1000,
-    'Generate data/union class',
+    'Generate data/union classes',
   );
 
   static const AssistKind fromJson = AssistKind(

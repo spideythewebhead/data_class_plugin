@@ -1,0 +1,8 @@
+file_generation_paths:
+  - "lib/data_class/**"
+  - "lib/union/**"
+
+generated_file_line_length: 100
+
+plugins:
+  - data_class_plugin

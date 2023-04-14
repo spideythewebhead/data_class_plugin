@@ -11,9 +11,9 @@ import 'package:analyzer_plugin/protocol/protocol_generated.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
-import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 import 'package:data_class_plugin/src/extensions/string_extensions.dart';
+import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -54,9 +54,14 @@ class AssistCollectorTest extends AssistCollector {
   bool get hasMultipleReplacements => assists[0].change.edits[0].edits.length > 1;
 }
 
+DataClassPluginOptions getPluginOptions() {
+  return DataClassPluginOptions.fromFile(io.File(
+    path.join('test', 'data_class_plugin_options.yaml'),
+  ));
+}
+
 const List<Type> availableContributors = <Type>[
   ShorthandConstructorAssistContributor,
-  ToStringAssistContributor,
   DataClassAssistContributor,
   EnumAnnotationAssistContributor,
   EnumConstructorAssistContributor,
@@ -66,7 +71,7 @@ const List<Type> availableContributors = <Type>[
 
 Future<void> testContributorAssists({
   required final String assistGroupName,
-  required final DataClassPlugin plugin,
+  required final DcpAnalyzerPlugin plugin,
   required final AnalysisContextCollection analysis,
   required final String filepath,
   required final List<Type> shouldHaveContributors,
@@ -93,9 +98,9 @@ Future<void> testContributorAssists({
               .unit;
     });
 
-    test('should have 7/${availableContributors.length} contributors', () {
+    test('should have 6/${availableContributors.length} contributors', () {
       expect(contributors, isNotEmpty);
-      expect(contributors.length, 7);
+      expect(contributors.length, 6);
       expect(contributors.length == availableContributors.length, true);
     });
 

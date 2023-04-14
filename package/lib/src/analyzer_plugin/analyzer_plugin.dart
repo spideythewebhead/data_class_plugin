@@ -4,11 +4,10 @@ import 'package:analyzer_plugin/plugin/assist_mixin.dart';
 import 'package:analyzer_plugin/plugin/plugin.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
-import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 
-class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
-  DataClassPlugin(
+class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
+  DcpAnalyzerPlugin(
     final analyzer.ResourceProvider resourceProvider,
   ) : super(resourceProvider: resourceProvider);
 
@@ -43,10 +42,6 @@ class DataClassPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
       EnumConstructorAssistContributor(path),
       EnumFromJsonAssistContributor(path),
       EnumToJsonAssistContributor(path),
-
-      // Common contributors
-      ToStringAssistContributor(path),
-      // UnionAssistContributor(path),
     ];
   }
 

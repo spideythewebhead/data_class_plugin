@@ -1,34 +1,30 @@
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_object.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_finder.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
-import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
-import 'package:data_class_plugin/src/backend/core/typedefs.dart';
-import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/common/generator.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
-import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 import 'package:data_class_plugin/src/typedefs.dart';
+import 'package:tachyon/tachyon.dart';
 
 class ToJsonGenerator implements Generator {
   ToJsonGenerator({
-    required CodeWriter codeWriter,
+    required final CodeWriter codeWriter,
     required final List<DeclarationInfo> fields,
     required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
-    required ClassOrEnumDeclarationFinder classDeclarationFinder,
-    required PluginLogger logger,
+    required final ClassOrEnumDeclarationFinder classDeclarationFinder,
+    final String? namedKeyToFactoryEntry,
+    required final Logger logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
         _classDeclarationFinder = classDeclarationFinder,
+        _namedKeyToFactoryEntry = namedKeyToFactoryEntry,
         _logger = logger;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
   final ClassOrEnumDeclarationFinder _classDeclarationFinder;
-  final PluginLogger _logger;
+  final String? _namedKeyToFactoryEntry;
+  final Logger _logger;
 
   @override
   Future<void> execute() async {
@@ -37,6 +33,10 @@ class ToJsonGenerator implements Generator {
       ..writeln('@override')
       ..writeln('Map<String, dynamic> toJson() {')
       ..writeln('return <String, dynamic>{');
+
+    if (_namedKeyToFactoryEntry != null) {
+      _codeWriter.write('$_namedKeyToFactoryEntry,');
+    }
 
     for (final DeclarationInfo field in _fields) {
       AnnotationValueExtractor? annotationValueExtractor;
@@ -57,7 +57,7 @@ class ToJsonGenerator implements Generator {
         if (node is ClassDeclaration) {
           for (final NamedType interface
               in (node.implementsClause?.interfaces ?? const <NamedType>[])) {
-            if (interface.name.name == 'JsonConverter') {
+            if (interface.name2.lexeme == 'JsonConverter') {
               customJsonConverter = className;
               break;
             }
@@ -76,7 +76,7 @@ class ToJsonGenerator implements Generator {
       final String fieldName = field.name;
       final String jsonFieldName = annotationValueExtractor.getString('name') ??
           jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
-      final CustomDartType dartType = field.type?.customDartType ?? CustomDartType.dynamic;
+      final TachyonDartType dartType = field.type?.customDartType ?? TachyonDartType.dynamic;
 
       _codeWriter.write("'$jsonFieldName': ");
 
@@ -112,7 +112,7 @@ class ToJsonGenerator implements Generator {
   }
 
   Future<void> _encode({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final int depthIndex,
     required final String parentVariableName,
     final bool requiresBangOperator = false,
@@ -146,10 +146,10 @@ class ToJsonGenerator implements Generator {
   }
 
   Future<void> _encodePrimary({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final String parentVariableName,
   }) async {
-    if (dartType.isDynamic || dartType.isPrimary) {
+    if (dartType.isDynamic || dartType.isPrimitive) {
       _codeWriter.writeln('$parentVariableName,');
       return;
     }
@@ -181,8 +181,8 @@ class ToJsonGenerator implements Generator {
         .writeln('jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),');
   }
 
-  bool _shouldSkipForCollection(final CustomDartType originalDartType) {
-    CustomDartType dartType = originalDartType;
+  bool _shouldSkipForCollection(final TachyonDartType originalDartType) {
+    TachyonDartType dartType = originalDartType;
     while (true) {
       if (dartType.isList) {
         dartType = dartType.typeArguments[0];
@@ -192,11 +192,11 @@ class ToJsonGenerator implements Generator {
         break;
       }
     }
-    return dartType.isPrimary;
+    return dartType.isPrimitive;
   }
 
   Future<void> _encodeList({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final String parentVariableName,
     required final int depthIndex,
     required final bool requiresBangOperator,
@@ -230,12 +230,12 @@ class ToJsonGenerator implements Generator {
   }
 
   Future<void> _encodeMap({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final String parentVariableName,
     required final int depthIndex,
     required final bool requiresBangOperator,
   }) async {
-    if (!dartType.typeArguments[0].isPrimary) {
+    if (!dartType.typeArguments[0].isPrimitive) {
       return;
     }
 

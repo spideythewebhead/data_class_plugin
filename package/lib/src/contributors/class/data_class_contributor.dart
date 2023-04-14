@@ -7,8 +7,6 @@ import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors_delegates/code_generation_delegate.dart';
 import 'package:data_class_plugin/src/contributors_delegates/file_generation/file_generation_data_class_delegate.dart';
 import 'package:data_class_plugin/src/contributors_delegates/file_generation/file_generation_union_delegate.dart';
-import 'package:data_class_plugin/src/contributors_delegates/in_place/in_place_data_class_delegate.dart';
-import 'package:data_class_plugin/src/contributors_delegates/in_place/in_place_union_delegate.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
@@ -45,7 +43,7 @@ class DataClassAssistContributor extends Object
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
     await _generateDataClass(changeBuilder);
     await _generateUnion(changeBuilder);
-    addAssist(AvailableAssists.dataAndUnionClass, changeBuilder);
+    addAssist(AvailableAssists.dataAndUnionClasses, changeBuilder);
   }
 
   Future<void> _generateDataClass(final ChangeBuilder changeBuilder) async {
@@ -60,24 +58,14 @@ class DataClassAssistContributor extends Object
       return;
     }
 
-    final CodeGenerationDelegate delegate =
-        pluginOptions.generationMode == CodeGenerationMode.inPlace
-            ? InPlaceDataClassDelegate(
-                relativeFilePath: relativeFilePath,
-                targetFilePath: targetFilePath,
-                classNodes: visitor.matchedNodes,
-                pluginOptions: pluginOptions,
-                changeBuilder: changeBuilder,
-              )
-            : FileGenerationDataClassDelegate(
-                relativeFilePath: relativeFilePath,
-                targetFilePath: targetFilePath,
-                changeBuilder: changeBuilder,
-                pluginOptions: pluginOptions,
-                classNodes: visitor.matchedNodes,
-                compilationUnit: assistRequest.result.unit,
-              );
-
+    final CodeGenerationDelegate delegate = FileGenerationDataClassDelegate(
+      relativeFilePath: relativeFilePath,
+      targetFilePath: targetFilePath,
+      changeBuilder: changeBuilder,
+      pluginOptions: pluginOptions,
+      classNodes: visitor.matchedNodes,
+      compilationUnit: assistRequest.result.unit,
+    );
     await delegate.generate();
   }
 
@@ -93,25 +81,14 @@ class DataClassAssistContributor extends Object
       return;
     }
 
-    final CodeGenerationDelegate delegate =
-        pluginOptions.generationMode == CodeGenerationMode.inPlace
-            ? InPlaceUnionDelegate(
-                relativeFilePath: relativeFilePath,
-                targetFilePath: targetFilePath,
-                classNodes: visitor.matchedNodes,
-                pluginOptions: pluginOptions,
-                changeBuilder: changeBuilder,
-                compilationUnit: assistRequest.result.unit,
-              )
-            : FileGenerationUnionDelegate(
-                relativeFilePath: relativeFilePath,
-                targetFilePath: targetFilePath,
-                changeBuilder: changeBuilder,
-                pluginOptions: pluginOptions,
-                classNodes: visitor.matchedNodes,
-                compilationUnit: assistRequest.result.unit,
-              );
-
+    final CodeGenerationDelegate delegate = FileGenerationUnionDelegate(
+      relativeFilePath: relativeFilePath,
+      targetFilePath: targetFilePath,
+      changeBuilder: changeBuilder,
+      pluginOptions: pluginOptions,
+      classNodes: visitor.matchedNodes,
+      compilationUnit: assistRequest.result.unit,
+    );
     await delegate.generate();
   }
 }

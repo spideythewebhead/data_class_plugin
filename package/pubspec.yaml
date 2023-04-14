@@ -1,5 +1,5 @@
 name: data_class_plugin
-version: 0.3.1
+version: 1.0.0-tachyon.dev.1
 description: A tool that uses Dart's Analyzer to generate code on-the-fly.
 
 homepage: https://github.com/spideythewebhead/dart_data_class_plugin
@@ -8,22 +8,20 @@ documentation: https://github.com/spideythewebhead/dart_data_class_plugin
 issue_tracker: https://github.com/spideythewebhead/dart_data_class_plugin/issues
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   analyzer: ">=4.0.0 <6.0.0"
   analyzer_plugin: ">=0.10.0 <1.0.0"
-  args: ^2.3.1
-  dart_style: ^2.2.4
-  meta: ^1.8.0
-  yaml: ^3.1.1
-  glob: ^2.1.1
-  path: ^1.8.2
-  file: ^6.1.4
-  stack_trace: ^1.10.0
-  watcher: ^1.0.2
-  rxdart: ^0.27.7
+  args: ^2.4.1
+  dart_style: ^2.3.1
+  meta: ^1.9.1
+  yaml: ^3.1.2
+  glob: ^2.1.2
+  path: ^1.8.3
+  file: ^7.0.0
+  tachyon: ^0.0.4
 
 dev_dependencies:
-  lints: ^2.0.1
-  test: ^1.22.1
+  lints: ^2.1.0
+  test: ^1.24.3

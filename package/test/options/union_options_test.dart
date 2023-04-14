@@ -31,7 +31,7 @@ union:
       default: true
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
 
         expect(options.union.optionsConfig['data_class']?.defaultValue, equals(false));
         expect(options.union.optionsConfig['from_json']?.defaultValue, equals(true));
@@ -62,7 +62,7 @@ union:
         - $disabledPath
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
 
         for (final String option in <String>[
           'data_class',

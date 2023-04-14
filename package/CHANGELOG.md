@@ -1,3 +1,14 @@
+## 1.0.0-tachyon.dev.1
+
+**Breaking changes**:
+
+- Migration to [Tachyon](https://github.com/spideythewebhead/tachyon)
+- Removed "In place" only code generation
+
+Other:
+
+- Use sealed instead of abstract for unions if dart 3 is available
+
 ## 0.3.1
 
 - Add support for required positional arguments in Unions [(issue #299)](https://github.com/spideythewebhead/data_class_plugin/issues/299)
