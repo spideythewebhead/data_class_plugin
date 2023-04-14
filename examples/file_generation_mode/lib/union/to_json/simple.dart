@@ -29,7 +29,7 @@ abstract class Post {
   unionJsonKey: 'code',
   unionFallbackJsonValue: 'error',
 )
-abstract class GetPostsResponse {
+sealed class GetPostsResponse {
   const GetPostsResponse._();
 
   // You can use @UnionJsonKeyValue(key) to specific a custom value for the constructor to match

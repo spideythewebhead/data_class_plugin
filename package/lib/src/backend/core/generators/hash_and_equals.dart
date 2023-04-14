@@ -1,14 +1,11 @@
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
-import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
-import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/common/generator.dart';
+import 'package:tachyon/tachyon.dart';
 
 class HashGenerator implements Generator {
   HashGenerator({
-    required CodeWriter codeWriter,
-    required List<DeclarationInfo> fields,
-    required bool skipCollections,
+    required final CodeWriter codeWriter,
+    required final List<DeclarationInfo> fields,
+    required final bool skipCollections,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _skipCollections = skipCollections;
@@ -70,7 +67,7 @@ class EqualsGenerator implements Generator {
         continue;
       }
 
-      final CustomDartType dartType = field.type.customDartType;
+      final TachyonDartType dartType = field.type.customDartType;
       if (dartType.isList || dartType.isMap) {
         _codeWriter.write(' && deepEquality(${field.name}, other.${field.name})');
         continue;

@@ -4,7 +4,7 @@ import 'package:file_generation_mode/pretty_print.dart';
 part 'copy_with.gen.dart';
 
 @Union(copyWith: true)
-abstract class AsyncResult {
+sealed class AsyncResult {
   const AsyncResult._();
 
   /// Shorthand constructor

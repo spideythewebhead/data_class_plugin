@@ -1,3 +1,34 @@
+## 1.0.0
+
+- Stable release with `Tachyon`
+
+## 1.0.0-tachyon.dev.5
+
+- Fix tools/analyzer_plugin dependency version of data_class_plugin
+
+## 1.0.0-tachyon.dev.4
+
+- Fix automatic conversion for final fields on data classes
+
+## 1.0.0-tachyon.dev.3
+
+- Update tachyon to 0.0.5
+
+## 1.0.0-tachyon.dev.2
+
+- Fix tools/analyzer_plugin dependency version of data_class_plugin
+
+## 1.0.0-tachyon.dev.1
+
+**Breaking changes**:
+
+- Migration to [Tachyon](https://github.com/spideythewebhead/tachyon)
+- Removed "In place" only code generation
+
+Other:
+
+- Use sealed instead of abstract for unions if dart 3 is available
+
 ## 0.3.1
 
 - Add support for required positional arguments in Unions [(issue #299)](https://github.com/spideythewebhead/data_class_plugin/issues/299)

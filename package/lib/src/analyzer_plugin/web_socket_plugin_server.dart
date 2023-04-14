@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:analyzer_plugin/channel/channel.dart';
 import 'package:analyzer_plugin/protocol/protocol.dart';
-import 'package:data_class_plugin/src/tools/logger/logger.dart';
+import 'package:tachyon/tachyon.dart';
 
 // https://simonbinder.eu/posts/debugging_analysis_server_plugins/
 

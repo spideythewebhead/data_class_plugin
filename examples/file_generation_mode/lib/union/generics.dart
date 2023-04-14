@@ -4,7 +4,7 @@ import 'package:file_generation_mode/pretty_print.dart';
 part 'generics.gen.dart';
 
 @Union()
-abstract class AsyncResult<T> {
+sealed class AsyncResult<T> {
   const AsyncResult._();
 
   const factory AsyncResult.loading() = AsyncResultLoading<T>;
@@ -30,7 +30,7 @@ abstract class User {
 }
 
 @Union()
-abstract class UnionWithGenericConstraints<T extends User> {
+sealed class UnionWithGenericConstraints<T extends User> {
   const UnionWithGenericConstraints._();
 
   factory UnionWithGenericConstraints.data(T data) = UnionWithGenericConstraintsData<T>;

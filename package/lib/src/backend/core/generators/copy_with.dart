@@ -1,16 +1,10 @@
 import 'dart:async';
 
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_object.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_finder.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
-import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
-import 'package:data_class_plugin/src/backend/core/typedefs.dart';
-import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/common/generator.dart';
 import 'package:data_class_plugin/src/extensions/annotation_extensions.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:path/path.dart';
+import 'package:tachyon/tachyon.dart';
 
 const String _kVmPreferInline = "@pragma('vm:prefer-inline')";
 
@@ -22,9 +16,9 @@ class CopyWithGenerator implements Generator {
     required final String generatedClassName,
     required final String classTypeParametersSource,
     required final String classTypeParametersWithoutConstraints,
-    required ClassOrEnumDeclarationFinder classDeclarationFinder,
-    required String projectDirectoryPath,
-    required DataClassPluginOptions pluginOptions,
+    required final ClassOrEnumDeclarationFinder classDeclarationFinder,
+    required final String projectDirectoryPath,
+    required final DataClassPluginOptions pluginOptions,
   })  : _codeWriter = codeWriter,
         _className = className,
         _generatedClassName = generatedClassName,
@@ -58,17 +52,16 @@ class CopyWithGenerator implements Generator {
       ..writeln();
 
     for (final DeclarationInfo field in _fields) {
-      final CustomDartType customDartType = field.type.customDartType;
+      final TachyonDartType dartType = field.type.customDartType;
       final String fieldName = field.name;
 
       bool useCopyWithProxy = false;
-      if (!customDartType.isPrimary &&
-          !customDartType.isList &&
-          !customDartType.isUri &&
-          !customDartType.isDateTime &&
-          !customDartType.isDuration) {
-        final ClassOrEnumDeclarationMatch? match =
-            await _classDeclarationFinder(customDartType.name);
+      if (!dartType.isPrimitive &&
+          !dartType.isList &&
+          !dartType.isUri &&
+          !dartType.isDateTime &&
+          !dartType.isDuration) {
+        final ClassOrEnumDeclarationMatch? match = await _classDeclarationFinder(dartType.name);
 
         final NamedCompilationUnitMember? node = match?.node;
         if (match != null && node is ClassDeclaration && node.hasDataClassAnnotation) {
@@ -83,14 +76,14 @@ class CopyWithGenerator implements Generator {
         _codeWriter
           ..writeln(_kVmPreferInline)
           ..write(
-              '\$${customDartType.name}CopyWithProxyChain<$_className$_classTypeParametersWithoutConstraints>')
-          ..write(customDartType.isNullable ? '?' : '')
+              '\$${dartType.name}CopyWithProxyChain<$_className$_classTypeParametersWithoutConstraints>')
+          ..write(dartType.isNullable ? '?' : '')
           ..write(' get $fieldName => ')
-          ..write(customDartType.isNullable ? '_value.$fieldName == null ? null : ' : '')
+          ..write(dartType.isNullable ? '_value.$fieldName == null ? null : ' : '')
           ..writeln(
-              '\$${customDartType.name}CopyWithProxyChain<$_className$_classTypeParametersWithoutConstraints>(_value.$fieldName')
-          ..write(customDartType.isNullable ? '!' : '')
-          ..writeln(', (${customDartType.fullTypeName} update) => this($fieldName: update));')
+              '\$${dartType.name}CopyWithProxyChain<$_className$_classTypeParametersWithoutConstraints>(_value.$fieldName')
+          ..write(dartType.isNullable ? '!' : '')
+          ..writeln(', (${dartType.fullTypeName} update) => this($fieldName: update));')
           ..writeln();
         continue;
       }
@@ -99,7 +92,7 @@ class CopyWithGenerator implements Generator {
         ..writeln()
         ..writeln(_kVmPreferInline)
         ..writeln(
-            '$_className$_classTypeParametersWithoutConstraints $fieldName(${customDartType.fullTypeName} newValue) => ')
+            '$_className$_classTypeParametersWithoutConstraints $fieldName(${dartType.fullTypeName} newValue) => ')
         ..writeln('this($fieldName: newValue);');
     }
 
@@ -111,12 +104,12 @@ class CopyWithGenerator implements Generator {
     if (_fields.isNotEmpty) {
       _codeWriter.write('{');
       for (final DeclarationInfo field in _fields) {
-        final CustomDartType customDartType = field.type.customDartType;
+        final TachyonDartType dartType = field.type.customDartType;
 
-        if (customDartType.isNullable) {
+        if (dartType.isNullable) {
           _codeWriter.write('final Object? ${field.name} = const Object(),');
         } else {
-          _codeWriter.write('final ${customDartType.fullTypeName}? ${field.name},');
+          _codeWriter.write('final ${dartType.fullTypeName}? ${field.name},');
         }
       }
       _codeWriter.write('}');
@@ -127,17 +120,17 @@ class CopyWithGenerator implements Generator {
       ..writeln('return $_generatedClassName$_classTypeParametersWithoutConstraints(');
 
     for (final DeclarationInfo field in _fields) {
-      final CustomDartType customDartType = field.type.customDartType;
+      final TachyonDartType dartType = field.type.customDartType;
       final String fieldName = field.name;
 
       if (field.isNamed) {
         _codeWriter.write('$fieldName: ');
       }
 
-      if (customDartType.isNullable) {
+      if (dartType.isNullable) {
         _codeWriter
           ..write('identical($fieldName, const Object())')
-          ..write(' ? _value.$fieldName : ($fieldName as ${customDartType.fullTypeName}),');
+          ..write(' ? _value.$fieldName : ($fieldName as ${dartType.fullTypeName}),');
       } else {
         _codeWriter.writeln('$fieldName ?? _value.$fieldName,');
       }
@@ -169,13 +162,13 @@ class CopyWithGenerator implements Generator {
       ..writeln();
 
     for (final DeclarationInfo field in _fields) {
-      final CustomDartType customDartType = field.type.customDartType;
+      final TachyonDartType dartType = field.type.customDartType;
       final String fieldName = field.name;
 
       _codeWriter
         ..writeln()
         ..writeln(_kVmPreferInline)
-        ..writeln('\$Result $fieldName(${customDartType.fullTypeName} newValue) => ')
+        ..writeln('\$Result $fieldName(${dartType.fullTypeName} newValue) => ')
         ..writeln('this($fieldName: newValue);')
         ..writeln();
     }
@@ -188,12 +181,12 @@ class CopyWithGenerator implements Generator {
     if (_fields.isNotEmpty) {
       _codeWriter.write('{');
       for (final DeclarationInfo field in _fields) {
-        final CustomDartType customDartType = field.type.customDartType;
+        final TachyonDartType dartType = field.type.customDartType;
 
-        if (customDartType.isNullable) {
+        if (dartType.isNullable) {
           _codeWriter.write('final Object? ${field.name} = const Object(),');
         } else {
-          _codeWriter.write('final ${customDartType.fullTypeName}? ${field.name},');
+          _codeWriter.write('final ${dartType.fullTypeName}? ${field.name},');
         }
       }
       _codeWriter.write('}');
@@ -204,17 +197,17 @@ class CopyWithGenerator implements Generator {
       ..writeln('return _chain($_generatedClassName$_classTypeParametersWithoutConstraints(');
 
     for (final DeclarationInfo field in _fields) {
-      final CustomDartType customDartType = field.type.customDartType;
+      final TachyonDartType dartType = field.type.customDartType;
       final String fieldName = field.name;
 
       if (field.isNamed) {
         _codeWriter.write('$fieldName: ');
       }
 
-      if (customDartType.isNullable) {
+      if (dartType.isNullable) {
         _codeWriter
           ..write('identical($fieldName, const Object())')
-          ..writeln(' ? _value.$fieldName : ($fieldName as ${customDartType.fullTypeName}),');
+          ..writeln(' ? _value.$fieldName : ($fieldName as ${dartType.fullTypeName}),');
       } else {
         _codeWriter.writeln('$fieldName ?? _value.$fieldName,');
       }

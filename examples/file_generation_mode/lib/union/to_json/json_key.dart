@@ -21,7 +21,7 @@ abstract class Post {
 }
 
 @Union()
-abstract class GetPostsResponse {
+sealed class GetPostsResponse {
   const GetPostsResponse._();
 
   factory GetPostsResponse.error() = GetPostsResponseError;

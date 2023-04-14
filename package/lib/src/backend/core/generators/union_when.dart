@@ -1,7 +1,6 @@
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
-import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/common/generator.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
+import 'package:tachyon/tachyon.dart';
 
 class UnionWhenGenerator implements Generator {
   UnionWhenGenerator({

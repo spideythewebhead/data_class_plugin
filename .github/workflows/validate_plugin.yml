@@ -14,7 +14,7 @@ on:
       dart_sdk:
         required: false
         type: string
-        default: "2.19.2"
+        default: "3.0.3"
       runs_on:
         required: false
         type: string
