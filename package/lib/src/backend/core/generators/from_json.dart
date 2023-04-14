@@ -1,25 +1,18 @@
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_object.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_finder.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
-import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
-import 'package:data_class_plugin/src/backend/core/typedefs.dart';
-import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/common/generator.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
-import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 import 'package:data_class_plugin/src/typedefs.dart';
+import 'package:tachyon/tachyon.dart';
 
 class FromJsonGenerator implements Generator {
   FromJsonGenerator({
-    required CodeWriter codeWriter,
-    required List<DeclarationInfo> fields,
-    required String generatedClassName,
-    required String classTypeParametersWithoutConstraints,
-    required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
-    required ClassOrEnumDeclarationFinder classDeclarationFinder,
-    required PluginLogger logger,
+    required final CodeWriter codeWriter,
+    required final List<DeclarationInfo> fields,
+    required final String generatedClassName,
+    required final String classTypeParametersWithoutConstraints,
+    required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
+    required final ClassOrEnumDeclarationFinder classDeclarationFinder,
+    required final Logger logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _generatedClassName = generatedClassName,
@@ -34,7 +27,7 @@ class FromJsonGenerator implements Generator {
   final String _classTypeParametersWithoutConstraints;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
   final ClassOrEnumDeclarationFinder _classOrEnumDeclarationFinder;
-  final PluginLogger _logger;
+  final Logger _logger;
 
   late String _currentJsonFieldName;
 
@@ -63,7 +56,7 @@ class FromJsonGenerator implements Generator {
         if (node is ClassDeclaration) {
           for (final NamedType interface
               in (node.implementsClause?.interfaces ?? const <NamedType>[])) {
-            if (interface.name.name == 'JsonConverter') {
+            if (interface.name2.lexeme == 'JsonConverter') {
               customJsonConverter = className;
               break;
             }
@@ -80,7 +73,7 @@ class FromJsonGenerator implements Generator {
           _jsonKeyNameConventionGetter(annotationValueExtractor.getEnumValue('nameConvention'));
 
       final String fieldName = field.name;
-      final CustomDartType dartType = field.type?.customDartType ?? CustomDartType.dynamic;
+      final TachyonDartType dartType = field.type?.customDartType ?? TachyonDartType.dynamic;
 
       _currentJsonFieldName = annotationValueExtractor.getString('name') ??
           jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
@@ -129,7 +122,7 @@ class FromJsonGenerator implements Generator {
   }
 
   Future<void> _parse({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final int depthIndex,
     required final String parentVariableName,
     final Expression? defaultValue,
@@ -166,7 +159,7 @@ class FromJsonGenerator implements Generator {
       return;
     }
 
-    if (!dartType.isPrimary && (dartType.isNullable || defaultValue != null)) {
+    if (!dartType.isPrimitive && (dartType.isNullable || defaultValue != null)) {
       _writeNullableCheck(
         variableName: parentVariableName,
         defaultValue: defaultValue,
@@ -178,7 +171,7 @@ class FromJsonGenerator implements Generator {
       parentVariableName: parentVariableName,
     );
 
-    if (dartType.isPrimary && defaultValue != null) {
+    if (dartType.isPrimitive && defaultValue != null) {
       if (dartType.isNullable) {
         _logger.warning('Declared a nullable type ${dartType.fullTypeName} with default');
       } else {
@@ -191,7 +184,7 @@ class FromJsonGenerator implements Generator {
   }
 
   Future<void> _parsePrimary({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final String parentVariableName,
   }) async {
     if (dartType.isDynamic) {
@@ -199,7 +192,7 @@ class FromJsonGenerator implements Generator {
       return;
     }
 
-    if (dartType.isPrimary) {
+    if (dartType.isPrimitive) {
       _codeWriter.write('$parentVariableName as ${dartType.fullTypeName}');
       return;
     }
@@ -208,22 +201,28 @@ class FromJsonGenerator implements Generator {
         await _classOrEnumDeclarationFinder(dartType.name)
             .then((ClassOrEnumDeclarationMatch? match) => match?.node);
 
-    if (typeDeclarationNode is ClassDeclaration &&
-            typeDeclarationNode.members.hasFactory('fromJson') ||
-        typeDeclarationNode is EnumDeclaration &&
-            typeDeclarationNode.members.hasFactory('fromJson')) {
-      _codeWriter.write('${dartType.name}.fromJson($parentVariableName)');
+    if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasFactory('fromJson') ||
+        typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasFactory('fromJson')) {
+      _codeWriter.write('${dartType.fullTypeName}.fromJson($parentVariableName)');
       return;
     }
 
-    _logger.warning('~ No "fromJson" factory found for type "${dartType.name}"');
+    _logger.warning('~ No "fromJson" factory found for type "${dartType.fullTypeName}"');
 
-    _codeWriter.write('jsonConverterRegistrant.find(${dartType.name})'
-        ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as ${dartType.name}");
+    if (dartType.isNullable) {
+      final String typeWithoutNullability =
+          dartType.fullTypeName.substring(0, dartType.fullTypeName.length - 1);
+      _codeWriter.write('jsonConverterRegistrant.find($typeWithoutNullability)'
+          ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as $typeWithoutNullability");
+      return;
+    }
+
+    _codeWriter.write('jsonConverterRegistrant.find(${dartType.fullTypeName})'
+        ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as ${dartType.fullTypeName}");
   }
 
   Future<void> _parseList({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final String parentVariableName,
     required final int depthIndex,
   }) async {
@@ -244,7 +243,7 @@ class FromJsonGenerator implements Generator {
   }
 
   Future<void> _parseMap({
-    required final CustomDartType dartType,
+    required final TachyonDartType dartType,
     required final String parentVariableName,
     required final int depthIndex,
   }) async {

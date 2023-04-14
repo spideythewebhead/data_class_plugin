@@ -29,7 +29,7 @@ enum:
       default: true
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
 
         expect(options.$enum.optionsConfig['to_string']?.defaultValue, equals(true));
         expect(options.$enum.optionsConfig['from_json']?.defaultValue, equals(true));
@@ -60,7 +60,7 @@ enum:
         - $disabledPath
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
 
         for (final String option in <String>[
           'to_string',

@@ -4,7 +4,7 @@ import 'package:file_generation_mode/pretty_print.dart';
 part 'hash_and_equality.gen.dart';
 
 @Union()
-abstract class AsyncResult {
+sealed class AsyncResult {
   const AsyncResult._();
 
   /// Shorthand constructor

@@ -4,7 +4,7 @@ import 'package:file_generation_mode/pretty_print.dart';
 part 'shared_fields.gen.dart';
 
 @Union()
-abstract class HttpResponse<T> {
+sealed class HttpResponse<T> {
   const HttpResponse._();
 
   factory HttpResponse.ok({

@@ -1,0 +1,9 @@
+name: data_class_plugin
+
+code_generator:
+  file: src/backend/code_generator.dart
+  className: DataClassPluginGenerator
+
+annotations:
+  - DataClass
+  - Union

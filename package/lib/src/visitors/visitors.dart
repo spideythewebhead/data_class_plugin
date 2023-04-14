@@ -1,4 +1,4 @@
-export 'class_collector_visitor.dart';
-export 'class_visitor.dart';
+export 'package:tachyon/tachyon.dart' show ClassAstVisitor, ClassCollectorAstVisitor;
+
 export 'enum_visitor.dart';
 export 'redirected_constructor_visitor.dart';

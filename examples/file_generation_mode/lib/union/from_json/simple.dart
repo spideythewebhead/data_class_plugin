@@ -29,7 +29,7 @@ abstract class Post {
   unionJsonKey: 'code',
   unionFallbackJsonValue: 'error',
 )
-abstract class GetPostsResponse {
+sealed class GetPostsResponse {
   const GetPostsResponse._();
 
   /// Creates an instance of [GetPostsResponse] from [json]

@@ -35,7 +35,7 @@ data_class:
       default: true
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
 
         expect(options.dataClass.optionsConfig['copy_with']?.defaultValue, equals(false));
         expect(options.dataClass.optionsConfig['hash_and_equals']?.defaultValue, equals(false));
@@ -78,7 +78,7 @@ data_class:
         - $disabledPath
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
 
         for (final String option in <String>[
           'copy_with',

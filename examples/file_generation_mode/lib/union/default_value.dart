@@ -4,7 +4,7 @@ import 'package:file_generation_mode/pretty_print.dart';
 part 'default_value.gen.dart';
 
 @Union()
-abstract class VideoInfo {
+sealed class VideoInfo {
   const VideoInfo._();
 
   factory VideoInfo.network(

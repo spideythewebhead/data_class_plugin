@@ -33,25 +33,11 @@ extension ClassDeclarationX on ClassDeclaration {
   Annotation? get unionAnnotation => metadata.getAnnotation(AnnotationType.union);
 
   List<Annotation> get annotations => metadata.annotations;
-
-  bool hasMethod(String methodName) {
-    return null !=
-        members.firstWhereOrNull((ClassMember member) {
-          return member is MethodDeclaration && member.name.lexeme == methodName;
-        });
-  }
 }
 
 extension EnumDeclarationX on EnumDeclaration {
   bool get hasEnumAnnotation => enumAnnotation != null;
   Annotation? get enumAnnotation => metadata.getAnnotation(AnnotationType.enumeration);
-
-  bool hasMethod(String methodName) {
-    return null !=
-        members.firstWhereOrNull((ClassMember member) {
-          return member is MethodDeclaration && member.name.lexeme == methodName;
-        });
-  }
 }
 
 extension ElementAnnotationX on ElementAnnotation {
@@ -109,6 +95,11 @@ extension AnnotationNodeListX on NodeList<Annotation> {
 
     return annotations;
   }
+
+  bool hasAnnotationWithName(String name) => any((Annotation element) => element.name.name == name);
+
+  Annotation? getAnnotationWithName(String name) =>
+      firstWhereOrNull((Annotation element) => element.name.name == name);
 }
 
 extension AnnotationX on Annotation {

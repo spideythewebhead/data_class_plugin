@@ -5,10 +5,8 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
-import 'package:data_class_plugin/src/contributors/common/to_string_assist_contributor.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 import 'package:data_class_plugin/src/extensions/annotation_extensions.dart';
-import 'package:data_class_plugin/src/tools/logger/plugin_logger.dart';
 import 'package:data_class_plugin/src/visitors/visitors.dart';
 import 'package:path/path.dart';
 
@@ -27,10 +25,8 @@ final String enumAnnotationPath = join(testFilesPath, 'enum_annotation.dart');
 final String unionAnnotationPath = join(testFilesPath, 'union_annotation.dart');
 final String dataClassAnnotationPath = join(testFilesPath, 'data_class_annotation.dart');
 
-class MockLogger extends PluginLogger {}
-
 void main() async {
-  final DataClassPlugin plugin = DataClassPlugin(PhysicalResourceProvider.INSTANCE);
+  final DcpAnalyzerPlugin plugin = DcpAnalyzerPlugin(PhysicalResourceProvider.INSTANCE);
 
   final AnalysisContextCollection analysis = AnalysisContextCollection(
     includedPaths: <String>[
@@ -50,7 +46,6 @@ void main() async {
       EnumConstructorAssistContributor,
       EnumToJsonAssistContributor,
       EnumFromJsonAssistContributor,
-      ToStringAssistContributor,
     ],
     filepath: enumPath,
   );

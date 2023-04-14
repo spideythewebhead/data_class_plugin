@@ -36,4 +36,7 @@ abstract class UnionOptions {
 
   bool effectiveUnmodifiableCollections(String filePath) =>
       optionsConfig.effectiveUnmodifiableCollections(filePath: filePath, defaultValue: true);
+
+  bool effectiveWhen(String filePath) =>
+      optionsConfig.effectiveWhen(filePath: filePath, defaultValue: true);
 }

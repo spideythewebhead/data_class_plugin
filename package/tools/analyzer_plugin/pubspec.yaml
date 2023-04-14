@@ -6,7 +6,7 @@ homepage: https://github.com/spideythewebhead/dart_data_class_plugin
 repository: https://github.com/spideythewebhead/dart_data_class_plugin
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  data_class_plugin: 0.3.1
+  data_class_plugin: 1.0.0-tachyon.dev.5

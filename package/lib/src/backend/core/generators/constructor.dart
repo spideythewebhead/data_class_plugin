@@ -1,10 +1,6 @@
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_object.dart';
-import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
-import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
-import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
-import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/common/generator.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
+import 'package:tachyon/tachyon.dart';
 
 class ConstructorGenerator implements Generator {
   ConstructorGenerator({
@@ -14,7 +10,7 @@ class ConstructorGenerator implements Generator {
     required final String generatedClassName,
     final bool shouldAnnotateFieldsWithOverride = true,
     final String? superConstructorName,
-    required bool generateUnmodifiableCollections,
+    required final bool generateUnmodifiableCollections,
   })  : _codeWriter = codeWriter,
         _constructor = constructor,
         _fields = fields,
@@ -45,10 +41,10 @@ class ConstructorGenerator implements Generator {
         _fields.where((DeclarationInfo element) => element.isNamed).toList(growable: false);
 
     for (final DeclarationInfo field in positionalFields) {
-      final CustomDartType customDartType = field.type.customDartType;
+      final TachyonDartType dartType = field.type.customDartType;
 
-      if (_generateUnmodifiableCollections && customDartType.isCollection) {
-        _codeWriter.write('${customDartType.fullTypeName} ${field.name},');
+      if (_generateUnmodifiableCollections && dartType.isCollection) {
+        _codeWriter.write('${dartType.fullTypeName} ${field.name},');
         unmodifiableCollectionsDeclarations.add('_${field.name} = ${field.name}');
       } else {
         _codeWriter.write('this.${field.name},');
@@ -60,7 +56,7 @@ class ConstructorGenerator implements Generator {
       for (final DeclarationInfo field in namedFields) {
         final Annotation? defaultValueAnnotation = field.metadata
             .firstWhereOrNull((Annotation annotation) => annotation.isDefaultValueAnnotation);
-        final CustomDartType customDartType = field.type.customDartType;
+        final TachyonDartType dartType = field.type.customDartType;
 
         Expression? defaultValueExpression;
         late String defaultValuePrefix;
@@ -79,8 +75,8 @@ class ConstructorGenerator implements Generator {
           _codeWriter.write('required ');
         }
 
-        if (_generateUnmodifiableCollections && customDartType.isCollection) {
-          _codeWriter.write(customDartType.fullTypeName);
+        if (_generateUnmodifiableCollections && dartType.isCollection) {
+          _codeWriter.write(dartType.fullTypeName);
         } else {
           _codeWriter.write('this.');
         }
@@ -91,7 +87,7 @@ class ConstructorGenerator implements Generator {
           _codeWriter.write(' = $defaultValuePrefix ${defaultValueExpression.toSource()}');
         }
 
-        if (customDartType.isCollection && _generateUnmodifiableCollections) {
+        if (dartType.isCollection && _generateUnmodifiableCollections) {
           unmodifiableCollectionsDeclarations.add('_${field.name} = ${field.name}');
         }
 
@@ -113,31 +109,31 @@ class ConstructorGenerator implements Generator {
     _codeWriter.writeln();
 
     for (final DeclarationInfo field in _fields) {
-      final CustomDartType customDartType = field.type.customDartType;
+      final TachyonDartType dartType = field.type.customDartType;
 
-      if (_generateUnmodifiableCollections && customDartType.isCollection) {
+      if (_generateUnmodifiableCollections && dartType.isCollection) {
         _codeWriter
           ..writeln()
           ..writeln(_shouldAnnotateFieldsWithOverride ? '@override' : '')
-          ..write('${customDartType.fullTypeName} get ${field.name} => ');
+          ..write('${dartType.fullTypeName} get ${field.name} => ');
 
-        if (customDartType.isNullable) {
+        if (dartType.isNullable) {
           final String notNullableType =
-              customDartType.fullTypeName.substring(0, customDartType.fullTypeName.length - 1);
+              dartType.fullTypeName.substring(0, dartType.fullTypeName.length - 1);
           _codeWriter.write('_${field.name} ?? $notNullableType.unmodifiable(_${field.name}!);');
         } else {
-          _codeWriter.writeln('${customDartType.fullTypeName}.unmodifiable(_${field.name});');
+          _codeWriter.writeln('${dartType.fullTypeName}.unmodifiable(_${field.name});');
         }
 
         _codeWriter
-          ..writeln('final ${customDartType.fullTypeName} _${field.name};')
+          ..writeln('final ${dartType.fullTypeName} _${field.name};')
           ..writeln();
         continue;
       }
 
       _codeWriter
         ..writeln(_shouldAnnotateFieldsWithOverride ? '@override' : '')
-        ..writeln('final ${customDartType.fullTypeName} ${field.name};')
+        ..writeln('final ${dartType.fullTypeName} ${field.name};')
         ..writeln();
     }
 

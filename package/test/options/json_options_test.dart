@@ -20,7 +20,7 @@ json:
   key_name_convention: snake_case
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
         expect(options.json.keyNameConvention, equals('snake_case'));
       });
 
@@ -37,7 +37,7 @@ json:
       - /b/c/**
 ''');
 
-        final DataClassPluginOptions options = await DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
         expect(options.json.nameConventionGlobs['camel_case'], isNull);
         expect(options.json.nameConventionGlobs['snake_case'], hasLength(1));
         expect(options.json.nameConventionGlobs['pascal_case'], hasLength(1));

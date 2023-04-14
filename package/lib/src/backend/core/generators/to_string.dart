@@ -1,13 +1,12 @@
-import 'package:data_class_plugin/src/backend/core/declaration_info.dart';
-import 'package:data_class_plugin/src/backend/core/generators/generator.dart';
-import 'package:data_class_plugin/src/common/code_writer.dart';
+import 'package:data_class_plugin/src/common/generator.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
+import 'package:tachyon/tachyon.dart';
 
 class ToStringGenerator implements Generator {
   ToStringGenerator({
-    required CodeWriter codeWriter,
-    required List<DeclarationInfo> fields,
-    required String className,
+    required final CodeWriter codeWriter,
+    required final List<DeclarationInfo> fields,
+    required final String className,
   })  : _codeWriter = codeWriter,
         _className = className,
         _fields = fields;

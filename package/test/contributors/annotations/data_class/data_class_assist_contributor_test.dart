@@ -21,8 +21,8 @@ final String _contributorsPath = path.join(
 
 void main() async {
   final List<InOutFilesPair> testFiles = getTestFiles(_contributorsPath);
-  final DataClassPluginOptions pluginOptions = await DataClassPluginOptions.fromFile(
-      File(path.join('test', 'data_class_plugin_options.yaml')));
+  final DataClassPluginOptions pluginOptions =
+      DataClassPluginOptions.fromFile(File(path.join('test', 'data_class_plugin_options.yaml')));
 
   group('DataClass annotation contributor', () {
     testFiles.runContributorTests(

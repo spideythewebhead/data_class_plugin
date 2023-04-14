@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/source_range.dart';
@@ -47,13 +48,31 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
             RedirectedConstructorsVisitor(result: <String, RedirectedConstructor>{});
         classNode.visitChildren(redirectedConstructorsVisitor);
 
-        if (!classElement.isAbstract) {
-          fileEditBuilder.addInsertion(
-            classNode.classKeyword.offset,
-            (DartEditBuilder builder) {
-              builder.write('abstract ');
-            },
-          );
+        if (compilationUnit.featureSet.isEnabled(Feature.sealed_class)) {
+          if (classNode.abstractKeyword != null) {
+            fileEditBuilder.addDeletion(SourceRange(
+              classNode.abstractKeyword!.offset,
+              classNode.abstractKeyword!.length,
+            ));
+          }
+
+          if (classNode.sealedKeyword == null) {
+            fileEditBuilder.addInsertion(
+              classNode.classKeyword.offset,
+              (DartEditBuilder builder) {
+                builder.write('sealed ');
+              },
+            );
+          }
+        } else {
+          if (classNode.abstractKeyword == null) {
+            fileEditBuilder.addInsertion(
+              classNode.classKeyword.offset,
+              (DartEditBuilder builder) {
+                builder.write('abstract ');
+              },
+            );
+          }
         }
 
         void createDefaultConstructor(DartEditBuilder builder) {

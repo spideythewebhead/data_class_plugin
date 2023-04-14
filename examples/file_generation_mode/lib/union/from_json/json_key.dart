@@ -23,7 +23,7 @@ abstract class Post {
 }
 
 @Union(unionJsonKey: 'code')
-abstract class GetPostsResponse {
+sealed class GetPostsResponse {
   const GetPostsResponse._();
 
   /// Creates an instance of [GetPostsResponse] from [json]

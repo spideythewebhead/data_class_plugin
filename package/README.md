@@ -8,11 +8,7 @@
 [![Pub Publisher](https://img.shields.io/pub/publisher/data_class_plugin)](https://github.com/spideythewebhead)
 -->
 
-**Data Class Plugin** is a tool that uses the Dart Analysis Server to generate code on-the-fly.
-
-> This package is experimental and still under development, thus do not use it for applications in production.
-
-NOTE: **The "in_place" mode has been deprecated and no new features will be added. It's recommended to use it only for prototyping and use "file" mode for production level projects.**
+**Data Class Plugin** code generator powered by `Tachyon`.
 
 ---
 
@@ -20,7 +16,6 @@ NOTE: **The "in_place" mode has been deprecated and no new features will be adde
 
 - [How it works](#how-it-works)
 - [Installation](#installation)
-- [File generation](#file-generation)
 - [Generate the code you want](#generate-the-code-you-want)
   - [DataClass Annotation](#dataclass-annotation)
   - [Union Annotation](#union-annotation)
@@ -29,7 +24,7 @@ NOTE: **The "in_place" mode has been deprecated and no new features will be adde
 - [Configuration](#configuration)
   - [Configuration file](#configuration-file)
   - [Available options](#available-options)
-  - [Configuration examples](#configuration-examples)
+  - [Configuration examples](#configuration-supported-values)
 - [Notes](#notes)
 - [Examples](#examples)
 - [Development](#development)
@@ -39,17 +34,37 @@ NOTE: **The "in_place" mode has been deprecated and no new features will be adde
 
 ## How it works
 
-**Data Class Plugin** uses the [analyzer](https://pub.dev/packages/analyzer) system and [analyzer plugin](https://pub.dev/packages/analyzer_plugin)
-to get access on the source code, parse it and provide actions based on that.
+**Data Class Plugin** uses `Tachyon` as it's build engine to provide fast code generation. Also this plugin uses the [analyzer](https://pub.dev/packages/analyzer) system and [analyzer plugin](https://pub.dev/packages/analyzer_plugin)
+to get access on the source code, parse it and provide `code actions` based on that.
+
+These `code actions` are similar to the ones provide by the language - e.g. `wrap with try/catch` - so you don't need to rely on snippets or manually typing any boilerplate code.
 
 ## Installation
 
-1. In your project's pubspec.yaml add on `dependencies` the following
+1. In your project's `pubspec.yaml` add
+
    ```yaml
    dependencies:
-     data_class_plugin: ^0.2.0
+     data_class_plugin: any
+
+   dev_dependencies:
+     tachyon: any
    ```
-1. Update your `analysis_options.yaml` _(in case you don't have it, just create a new one)_
+
+1. Create `tachyon_config.yaml` on the project's root folder
+
+   ```yaml
+   file_generation_paths: # which files/paths to include for build
+     - "file/path/to/watch"
+     - "another/one"
+
+   generated_file_line_length: 80 # default line length
+
+   plugins:
+     - data_class_plugin # register data_class_plugin
+   ```
+
+1. Update your `analysis_options.yaml` (to enable `code action`)
 
    **Minimal analysis_options.yaml**
 
@@ -82,17 +97,16 @@ to get access on the source code, parse it and provide actions based on that.
 
 ### DataClass Annotation
 
-1. Create a simple class, annotate it with `@DataClass()` and provide `final public` fields for your model.
+1. Create a simple class, annotate it with `@DataClass()` and provide `abstract getter` fields for your model.
 
    ```dart
    @DataClass()
    class User {
-      final String id;
-      final String username;
+      String get id;
+      String get username;
    }
    ```
 
-1. Place the cursor anywhere inside the `User` class
 1. Run code actions on your IDE
 
    VSCode
@@ -105,94 +119,33 @@ to get access on the source code, parse it and provide actions based on that.
    1. **Windows/Linux:** Alt + Enter
    1. **MacOS:** ⌘ + Enter
 
-1. Select `Generate data class`
+1. Select `Generate data/union classes`
 
-<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/010.png" width="400">
+<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/dataclass.png" width="400">
 
-Available methods are:
+This will generate all the boilerplate code on the source file.
 
-1. **copyWith**
+Hint: _Fields declared with final (e.g. final String id;) will be automatically coverters to abstract getters._
 
-   Generates a new instance of the class with optionally provide new fields values.
+Now to generate the part file code (part directive inserted by the code action) you need to run tachyon.
 
-   _If no value is provided (default), then **true** is assumed._
+Executing tachyon:
 
-   ```dart
-   MyClass copyWith(...) { ... }
-   ```
+`dart run tachyon build`
 
-1. **hashAndEquals**
+See more options about tachyon by executing: `dart run tachyon --help`
 
-   Implements hashCode and equals methods.
+**Note**: _As you can see on the screenshot `@DataClass` annotations provides a variety of options to choose from. While this is ok, in many cases you might prefer to set these options on `path match` or `project level`._
 
-   _If no value is provided (default), then **true** is assumed._
-
-   ```dart
-   @override
-   bool operator ==(Object other) { ... }
-
-   @override
-   int get hashCode { ... }
-   ```
-
-1. **$toString**
-
-   Implements toString method.
-
-   _If no value is provided (default), then **true** is assumed._
-
-   ```dart
-   @override
-   String toString() { ... }
-   ```
-
-1. **fromJson**
-
-   Generates a factory constructor that creates a new instance from a Map.
-
-   _If no value is provided (default), then **false** is assumed._
-
-   ```dart
-   factory MyClass.fromJson(Map<dynamic, dynamic> json) { ... }
-   ```
-
-1. **toJson**
-
-   Generates a function that coverts this instance to a Map.
-
-   _If no value is provided (default), then **false** is assumed._
-
-   ```dart
-   Map<String, dynamic> toJson() { ... }
-   ```
-
-_This configuration can be overriden in `data_class_plugin_options.yaml`, see [Configuration](#Configuration)_.
+_Check [Configuration](#Configuration) section to find more option about `data_class_plugin_options.yaml`_
 
 ### Union Annotation
 
 Adding this annotation to a class enables it to create union types.
 
-<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/009.png" width="450">
+<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/union.png" width="450">
 
-Available union annotation toggles are:
-
-1. **dataClass**
-
-   Toggles code generation for **toString**, **copyWith**, **equals** and **hashCode**.
-
-   _If no value is provided (default), then **true** is assumed._
-
-1. **toJson**
-
-   Toggles code generation for **fromJson**.
-
-   _If no value is provided (default), then **true** is assumed._
-
-1. **fromJson**
-
-   Toggles code generation for **toJson**.
-
-   _If no value is provided (default), then **true** is assumed._
+_This configuration can be overriden in `data_class_plugin_options.yaml`, see [Configuration](#Configuration)_.
 
 ### Enum Annotation
 
@@ -206,56 +159,9 @@ Available union annotation toggles are:
    }
    ```
 
-1. Place the cursor anywhere inside the `Category` enum
-
-1. Run code actions on your IDE
-
-   VSCode
-
-   1. **Windows/Linux:** Ctrl + .
-   1. **MacOS:** ⌘ + .
-
-   Intellij
-
-   1. **Windows/Linux:** Alt + Enter
-   1. **MacOS:** ⌘ + Enter
-
 1. Select `Generate enum`
 
-<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/011.png" width="400">
-
-Available methods are:
-
-1. **$toString**
-
-   Implements toString method.
-
-   _If no value is provided (default), then **true** is assumed._
-
-   ```dart
-   @override
-   String toString() { ... }
-   ```
-
-1. **fromJson**
-
-   Generates a factory constructor that creates a new instance from a Map.
-
-   _If no value is provided (default), then **false** is assumed._
-
-   ```dart
-   factory MyClass.fromJson(Map<dynamic, dynamic> json) { ... }
-   ```
-
-1. **toJson**
-
-   Generates a function that coverts this instance to a Map.
-
-   _If no value is provided (default), then **false** is assumed._
-
-   ```dart
-   Map<String, dynamic> toJson() { ... }
-   ```
+<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/enum.png" width="400">
 
 _This configuration can be overriden in `data_class_plugin_options.yaml`, see [Configuration](#Configuration)_.
 
@@ -276,23 +182,13 @@ Even if you don't use the `@Enum()` annotation, you can still generate methods i
 
 1. Run code actions on your IDE
 
-   VSCode
-
-   1. **Windows/Linux:** Ctrl + .
-   1. **MacOS:** ⌘ + .
-
-   Intellij
-
-   1. **Windows/Linux:** Alt + Enter
-   1. **MacOS:** ⌘ + Enter
-
 1. A list with the following actions will be displayed
    1. Generate constructor
    1. Generate 'fromJson'
    1. Generate 'toJson'
    1. Generate 'toString'
 
-> Enums can have an optional single field of primary type to be used in the _fromJson_ or _toJson_ transforms,
+> Enums can have an optional single field of primitive type to be used in the _fromJson_ or _toJson_ transforms,
 > if not provided then the `.name` is used as the default json value.
 
 ```dart
@@ -304,69 +200,17 @@ enum Category {
 }
 ```
 
-<img src="https://raw.githubusercontent.com/spideythewebhead/data_class_plugin/main/assets/screenshots/007.png" width="400">
-
 ## Json Converters
 
 The plugin exposes a json converter registrant that be used through out the app to register your custom converters. This eliminates the need to annotate every single field with a custom converter like (json_serializable).
 
 By default the plugin provides 3 converters for the following classes: Duration, DateTime, Uri.  
-In case you want to override the default implementation of these converters you can do it by registering your custom converter with `jsonConverterRegistrant.register(cosnt MyCustomConverter())`. For more info on how to create and register a converter, see this [example](example/lib/json_converter.dart)
+In case you want to override the default implementation of these converters you can do it by registering your custom converter with `jsonConverterRegistrant.register(const MyCustomConverter())`. For more info on how to create and register a converter, see this [example](examples/file_generation_mode/lib/data_class/from_json/custom_json_converter.dart)
 
 In case you want to provide a custom implementation for a single field that might contain complex logic for parsing/conversion you can use a [JsonConverter](lib/src/json_converter/json_converter.dart) implementation and annotate the specific field with the implementer class.
 See [example](example/lib/json_converter.dart) on `ClassWithLatLngConverterAnnotation` class.
 
 If implementing a `JsonConverter` is too complex for your case you can use the `JsonKey` `fromJson/toJson` functions.
-
-## File generation
-
-In this mode most of the code generation happens on a generated file.
-
-You still need to generate some boilerplate code on the main class via actions,
-but most of the code now is generated into a different file (like build_runner).
-
-The generated file has the format of `base_filename.gen.dart`
-
-To start with this mode you need to:
-
-1. Update data_class_plugin_options.yaml (See more options)
-
-```yaml
-generation_mode: file (default in_place)
-
-# This option is **required** if **generation_mode** is "file"
-# Specify which path matches should generate files
-# If you update this option, you should re-run the generator
-# or if it's for a specific folder/file(s) you are working on, you can update this without restarting
-file_generation_paths:
-  - "a/glob/here"
-  - "an/oth/er/*.dart"
-
-# If you commit the generated files in git
-# You can set the line length for the generated code too, so it won't fail in potential CI/CD workflows
-generated_file_line_length: 80 (default)
-```
-
-1. Add a class
-
-```dart
-@DataClass()
-class User {
-
-   String get id;
-   String get username;
-
-   @DefaultValue<String>('')
-   String get email;
-}
-```
-
-Run the code actions like described previously.
-
-The actions will generate for you the constructor, methods and the part directive.
-
-Save the file and run the data_class_plugin CLI to generate
-`dart run data_class_plugin generate <build | watch>`
 
 ## Configuration
 
@@ -391,28 +235,19 @@ To create a custom configuration you need to add a file named `data_class_plugin
    Set the default values for the provided methods of the `@DataClass` annotation,
    by specifying the directories where they will be enabled or disabled.
 
+1. `union`
+
+   Set the default values for the provided methods of the `@Union` annotation,
+   by specifying the directories where they will be enabled or disabled.
+
 1. `enum`
 
    Set the default values for the provided methods of the `@Enum` annotation,
    by specifying the directories where they will be enabled or disabled.
 
-#### Configuration examples
+#### Configuration supported values
 
 ```yaml
-generation_mode: in_place (default) | file
-
-# This option is **required** if **generation_mode** is "file"
-# Which path matches should generate files
-# If you update this option, you should re-run the genenator
-# or if it's for a specific folder/file(s) you are working on, you can update this without restarting
-file_generation_paths:
-  - "a/glob/here"
-  - "an/oth/er/*.dart"
-
-# If you commit the generated files in git
-# You can set the line length for the generated code too, so it won't fail in potential CI/CD workflows
-generated_file_line_length: 80 (default)
-
 json:
   # Default naming convention for json keys
   key_name_convention: camel_case (default) | snake_case | kebab_case | pascal_case
@@ -432,11 +267,11 @@ data_class:
     # Default values for each options
     # copy_with (true), hash_and_equals (true), to_string (true), from_json (false),to_json (false), unmodifiable_collections (true)
     <copy_with | hash_and_equals | to_string | from_json | to_json | unmodifiable_collections>:
-      default: boolean
-      enabled:
+      default: boolean # default value is there is no match in enabled or disabled lists
+      enabled: # list of globs
         - "a/glob/here"
         - "another/glob/here"
-      disabled:
+      disabled: # list of globs
         - "a/glob/here"
         - "another/glob/here"
 
@@ -445,13 +280,13 @@ union:
     # For each of the provided methods you can provide a configuration
     # The configuration can be an enabled or disabled field that contains a list of globs
     # Default values for each options
-    # copy_with (false), hash_and_equals (true), to_string (true)  from_json(false), to_json (false), unmodifiable_collections (true)
-    <copy_with | hash_and_equals | to_string | from_json | to_json | unmodifiable_collections>:
-      default: boolean
-      enabled:
+    # copy_with (false), hash_and_equals (true), to_string (true)  from_json(false), to_json (false), unmodifiable_collections (true), when (true)
+    <copy_with | hash_and_equals | to_string | from_json | to_json | unmodifiable_collections | when>:
+      default: boolean # default value is there is no match in enabled or disabled lists
+      enabled: # list of globs
         - "a/glob/here"
         - "another/glob/here"
-      disabled:
+      disabled: # list of globs
         - "a/glob/here"
         - "another/glob/here"
 
@@ -462,11 +297,11 @@ enum:
     # Default values for each options
     # to_string (false), from_json(false), to_json (false)
     <to_string | from_json | to_json>:
-      default: boolean
-      enabled:
+      default: boolean # default value is there is no match in enabled or disabled lists
+      enabled: # list of globs
         - "a/glob/here"
         - "another/glob/here"
-      disabled:
+      disabled: # list of globs
         - "a/glob/here"
         - "another/glob/here"
 ```
