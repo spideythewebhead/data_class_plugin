@@ -1,5 +1,7 @@
 // AUTO GENERATED - DO NOT MODIFY
 
+// ignore_for_file: library_private_types_in_public_api, unused_element, unused_field
+
 part of 'exceptions.dart';
 
 extension $DcpException on DcpException {

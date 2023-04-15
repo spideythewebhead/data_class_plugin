@@ -746,7 +746,7 @@ class CodeGenerator {
         codeWriter.writeln('}');
 
         if (unionAnnotationValueExtractor.getBool('copyWith') ??
-            pluginOptions.dataClass
+            pluginOptions.union
                 .effectiveCopyWith(path.relative(targetFileRelativePath, from: directory.path))) {
           await CopyWithGenerator(
             codeWriter: codeWriter,

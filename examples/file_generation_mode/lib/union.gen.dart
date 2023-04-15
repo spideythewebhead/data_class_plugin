@@ -80,48 +80,6 @@ class GetUserResultData extends GetUserResult {
   }
 }
 
-class _$GetUserResultDataCopyWithProxy {
-  _$GetUserResultDataCopyWithProxy(this._value);
-
-  final GetUserResultData _value;
-
-  @pragma('vm:prefer-inline')
-  $UserCopyWithProxyChain<GetUserResultData> get user =>
-      $UserCopyWithProxyChain<GetUserResultData>(_value.user, (User update) => this(user: update));
-
-  @pragma('vm:prefer-inline')
-  GetUserResultData call({
-    final User? user,
-  }) {
-    return GetUserResultData(
-      user: user ?? _value.user,
-    );
-  }
-}
-
-class $GetUserResultDataCopyWithProxyChain<$Result> {
-  $GetUserResultDataCopyWithProxyChain(this._value, this._chain);
-
-  final GetUserResultData _value;
-  final $Result Function(GetUserResultData update) _chain;
-
-  @pragma('vm:prefer-inline')
-  $Result user(User newValue) => this(user: newValue);
-
-  @pragma('vm:prefer-inline')
-  $Result call({
-    final User? user,
-  }) {
-    return _chain(GetUserResultData(
-      user: user ?? _value.user,
-    ));
-  }
-}
-
-extension $GetUserResultDataExtension on GetUserResultData {
-  _$GetUserResultDataCopyWithProxy get copyWith => _$GetUserResultDataCopyWithProxy(this);
-}
-
 class GetUserResultError extends GetUserResult {
   GetUserResultError({
     required this.statusCode,
@@ -167,55 +125,4 @@ class GetUserResultError extends GetUserResult {
     }());
     return toStringOutput;
   }
-}
-
-class _$GetUserResultErrorCopyWithProxy {
-  _$GetUserResultErrorCopyWithProxy(this._value);
-
-  final GetUserResultError _value;
-
-  @pragma('vm:prefer-inline')
-  GetUserResultError statusCode(int newValue) => this(statusCode: newValue);
-
-  @pragma('vm:prefer-inline')
-  GetUserResultError message(String? newValue) => this(message: newValue);
-
-  @pragma('vm:prefer-inline')
-  GetUserResultError call({
-    final int? statusCode,
-    final Object? message = const Object(),
-  }) {
-    return GetUserResultError(
-      statusCode: statusCode ?? _value.statusCode,
-      message: identical(message, const Object()) ? _value.message : (message as String?),
-    );
-  }
-}
-
-class $GetUserResultErrorCopyWithProxyChain<$Result> {
-  $GetUserResultErrorCopyWithProxyChain(this._value, this._chain);
-
-  final GetUserResultError _value;
-  final $Result Function(GetUserResultError update) _chain;
-
-  @pragma('vm:prefer-inline')
-  $Result statusCode(int newValue) => this(statusCode: newValue);
-
-  @pragma('vm:prefer-inline')
-  $Result message(String? newValue) => this(message: newValue);
-
-  @pragma('vm:prefer-inline')
-  $Result call({
-    final int? statusCode,
-    final Object? message = const Object(),
-  }) {
-    return _chain(GetUserResultError(
-      statusCode: statusCode ?? _value.statusCode,
-      message: identical(message, const Object()) ? _value.message : (message as String?),
-    ));
-  }
-}
-
-extension $GetUserResultErrorExtension on GetUserResultError {
-  _$GetUserResultErrorCopyWithProxy get copyWith => _$GetUserResultErrorCopyWithProxy(this);
 }
