@@ -71,13 +71,6 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
           );
         }
 
-        addPartDirective(
-          directives: compilationUnit.directives,
-          fileEditBuilder: fileEditBuilder,
-          targetFilePath: targetFilePath,
-          partElements: classElement.library.parts,
-        );
-
         if (unionInternalAnnotation.fromJson ??
             pluginOptions.union.effectiveFromJson(relativeFilePath)) {
           _generateFromJsonFunction(
