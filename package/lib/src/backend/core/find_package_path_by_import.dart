@@ -52,12 +52,16 @@ Future<String?> findDartFileFromUri({
     throw DcpException.packageNotFound(packageName: packageName);
   }
 
-  return path.join(
-    path.isRelative(targetPackage.rootUri.path) ? projectDirectoryPath : targetPackage.rootUri.path,
-    path.normalize(targetPackage.packageUri.path),
-    // uri format = package:package_name/path/to/file.dart
-    // we need to extract the 'path/to/file.dart'
-    uri.substring(1 + uri.indexOf('/')),
+  return path.normalize(
+    path.join(
+      path.isRelative(targetPackage.rootUri.path)
+          ? projectDirectoryPath
+          : targetPackage.rootUri.path,
+      targetPackage.packageUri.path,
+      // uri format = package:package_name/path/to/file.dart
+      // we need to extract the 'path/to/file.dart'
+      uri.substring(1 + uri.indexOf('/')),
+    ),
   );
 }
 
