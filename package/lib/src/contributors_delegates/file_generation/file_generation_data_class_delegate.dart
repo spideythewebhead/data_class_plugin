@@ -7,6 +7,7 @@ import 'package:data_class_plugin/src/annotations/data_class_internal.dart';
 import 'package:data_class_plugin/src/backend/core/custom_dart_type.dart';
 import 'package:data_class_plugin/src/common/utils.dart';
 import 'package:data_class_plugin/src/contributors_delegates/class_generation_delegate.dart';
+import 'package:data_class_plugin/src/exceptions.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 
 class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
@@ -27,9 +28,14 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
       for (final ClassDeclaration classNode in classNodes) {
         final ClassElement classElement = classNode.declaredElement!;
 
-        final DataClassInternal dataClassAnnotation = DataClassInternal.fromDartObject(
-          classElement.metadata.dataClassAnnotation!.computeConstantValue(),
-        );
+        final ElementAnnotation? dataClassElementAnnotation =
+            classElement.metadata.dataClassAnnotation;
+        if (dataClassElementAnnotation == null) {
+          throw DcpException.missingDataClassPluginImport(relativeFilePath: relativeFilePath);
+        }
+
+        final DataClassInternal dataClassAnnotation =
+            DataClassInternal.fromDartObject(dataClassElementAnnotation.computeConstantValue());
 
         final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
         final SourceRange? copyWithSourceRange = classNode.members.copyWithSourceRange;

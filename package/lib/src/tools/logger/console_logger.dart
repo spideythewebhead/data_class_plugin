@@ -26,7 +26,7 @@ class ConsoleLogger extends Logger {
 
   @override
   void debug([final Object? object]) {
-    log(object, LogSeverity.debug);
+    log('$object'.cyan(), LogSeverity.debug);
   }
 
   @override

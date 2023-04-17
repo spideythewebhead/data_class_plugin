@@ -15,4 +15,8 @@ abstract class DcpException implements Exception {
   factory DcpException.packageNotFound({
     required String packageName,
   }) = DcpExceptionPackageNotFound;
+
+  const factory DcpException.missingDataClassPluginImport({
+    required String relativeFilePath,
+  }) = DcpExceptionMissingDataClassPluginImport;
 }

@@ -34,6 +34,7 @@ Future<void> main(List<String> args) async {
           )
           ..writeln('  2. Remove any imports related to "${exception.packageName}"');
       },
+      missingDataClassPluginImport: (DcpExceptionMissingDataClassPluginImport exception) {},
     );
 
     exitCode = 1;

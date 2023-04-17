@@ -5,6 +5,7 @@ import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dar
 import 'package:data_class_plugin/src/annotations/union_internal.dart';
 import 'package:data_class_plugin/src/common/utils.dart';
 import 'package:data_class_plugin/src/contributors_delegates/class_generation_delegate.dart';
+import 'package:data_class_plugin/src/exceptions.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/visitors/redirected_constructor_visitor.dart';
 
@@ -30,9 +31,13 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
       for (final ClassDeclaration classNode in classNodes) {
         final ClassElement classElement = classNode.declaredElement!;
 
-        final UnionInternal unionInternalAnnotation = UnionInternal.fromDartObject(
-          classElement.metadata.unionAnnotation!.computeConstantValue(),
-        );
+        final ElementAnnotation? unionElementAnnotation = classElement.metadata.unionAnnotation;
+        if (unionElementAnnotation == null) {
+          throw DcpException.missingDataClassPluginImport(relativeFilePath: relativeFilePath);
+        }
+
+        final UnionInternal unionInternalAnnotation =
+            UnionInternal.fromDartObject(unionElementAnnotation.computeConstantValue());
 
         final SourceRange? privateConstructor = classNode.members.getSourceRangeForConstructor('_');
         final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
