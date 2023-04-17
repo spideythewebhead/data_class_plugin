@@ -17,6 +17,7 @@ import 'package:data_class_plugin/src/cli/commands/mixins.dart';
 import 'package:data_class_plugin/src/cli/commands/resync/resync_argument.dart';
 import 'package:data_class_plugin/src/common/utils.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
+import 'package:data_class_plugin/src/exceptions.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/tools/logger/ansi.dart';
 
@@ -79,8 +80,10 @@ class ResyncCommand extends BaseCommand with UtilsCommandMixin {
         );
 
         final _SimpleAssistCollector collector = _SimpleAssistCollector();
-        final DataClassAssistContributor dataClassContributor =
-            DataClassAssistContributor(path, pluginOptions: pluginOptions);
+        final DataClassAssistContributor dataClassContributor = DataClassAssistContributor(
+          path,
+          pluginOptions: pluginOptions,
+        );
 
         final ResolvedUnitResult resolvedUnitResult = await analysis
             .contextFor(path)
@@ -88,15 +91,33 @@ class ResyncCommand extends BaseCommand with UtilsCommandMixin {
             .getResolvedUnit(path)
             .then((SomeResolvedUnitResult value) => value as ResolvedUnitResult);
 
-        await dataClassContributor.computeAssists(
-          _SimpleAssistRequest(
-            length: request.length,
-            offset: request.offset,
-            resourceProvider: request.resourceProvider,
-            result: resolvedUnitResult,
-          ),
-          collector,
-        );
+        try {
+          await dataClassContributor.computeAssists(
+            _SimpleAssistRequest(
+              length: request.length,
+              offset: request.offset,
+              resourceProvider: request.resourceProvider,
+              result: resolvedUnitResult,
+            ),
+            collector,
+          );
+        } on DcpException catch (e) {
+          await e.maybeWhen(
+            missingDataClassPluginImport:
+                (DcpExceptionMissingDataClassPluginImport exception) async {
+              logger
+                ..error('Resyncing can not be completed')
+                ..debug(
+                  "${exception.relativeFilePath} is missing the following import => import 'package:data_class_plugin/data_class_plugin.dart';",
+                )
+                ..info('Fix the issue listed above and re-run the command');
+              stopwatch.stop();
+              await _codeGenerator.dispose();
+              io.exit(1);
+            },
+            orElse: () {},
+          );
+        }
 
         String content = file.readAsStringSync();
         for (final PrioritizedSourceChange assist in collector.assists) {
