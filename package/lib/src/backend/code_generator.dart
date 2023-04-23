@@ -438,6 +438,8 @@ class CodeGenerator {
               name: methodDecl.name.lexeme,
               type: methodDecl.returnType,
               metadata: methodDecl.metadata,
+              isPositional: false,
+              isNamed: true,
               isRequired: defaultFactoryConstructor?.parameters.parameters
                       .firstWhereOrNull((FormalParameter parameter) =>
                           parameter.name?.lexeme == methodDecl.name.lexeme)
@@ -654,25 +656,29 @@ class CodeGenerator {
 
       for (final ConstructorDeclaration ctor in factoriesWithRedirectedConstructors) {
         final String generatedClassName = ctor.redirectedConstructor!.beginToken.lexeme;
-        final List<DeclarationInfo> fields = ctor.parameters.parameters
-            .where((FormalParameter parameter) =>
-                parameter.isNamed &&
-                parameter.isExplicitlyTyped &&
-                parameter is DefaultFormalParameter)
-            .cast<DefaultFormalParameter>()
-            .map((DefaultFormalParameter parameter) {
-          TypeAnnotation? type;
-          if (parameter.parameter is SimpleFormalParameter) {
-            type = (parameter.parameter as SimpleFormalParameter).type;
-          }
 
-          return DeclarationInfo(
-            name: parameter.name!.lexeme,
-            type: type,
-            metadata: parameter.metadata,
-            isRequired: parameter.isRequired,
-          );
-        }).toList(growable: false);
+        final List<DeclarationInfo> fields = <DeclarationInfo>[
+          for (final FormalParameter parameter in ctor.parameters.parameters)
+            if (parameter is SimpleFormalParameter)
+              DeclarationInfo(
+                name: parameter.name!.lexeme,
+                type: parameter.type,
+                metadata: parameter.metadata,
+                isNamed: parameter.isNamed,
+                isRequired: parameter.isRequired,
+                isPositional: parameter.isPositional,
+              )
+            else if (parameter is DefaultFormalParameter &&
+                parameter.parameter is SimpleFormalParameter)
+              DeclarationInfo(
+                name: parameter.name!.lexeme,
+                type: (parameter.parameter as SimpleFormalParameter).type,
+                metadata: parameter.metadata,
+                isNamed: parameter.isNamed,
+                isRequired: parameter.isRequired,
+                isPositional: parameter.isPositional,
+              )
+        ];
 
         final bool unmodifiableCollections =
             unionAnnotationValueExtractor.getBool('unmodifiableCollections') ??

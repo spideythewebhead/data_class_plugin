@@ -85,7 +85,9 @@ class FromJsonGenerator implements Generator {
       _currentJsonFieldName = annotationValueExtractor.getString('name') ??
           jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
 
-      _codeWriter.write('$fieldName: ');
+      if (field.isNamed) {
+        _codeWriter.write('$fieldName: ');
+      }
 
       if (customJsonConverter != null) {
         _codeWriter.writeln('const $customJsonConverter()'

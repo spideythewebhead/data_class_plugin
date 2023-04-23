@@ -38,9 +38,19 @@ class ConstructorGenerator implements Generator {
     _codeWriter.write(_constructor?.constKeyword?.lexeme ?? '');
     _codeWriter.write(' $_generatedClassName(');
 
-    if (_fields.isNotEmpty) {
+    final List<DeclarationInfo> positionalFields =
+        _fields.where((DeclarationInfo element) => element.isPositional).toList(growable: false);
+
+    final List<DeclarationInfo> namedFields =
+        _fields.where((DeclarationInfo element) => element.isNamed).toList(growable: false);
+
+    for (final DeclarationInfo field in positionalFields) {
+      _codeWriter.write('this.${field.name},');
+    }
+
+    if (namedFields.isNotEmpty) {
       _codeWriter.write('{');
-      for (final DeclarationInfo field in _fields) {
+      for (final DeclarationInfo field in namedFields) {
         final Annotation? defaultValueAnnotation = field.metadata
             .firstWhereOrNull((Annotation annotation) => annotation.isDefaultValueAnnotation);
         final CustomDartType customDartType = field.type.customDartType;
