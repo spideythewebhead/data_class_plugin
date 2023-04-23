@@ -130,12 +130,16 @@ class CopyWithGenerator implements Generator {
       final CustomDartType customDartType = field.type.customDartType;
       final String fieldName = field.name;
 
+      if (field.isNamed) {
+        _codeWriter.write('$fieldName: ');
+      }
+
       if (customDartType.isNullable) {
         _codeWriter
-          ..write('$fieldName: identical($fieldName, const Object())')
+          ..write('identical($fieldName, const Object())')
           ..write(' ? _value.$fieldName : ($fieldName as ${customDartType.fullTypeName}),');
       } else {
-        _codeWriter.writeln('$fieldName: $fieldName ?? _value.$fieldName,');
+        _codeWriter.writeln('$fieldName ?? _value.$fieldName,');
       }
     }
 
@@ -203,12 +207,16 @@ class CopyWithGenerator implements Generator {
       final CustomDartType customDartType = field.type.customDartType;
       final String fieldName = field.name;
 
+      if (field.isNamed) {
+        _codeWriter.write('$fieldName: ');
+      }
+
       if (customDartType.isNullable) {
         _codeWriter
-          ..write('$fieldName: identical($fieldName, const Object())')
-          ..write(' ? _value.$fieldName : ($fieldName as ${customDartType.fullTypeName}),');
+          ..write('identical($fieldName, const Object())')
+          ..writeln(' ? _value.$fieldName : ($fieldName as ${customDartType.fullTypeName}),');
       } else {
-        _codeWriter.writeln('$fieldName: $fieldName ?? _value.$fieldName,');
+        _codeWriter.writeln('$fieldName ?? _value.$fieldName,');
       }
     }
 
