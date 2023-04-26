@@ -2,38 +2,30 @@
 
 // ignore_for_file: library_private_types_in_public_api, unused_element, unused_field
 
-part of 'data_class.dart';
+part of 'json_key.dart';
 
 class _$UserImpl extends User {
   _$UserImpl({
     required this.id,
     required this.username,
-    this.email = '',
+    required this.isVerified,
   }) : super.ctor();
 
   @override
-  final String id;
+  final int id;
 
   @override
   final String username;
 
   @override
-  final String email;
-
-  factory _$UserImpl.fromJson(Map<dynamic, dynamic> json) {
-    return _$UserImpl(
-      id: json['id'] as String,
-      username: json['username'] as String,
-      email: json['email'] as String? ?? '',
-    );
-  }
+  final bool isVerified;
 
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'id': id,
-      'username': username,
-      'email': email,
+      '_id': id,
+      'username': User._customUsernameToJson(username),
+      'is-verified': isVerified,
     };
   }
 
@@ -44,7 +36,7 @@ class _$UserImpl extends User {
             runtimeType == other.runtimeType &&
             id == other.id &&
             username == other.username &&
-            email == other.email;
+            isVerified == other.isVerified;
   }
 
   @override
@@ -53,7 +45,7 @@ class _$UserImpl extends User {
       runtimeType,
       id,
       username,
-      email,
+      isVerified,
     ]);
   }
 
@@ -61,7 +53,7 @@ class _$UserImpl extends User {
   String toString() {
     String toStringOutput = 'User{<optimized out>}';
     assert(() {
-      toStringOutput = 'User@<$hexIdentity>{id: $id, username: $username, email: $email}';
+      toStringOutput = 'User@<$hexIdentity>{id: $id, username: $username, isVerified: $isVerified}';
       return true;
     }());
     return toStringOutput;
@@ -77,24 +69,24 @@ class _$UserCopyWithProxy {
   final User _value;
 
   @pragma('vm:prefer-inline')
-  User id(String newValue) => this(id: newValue);
+  User id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
   User username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
-  User email(String newValue) => this(email: newValue);
+  User isVerified(bool newValue) => this(isVerified: newValue);
 
   @pragma('vm:prefer-inline')
   User call({
-    final String? id,
+    final int? id,
     final String? username,
-    final String? email,
+    final bool? isVerified,
   }) {
     return _$UserImpl(
       id: id ?? _value.id,
       username: username ?? _value.username,
-      email: email ?? _value.email,
+      isVerified: isVerified ?? _value.isVerified,
     );
   }
 }
@@ -106,24 +98,24 @@ class $UserCopyWithProxyChain<$Result> {
   final $Result Function(User update) _chain;
 
   @pragma('vm:prefer-inline')
-  $Result id(String newValue) => this(id: newValue);
+  $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
   $Result username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
-  $Result email(String newValue) => this(email: newValue);
+  $Result isVerified(bool newValue) => this(isVerified: newValue);
 
   @pragma('vm:prefer-inline')
   $Result call({
-    final String? id,
+    final int? id,
     final String? username,
-    final String? email,
+    final bool? isVerified,
   }) {
     return _chain(_$UserImpl(
       id: id ?? _value.id,
       username: username ?? _value.username,
-      email: email ?? _value.email,
+      isVerified: isVerified ?? _value.isVerified,
     ));
   }
 }

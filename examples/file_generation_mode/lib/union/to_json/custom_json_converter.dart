@@ -1,0 +1,1 @@
+// see examples/file_generation_mode/lib/data_class/from_json/custom_json_converter.dart for an example

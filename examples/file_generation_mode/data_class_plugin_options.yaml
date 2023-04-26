@@ -7,6 +7,49 @@ generated_file_line_length: 100
 
 data_class:
   options_config:
+    # default config
     copy_with:
-      disabled:
-        - "lib/super_class.dart"
+      default: true
+    # default config
+    hash_and_equals:
+      default: true
+    # default config
+    to_string:
+      default: true
+    # default config
+    unmodifiable_collections:
+      default: true
+    from_json:
+      # from json convertion is off for all data classes
+      # except for paths specified in "enabled" section
+      default: false
+      enabled:
+        - "lib/data_class/from_json/**"
+    to_json:
+      default: false
+      enabled:
+        - "lib/data_class/to_json/**"
+
+union:
+  options_config:
+    # default config
+    copy_with:
+      default: false
+    # default config
+    hash_and_equals:
+      default: true
+    # default config
+    to_string:
+      default: true
+    unmodifiable_collections:
+      default: true
+    from_json:
+      # from json convertion is off for all data classes
+      # except for paths specified in "enabled" section
+      default: false
+      enabled:
+        - "lib/union/from_json/**"
+    to_json:
+      default: false
+      enabled:
+        - "lib/union/to_json/**"
