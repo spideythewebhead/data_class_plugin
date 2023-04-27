@@ -14,14 +14,14 @@ class ConstructorGenerator implements Generator {
     required final String generatedClassName,
     final bool shouldAnnotateFieldsWithOverride = true,
     final String? superConstructorName,
-    required bool unmodifiableCollections,
+    required bool generateUnmodifiableCollections,
   })  : _codeWriter = codeWriter,
         _constructor = constructor,
         _fields = fields,
         _generatedClassName = generatedClassName,
         _shouldAnnotateFieldsWithOverride = shouldAnnotateFieldsWithOverride,
         _superConstructorName = superConstructorName,
-        _unmodifiableCollections = unmodifiableCollections;
+        _generateUnmodifiableCollections = generateUnmodifiableCollections;
 
   final CodeWriter _codeWriter;
   final ConstructorDeclaration? _constructor;
@@ -29,7 +29,7 @@ class ConstructorGenerator implements Generator {
   final String _generatedClassName;
   final bool _shouldAnnotateFieldsWithOverride;
   final String? _superConstructorName;
-  final bool _unmodifiableCollections;
+  final bool _generateUnmodifiableCollections;
 
   @override
   void execute() {
@@ -45,7 +45,14 @@ class ConstructorGenerator implements Generator {
         _fields.where((DeclarationInfo element) => element.isNamed).toList(growable: false);
 
     for (final DeclarationInfo field in positionalFields) {
-      _codeWriter.write('this.${field.name},');
+      final CustomDartType customDartType = field.type.customDartType;
+
+      if (_generateUnmodifiableCollections && customDartType.isCollection) {
+        _codeWriter.write('${customDartType.fullTypeName} ${field.name},');
+        unmodifiableCollectionsDeclarations.add('_${field.name} = ${field.name}');
+      } else {
+        _codeWriter.write('this.${field.name},');
+      }
     }
 
     if (namedFields.isNotEmpty) {
@@ -72,7 +79,7 @@ class ConstructorGenerator implements Generator {
           _codeWriter.write('required ');
         }
 
-        if (_unmodifiableCollections && customDartType.isCollection) {
+        if (_generateUnmodifiableCollections && customDartType.isCollection) {
           _codeWriter.write(customDartType.fullTypeName);
         } else {
           _codeWriter.write('this.');
@@ -84,7 +91,7 @@ class ConstructorGenerator implements Generator {
           _codeWriter.write(' = $defaultValuePrefix ${defaultValueExpression.toSource()}');
         }
 
-        if (customDartType.isCollection && _unmodifiableCollections) {
+        if (customDartType.isCollection && _generateUnmodifiableCollections) {
           unmodifiableCollectionsDeclarations.add('_${field.name} = ${field.name}');
         }
 
@@ -108,7 +115,7 @@ class ConstructorGenerator implements Generator {
     for (final DeclarationInfo field in _fields) {
       final CustomDartType customDartType = field.type.customDartType;
 
-      if (_unmodifiableCollections && customDartType.isCollection) {
+      if (_generateUnmodifiableCollections && customDartType.isCollection) {
         _codeWriter
           ..writeln()
           ..writeln(_shouldAnnotateFieldsWithOverride ? '@override' : '')
