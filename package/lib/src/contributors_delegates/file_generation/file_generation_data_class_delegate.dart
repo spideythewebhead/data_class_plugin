@@ -323,8 +323,10 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     required final List<FieldDeclaration> finalFieldsDeclarations,
   }) {
     final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
-    final String optionalTypeParameters =
-        classElement.typeParameters.join(', ').wrapWithAngleBracketsIfNotEmpty();
+    final String optionalTypeParameters = classElement.typeParameters
+        .map((TypeParameterElement parameter) => parameter.name)
+        .join(', ')
+        .wrapWithAngleBracketsIfNotEmpty();
     final bool isConst = defaultConstructor?.isConst ?? true;
 
     builder
@@ -374,8 +376,10 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     required final DartEditBuilder builder,
   }) {
     final String className = classElement.name;
-    final String optionalTypeParameters =
-        classElement.typeParameters.join(', ').wrapWithAngleBracketsIfNotEmpty();
+    final String optionalTypeParameters = classElement.typeParameters
+        .map((TypeParameterElement parameter) => parameter.name)
+        .join(', ')
+        .wrapWithAngleBracketsIfNotEmpty();
     builder
       ..writeln()
       ..writeln('/// Creates an instance of [$className] from [json]')
