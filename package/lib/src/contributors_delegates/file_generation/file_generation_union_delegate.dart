@@ -177,8 +177,10 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
     required final DartEditBuilder builder,
   }) {
     final String className = classElement.name;
-    final String optionalTypeParameters =
-        classElement.typeParameters.join(', ').wrapWithAngleBracketsIfNotEmpty();
+    final String optionalTypeParameters = classElement.typeParameters
+        .map((TypeParameterElement parameter) => parameter.name)
+        .join(', ')
+        .wrapWithAngleBracketsIfNotEmpty();
     builder
       ..writeln()
       ..writeln('/// Creates an instance of [$className] from [json]')

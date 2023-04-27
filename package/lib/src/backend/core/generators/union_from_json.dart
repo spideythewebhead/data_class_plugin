@@ -37,7 +37,7 @@ class UnionFromJsonGenerator implements Generator {
 
     _codeWriter
       ..writeln(
-          '$_className$_classTypeParametersSource _\$${_className}FromJson$_classTypeParametersWithoutConstraints(Map<dynamic, dynamic> json) {')
+          '$_className$_classTypeParametersWithoutConstraints _\$${_className}FromJson$_classTypeParametersSource(Map<dynamic, dynamic> json) {')
       ..writeln("switch (json['$unionJsonKey']) {");
 
     for (final ConstructorDeclaration ctor in _factoriesWithRedirectedConstructors) {
