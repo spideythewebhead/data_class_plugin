@@ -452,7 +452,7 @@ class CodeGenerator {
       final AnnotationValueExtractor dataClassAnnotationValueExtractor =
           AnnotationValueExtractor(classDeclaration.dataClassAnnotation);
 
-      final bool unmodifiableCollections =
+      final bool generateUnmodifiableCollections =
           dataClassAnnotationValueExtractor.getBool('unmodifiableCollections') ??
               pluginOptions.dataClass.effectiveUnmodifiableCollections(targetFileRelativePath);
 
@@ -465,7 +465,7 @@ class CodeGenerator {
         fields: fields,
         generatedClassName: generatedClassName,
         superConstructorName: superConstructorName,
-        unmodifiableCollections: unmodifiableCollections,
+        generateUnmodifiableCollections: generateUnmodifiableCollections,
       ).execute();
 
       if (dataClassAnnotationValueExtractor.getBool('fromJson') ??
@@ -516,7 +516,7 @@ class CodeGenerator {
         HashGenerator(
           codeWriter: codeWriter,
           fields: fields,
-          skipCollections: unmodifiableCollections,
+          skipCollections: generateUnmodifiableCollections,
         ).execute();
       }
 
@@ -680,7 +680,7 @@ class CodeGenerator {
               )
         ];
 
-        final bool unmodifiableCollections =
+        final bool generateUnmodifiableCollections =
             unionAnnotationValueExtractor.getBool('unmodifiableCollections') ??
                 pluginOptions.union.effectiveUnmodifiableCollections(targetFileRelativePath);
 
@@ -694,7 +694,7 @@ class CodeGenerator {
           generatedClassName: generatedClassName,
           shouldAnnotateFieldsWithOverride: false,
           superConstructorName: '_',
-          unmodifiableCollections: unmodifiableCollections,
+          generateUnmodifiableCollections: generateUnmodifiableCollections,
         ).execute();
 
         if (unionAnnotationValueExtractor.getBool('fromJson') ??
@@ -738,7 +738,7 @@ class CodeGenerator {
           HashGenerator(
             codeWriter: codeWriter,
             fields: fields,
-            skipCollections: unmodifiableCollections,
+            skipCollections: generateUnmodifiableCollections,
           ).execute();
 
           EqualsGenerator(
