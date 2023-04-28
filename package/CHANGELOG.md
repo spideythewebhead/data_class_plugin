@@ -1,3 +1,9 @@
+## 0.3.1
+
+- Add support for required positional arguments in Unions [(issue #299)](https://github.com/spideythewebhead/data_class_plugin/issues/299)
+- Fix generic type constraints on data classes not providing code actions [(issue #302)](https://github.com/spideythewebhead/data_class_plugin/issues/302)
+- Add better examples for file generation mode [(issue #289)](https://github.com/spideythewebhead/data_class_plugin/issues/289)
+
 ## 0.3.0
 
 - Breaking change - Add support for deep copyWith [(issue #277)](https://github.com/spideythewebhead/data_class_plugin/issues/277)
