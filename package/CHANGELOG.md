@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Update "analyzer" and "tachyon" versions
+
 ## 1.0.0
 
 - Stable release with `Tachyon`
