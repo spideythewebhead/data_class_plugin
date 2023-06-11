@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Fix copyWith typing for nullable members [(issue #325)](https://github.com/spideythewebhead/data_class_plugin/issues/325)
+
 ## 1.0.1
 
 - Update "analyzer" and "tachyon" versions
