@@ -52,18 +52,32 @@ class _$PostImpl extends Post {
   Type get runtimeType => Post;
 }
 
-class _$PostCopyWithProxy {
-  _$PostCopyWithProxy(this._value);
+abstract interface class _PostCopyWithProxy {
+  Post id(String newValue);
+
+  Post title(String newValue);
+
+  Post call({
+    final String id,
+    final String title,
+  });
+}
+
+class _PostCopyWithProxyImpl implements _PostCopyWithProxy {
+  _PostCopyWithProxyImpl(this._value);
 
   final Post _value;
 
   @pragma('vm:prefer-inline')
+  @override
   Post id(String newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   Post title(String newValue) => this(title: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   Post call({
     final String? id,
     final String? title,
@@ -75,19 +89,36 @@ class _$PostCopyWithProxy {
   }
 }
 
-class $PostCopyWithProxyChain<$Result> {
-  $PostCopyWithProxyChain(this._value, this._chain);
+sealed class $PostCopyWithProxyChain<$Result> {
+  factory $PostCopyWithProxyChain(final Post value, final $Result Function(Post update) chain) =
+      _PostCopyWithProxyChainImpl<$Result>;
+
+  $Result id(String newValue);
+
+  $Result title(String newValue);
+
+  $Result call({
+    final String id,
+    final String title,
+  });
+}
+
+class _PostCopyWithProxyChainImpl<$Result> implements $PostCopyWithProxyChain<$Result> {
+  _PostCopyWithProxyChainImpl(this._value, this._chain);
 
   final Post _value;
   final $Result Function(Post update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(String newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result title(String newValue) => this(title: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final String? id,
     final String? title,
@@ -100,7 +131,7 @@ class $PostCopyWithProxyChain<$Result> {
 }
 
 extension $PostExtension on Post {
-  _$PostCopyWithProxy get copyWith => _$PostCopyWithProxy(this);
+  _PostCopyWithProxy get copyWith => _PostCopyWithProxyImpl(this);
 }
 
 extension $GetPostsResponse on GetPostsResponse {

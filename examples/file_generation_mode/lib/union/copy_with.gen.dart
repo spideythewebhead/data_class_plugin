@@ -64,18 +64,32 @@ class AsyncResultError extends AsyncResult {
   }
 }
 
-class _$AsyncResultErrorCopyWithProxy {
-  _$AsyncResultErrorCopyWithProxy(this._value);
+abstract interface class _AsyncResultErrorCopyWithProxy {
+  AsyncResultError error(Object newValue);
+
+  AsyncResultError stackTrace(StackTrace? newValue);
+
+  AsyncResultError call({
+    final Object error,
+    final StackTrace? stackTrace,
+  });
+}
+
+class _AsyncResultErrorCopyWithProxyImpl implements _AsyncResultErrorCopyWithProxy {
+  _AsyncResultErrorCopyWithProxyImpl(this._value);
 
   final AsyncResultError _value;
 
   @pragma('vm:prefer-inline')
+  @override
   AsyncResultError error(Object newValue) => this(error: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   AsyncResultError stackTrace(StackTrace? newValue) => this(stackTrace: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   AsyncResultError call({
     final Object? error,
     final Object? stackTrace = const Object(),
@@ -88,19 +102,38 @@ class _$AsyncResultErrorCopyWithProxy {
   }
 }
 
-class $AsyncResultErrorCopyWithProxyChain<$Result> {
-  $AsyncResultErrorCopyWithProxyChain(this._value, this._chain);
+sealed class $AsyncResultErrorCopyWithProxyChain<$Result> {
+  factory $AsyncResultErrorCopyWithProxyChain(
+          final AsyncResultError value, final $Result Function(AsyncResultError update) chain) =
+      _AsyncResultErrorCopyWithProxyChainImpl<$Result>;
+
+  $Result error(Object newValue);
+
+  $Result stackTrace(StackTrace? newValue);
+
+  $Result call({
+    final Object error,
+    final StackTrace? stackTrace,
+  });
+}
+
+class _AsyncResultErrorCopyWithProxyChainImpl<$Result>
+    implements $AsyncResultErrorCopyWithProxyChain<$Result> {
+  _AsyncResultErrorCopyWithProxyChainImpl(this._value, this._chain);
 
   final AsyncResultError _value;
   final $Result Function(AsyncResultError update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result error(Object newValue) => this(error: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result stackTrace(StackTrace? newValue) => this(stackTrace: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final Object? error,
     final Object? stackTrace = const Object(),
@@ -114,5 +147,5 @@ class $AsyncResultErrorCopyWithProxyChain<$Result> {
 }
 
 extension $AsyncResultErrorExtension on AsyncResultError {
-  _$AsyncResultErrorCopyWithProxy get copyWith => _$AsyncResultErrorCopyWithProxy(this);
+  _AsyncResultErrorCopyWithProxy get copyWith => _AsyncResultErrorCopyWithProxyImpl(this);
 }
