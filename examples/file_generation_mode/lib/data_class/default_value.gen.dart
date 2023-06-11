@@ -61,24 +61,46 @@ class _$UserImpl extends User {
   Type get runtimeType => User;
 }
 
-class _$UserCopyWithProxy {
-  _$UserCopyWithProxy(this._value);
+abstract interface class _UserCopyWithProxy {
+  User id(int newValue);
+
+  User username(String newValue);
+
+  User email(String newValue);
+
+  User isVerified(bool newValue);
+
+  User call({
+    final int id,
+    final String username,
+    final String email,
+    final bool isVerified,
+  });
+}
+
+class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
+  _UserCopyWithProxyImpl(this._value);
 
   final User _value;
 
   @pragma('vm:prefer-inline')
+  @override
   User id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User email(String newValue) => this(email: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User isVerified(bool newValue) => this(isVerified: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User call({
     final int? id,
     final String? username,
@@ -94,25 +116,50 @@ class _$UserCopyWithProxy {
   }
 }
 
-class $UserCopyWithProxyChain<$Result> {
-  $UserCopyWithProxyChain(this._value, this._chain);
+sealed class $UserCopyWithProxyChain<$Result> {
+  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+      _UserCopyWithProxyChainImpl<$Result>;
+
+  $Result id(int newValue);
+
+  $Result username(String newValue);
+
+  $Result email(String newValue);
+
+  $Result isVerified(bool newValue);
+
+  $Result call({
+    final int id,
+    final String username,
+    final String email,
+    final bool isVerified,
+  });
+}
+
+class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$Result> {
+  _UserCopyWithProxyChainImpl(this._value, this._chain);
 
   final User _value;
   final $Result Function(User update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result email(String newValue) => this(email: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result isVerified(bool newValue) => this(isVerified: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final int? id,
     final String? username,
@@ -129,5 +176,5 @@ class $UserCopyWithProxyChain<$Result> {
 }
 
 extension $UserExtension on User {
-  _$UserCopyWithProxy get copyWith => _$UserCopyWithProxy(this);
+  _UserCopyWithProxy get copyWith => _UserCopyWithProxyImpl(this);
 }

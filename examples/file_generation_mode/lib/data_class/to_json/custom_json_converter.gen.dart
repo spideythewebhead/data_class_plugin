@@ -56,18 +56,32 @@ class _$LogRecordImpl extends LogRecord {
   Type get runtimeType => LogRecord;
 }
 
-class _$LogRecordCopyWithProxy {
-  _$LogRecordCopyWithProxy(this._value);
+abstract interface class _LogRecordCopyWithProxy {
+  LogRecord text(String newValue);
+
+  LogRecord datetime(DateTime newValue);
+
+  LogRecord call({
+    final String text,
+    final DateTime datetime,
+  });
+}
+
+class _LogRecordCopyWithProxyImpl implements _LogRecordCopyWithProxy {
+  _LogRecordCopyWithProxyImpl(this._value);
 
   final LogRecord _value;
 
   @pragma('vm:prefer-inline')
+  @override
   LogRecord text(String newValue) => this(text: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   LogRecord datetime(DateTime newValue) => this(datetime: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   LogRecord call({
     final String? text,
     final DateTime? datetime,
@@ -79,19 +93,37 @@ class _$LogRecordCopyWithProxy {
   }
 }
 
-class $LogRecordCopyWithProxyChain<$Result> {
-  $LogRecordCopyWithProxyChain(this._value, this._chain);
+sealed class $LogRecordCopyWithProxyChain<$Result> {
+  factory $LogRecordCopyWithProxyChain(
+          final LogRecord value, final $Result Function(LogRecord update) chain) =
+      _LogRecordCopyWithProxyChainImpl<$Result>;
+
+  $Result text(String newValue);
+
+  $Result datetime(DateTime newValue);
+
+  $Result call({
+    final String text,
+    final DateTime datetime,
+  });
+}
+
+class _LogRecordCopyWithProxyChainImpl<$Result> implements $LogRecordCopyWithProxyChain<$Result> {
+  _LogRecordCopyWithProxyChainImpl(this._value, this._chain);
 
   final LogRecord _value;
   final $Result Function(LogRecord update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result text(String newValue) => this(text: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result datetime(DateTime newValue) => this(datetime: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final String? text,
     final DateTime? datetime,
@@ -104,5 +136,5 @@ class $LogRecordCopyWithProxyChain<$Result> {
 }
 
 extension $LogRecordExtension on LogRecord {
-  _$LogRecordCopyWithProxy get copyWith => _$LogRecordCopyWithProxy(this);
+  _LogRecordCopyWithProxy get copyWith => _LogRecordCopyWithProxyImpl(this);
 }

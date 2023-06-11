@@ -48,18 +48,32 @@ class _$UserImpl extends User {
   Type get runtimeType => User;
 }
 
-class _$UserCopyWithProxy {
-  _$UserCopyWithProxy(this._value);
+abstract interface class _UserCopyWithProxy {
+  User id(int newValue);
+
+  User username(String newValue);
+
+  User call({
+    final int id,
+    final String username,
+  });
+}
+
+class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
+  _UserCopyWithProxyImpl(this._value);
 
   final User _value;
 
   @pragma('vm:prefer-inline')
+  @override
   User id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User call({
     final int? id,
     final String? username,
@@ -71,19 +85,36 @@ class _$UserCopyWithProxy {
   }
 }
 
-class $UserCopyWithProxyChain<$Result> {
-  $UserCopyWithProxyChain(this._value, this._chain);
+sealed class $UserCopyWithProxyChain<$Result> {
+  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+      _UserCopyWithProxyChainImpl<$Result>;
+
+  $Result id(int newValue);
+
+  $Result username(String newValue);
+
+  $Result call({
+    final int id,
+    final String username,
+  });
+}
+
+class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$Result> {
+  _UserCopyWithProxyChainImpl(this._value, this._chain);
 
   final User _value;
   final $Result Function(User update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final int? id,
     final String? username,
@@ -96,7 +127,7 @@ class $UserCopyWithProxyChain<$Result> {
 }
 
 extension $UserExtension on User {
-  _$UserCopyWithProxy get copyWith => _$UserCopyWithProxy(this);
+  _UserCopyWithProxy get copyWith => _UserCopyWithProxyImpl(this);
 }
 
 class _$SuperUserImpl extends SuperUser {
@@ -143,18 +174,32 @@ class _$SuperUserImpl extends SuperUser {
   Type get runtimeType => SuperUser;
 }
 
-class _$SuperUserCopyWithProxy {
-  _$SuperUserCopyWithProxy(this._value);
+abstract interface class _SuperUserCopyWithProxy {
+  SuperUser id(int newValue);
+
+  SuperUser username(String newValue);
+
+  SuperUser call({
+    final int id,
+    final String username,
+  });
+}
+
+class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
+  _SuperUserCopyWithProxyImpl(this._value);
 
   final SuperUser _value;
 
   @pragma('vm:prefer-inline')
+  @override
   SuperUser id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   SuperUser username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   SuperUser call({
     final int? id,
     final String? username,
@@ -166,19 +211,37 @@ class _$SuperUserCopyWithProxy {
   }
 }
 
-class $SuperUserCopyWithProxyChain<$Result> {
-  $SuperUserCopyWithProxyChain(this._value, this._chain);
+sealed class $SuperUserCopyWithProxyChain<$Result> {
+  factory $SuperUserCopyWithProxyChain(
+          final SuperUser value, final $Result Function(SuperUser update) chain) =
+      _SuperUserCopyWithProxyChainImpl<$Result>;
+
+  $Result id(int newValue);
+
+  $Result username(String newValue);
+
+  $Result call({
+    final int id,
+    final String username,
+  });
+}
+
+class _SuperUserCopyWithProxyChainImpl<$Result> implements $SuperUserCopyWithProxyChain<$Result> {
+  _SuperUserCopyWithProxyChainImpl(this._value, this._chain);
 
   final SuperUser _value;
   final $Result Function(SuperUser update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final int? id,
     final String? username,
@@ -191,7 +254,7 @@ class $SuperUserCopyWithProxyChain<$Result> {
 }
 
 extension $SuperUserExtension on SuperUser {
-  _$SuperUserCopyWithProxy get copyWith => _$SuperUserCopyWithProxy(this);
+  _SuperUserCopyWithProxy get copyWith => _SuperUserCopyWithProxyImpl(this);
 }
 
 extension $AsyncResult<T> on AsyncResult<T> {

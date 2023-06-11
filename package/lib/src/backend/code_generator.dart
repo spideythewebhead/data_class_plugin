@@ -264,7 +264,7 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           ..writeln(
               'extension \$${className}Extension$classTypeParametersSource on $className$classTypeParametersWithoutConstraints {')
           ..writeln(
-              '_\$${className}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _\$${className}CopyWithProxy$classTypeParametersWithoutConstraints(this);')
+              '_${className}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _${className}CopyWithProxyImpl$classTypeParametersWithoutConstraints(this);')
           ..writeln('}');
       }
     }
@@ -448,7 +448,7 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
             ..writeln(
                 'extension \$${generatedClassName}Extension$classTypeParametersSource on $generatedClassName$classTypeParametersWithoutConstraints {')
             ..writeln(
-                '_\$${generatedClassName}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _\$${generatedClassName}CopyWithProxy$classTypeParametersWithoutConstraints(this);')
+                '_${generatedClassName}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _${generatedClassName}CopyWithProxyImpl$classTypeParametersWithoutConstraints(this);')
             ..writeln('}');
         }
       }

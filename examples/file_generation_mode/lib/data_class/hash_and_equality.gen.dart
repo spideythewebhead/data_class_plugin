@@ -61,24 +61,46 @@ class _$UserImpl extends User {
   Type get runtimeType => User;
 }
 
-class _$UserCopyWithProxy {
-  _$UserCopyWithProxy(this._value);
+abstract interface class _UserCopyWithProxy {
+  User id(int newValue);
+
+  User username(String newValue);
+
+  User email(String? newValue);
+
+  User isVerified(bool newValue);
+
+  User call({
+    final int id,
+    final String username,
+    final String? email,
+    final bool isVerified,
+  });
+}
+
+class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
+  _UserCopyWithProxyImpl(this._value);
 
   final User _value;
 
   @pragma('vm:prefer-inline')
+  @override
   User id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User email(String? newValue) => this(email: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User isVerified(bool newValue) => this(isVerified: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User call({
     final int? id,
     final String? username,
@@ -94,25 +116,50 @@ class _$UserCopyWithProxy {
   }
 }
 
-class $UserCopyWithProxyChain<$Result> {
-  $UserCopyWithProxyChain(this._value, this._chain);
+sealed class $UserCopyWithProxyChain<$Result> {
+  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+      _UserCopyWithProxyChainImpl<$Result>;
+
+  $Result id(int newValue);
+
+  $Result username(String newValue);
+
+  $Result email(String? newValue);
+
+  $Result isVerified(bool newValue);
+
+  $Result call({
+    final int id,
+    final String username,
+    final String? email,
+    final bool isVerified,
+  });
+}
+
+class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$Result> {
+  _UserCopyWithProxyChainImpl(this._value, this._chain);
 
   final User _value;
   final $Result Function(User update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result username(String newValue) => this(username: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result email(String? newValue) => this(email: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result isVerified(bool newValue) => this(isVerified: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final int? id,
     final String? username,
@@ -129,7 +176,7 @@ class $UserCopyWithProxyChain<$Result> {
 }
 
 extension $UserExtension on User {
-  _$UserCopyWithProxy get copyWith => _$UserCopyWithProxy(this);
+  _UserCopyWithProxy get copyWith => _UserCopyWithProxyImpl(this);
 }
 
 class _$CartImpl extends Cart {
@@ -169,15 +216,25 @@ class _$CartImpl extends Cart {
   Type get runtimeType => Cart;
 }
 
-class _$CartCopyWithProxy {
-  _$CartCopyWithProxy(this._value);
+abstract interface class _CartCopyWithProxy {
+  Cart products(List<Product> newValue);
+
+  Cart call({
+    final List<Product> products,
+  });
+}
+
+class _CartCopyWithProxyImpl implements _CartCopyWithProxy {
+  _CartCopyWithProxyImpl(this._value);
 
   final Cart _value;
 
   @pragma('vm:prefer-inline')
+  @override
   Cart products(List<Product> newValue) => this(products: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   Cart call({
     final List<Product>? products,
   }) {
@@ -187,16 +244,29 @@ class _$CartCopyWithProxy {
   }
 }
 
-class $CartCopyWithProxyChain<$Result> {
-  $CartCopyWithProxyChain(this._value, this._chain);
+sealed class $CartCopyWithProxyChain<$Result> {
+  factory $CartCopyWithProxyChain(final Cart value, final $Result Function(Cart update) chain) =
+      _CartCopyWithProxyChainImpl<$Result>;
+
+  $Result products(List<Product> newValue);
+
+  $Result call({
+    final List<Product> products,
+  });
+}
+
+class _CartCopyWithProxyChainImpl<$Result> implements $CartCopyWithProxyChain<$Result> {
+  _CartCopyWithProxyChainImpl(this._value, this._chain);
 
   final Cart _value;
   final $Result Function(Cart update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result products(List<Product> newValue) => this(products: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final List<Product>? products,
   }) {
@@ -207,7 +277,7 @@ class $CartCopyWithProxyChain<$Result> {
 }
 
 extension $CartExtension on Cart {
-  _$CartCopyWithProxy get copyWith => _$CartCopyWithProxy(this);
+  _CartCopyWithProxy get copyWith => _CartCopyWithProxyImpl(this);
 }
 
 class _$ProductImpl extends Product {
@@ -254,18 +324,32 @@ class _$ProductImpl extends Product {
   Type get runtimeType => Product;
 }
 
-class _$ProductCopyWithProxy {
-  _$ProductCopyWithProxy(this._value);
+abstract interface class _ProductCopyWithProxy {
+  Product id(int newValue);
+
+  Product price(double newValue);
+
+  Product call({
+    final int id,
+    final double price,
+  });
+}
+
+class _ProductCopyWithProxyImpl implements _ProductCopyWithProxy {
+  _ProductCopyWithProxyImpl(this._value);
 
   final Product _value;
 
   @pragma('vm:prefer-inline')
+  @override
   Product id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   Product price(double newValue) => this(price: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   Product call({
     final int? id,
     final double? price,
@@ -277,19 +361,37 @@ class _$ProductCopyWithProxy {
   }
 }
 
-class $ProductCopyWithProxyChain<$Result> {
-  $ProductCopyWithProxyChain(this._value, this._chain);
+sealed class $ProductCopyWithProxyChain<$Result> {
+  factory $ProductCopyWithProxyChain(
+          final Product value, final $Result Function(Product update) chain) =
+      _ProductCopyWithProxyChainImpl<$Result>;
+
+  $Result id(int newValue);
+
+  $Result price(double newValue);
+
+  $Result call({
+    final int id,
+    final double price,
+  });
+}
+
+class _ProductCopyWithProxyChainImpl<$Result> implements $ProductCopyWithProxyChain<$Result> {
+  _ProductCopyWithProxyChainImpl(this._value, this._chain);
 
   final Product _value;
   final $Result Function(Product update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result price(double newValue) => this(price: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final int? id,
     final double? price,
@@ -302,5 +404,5 @@ class $ProductCopyWithProxyChain<$Result> {
 }
 
 extension $ProductExtension on Product {
-  _$ProductCopyWithProxy get copyWith => _$ProductCopyWithProxy(this);
+  _ProductCopyWithProxy get copyWith => _ProductCopyWithProxyImpl(this);
 }
