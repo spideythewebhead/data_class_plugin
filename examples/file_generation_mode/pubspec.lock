@@ -324,10 +324,10 @@ packages:
     dependency: "direct dev"
     description:
       name: tachyon
-      sha256: "57c4597bfecb9a0aedc3b5f1f57d6aad5f16175ca4af0a3857840490f2e66615"
+      sha256: "196386fb8d5ed995491087cd61afb6ba18ac6db9d892a67c9b5e7bc866d9499f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.6"
+    version: "0.0.7"
   term_glyph:
     dependency: transitive
     description:
