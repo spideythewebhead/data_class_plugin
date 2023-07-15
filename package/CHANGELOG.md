@@ -1,3 +1,8 @@
+## 1.0.3
+
+- Change UnionJsonKeyValue "key" type from "String" to "dynamic" [(issue #330)](https://github.com/spideythewebhead/data_class_plugin/issues/330)
+- Set copyWith fields as nullable [(issue #332)](https://github.com/spideythewebhead/data_class_plugin/issues/332)
+
 ## 1.0.2
 
 - Fix copyWith typing for nullable members [(issue #325)](https://github.com/spideythewebhead/data_class_plugin/issues/325)
