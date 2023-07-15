@@ -80,10 +80,10 @@ abstract interface class _UserCopyWithProxy {
   User isVerified(bool newValue);
 
   User call({
-    final int id,
-    final String username,
+    final int? id,
+    final String? username,
     final String? email,
-    final bool isVerified,
+    final bool? isVerified,
   });
 }
 
@@ -138,10 +138,10 @@ sealed class $UserCopyWithProxyChain<$Result> {
   $Result isVerified(bool newValue);
 
   $Result call({
-    final int id,
-    final String username,
+    final int? id,
+    final String? username,
     final String? email,
-    final bool isVerified,
+    final bool? isVerified,
   });
 }
 
@@ -239,7 +239,7 @@ abstract interface class _GetUsersResultCopyWithProxy {
   GetUsersResult users(List<User> newValue);
 
   GetUsersResult call({
-    final List<User> users,
+    final List<User>? users,
   });
 }
 
@@ -271,7 +271,7 @@ sealed class $GetUsersResultCopyWithProxyChain<$Result> {
   $Result users(List<User> newValue);
 
   $Result call({
-    final List<User> users,
+    final List<User>? users,
   });
 }
 

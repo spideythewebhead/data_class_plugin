@@ -71,10 +71,10 @@ abstract interface class _UserCopyWithProxy {
   User isVerified(bool newValue);
 
   User call({
-    final int id,
-    final String username,
+    final int? id,
+    final String? username,
     final String? email,
-    final bool isVerified,
+    final bool? isVerified,
   });
 }
 
@@ -129,10 +129,10 @@ sealed class $UserCopyWithProxyChain<$Result> {
   $Result isVerified(bool newValue);
 
   $Result call({
-    final int id,
-    final String username,
+    final int? id,
+    final String? username,
     final String? email,
-    final bool isVerified,
+    final bool? isVerified,
   });
 }
 
@@ -220,7 +220,7 @@ abstract interface class _CartCopyWithProxy {
   Cart products(List<Product> newValue);
 
   Cart call({
-    final List<Product> products,
+    final List<Product>? products,
   });
 }
 
@@ -251,7 +251,7 @@ sealed class $CartCopyWithProxyChain<$Result> {
   $Result products(List<Product> newValue);
 
   $Result call({
-    final List<Product> products,
+    final List<Product>? products,
   });
 }
 
@@ -330,8 +330,8 @@ abstract interface class _ProductCopyWithProxy {
   Product price(double newValue);
 
   Product call({
-    final int id,
-    final double price,
+    final int? id,
+    final double? price,
   });
 }
 
@@ -371,8 +371,8 @@ sealed class $ProductCopyWithProxyChain<$Result> {
   $Result price(double newValue);
 
   $Result call({
-    final int id,
-    final double price,
+    final int? id,
+    final double? price,
   });
 }
 

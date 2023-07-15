@@ -62,8 +62,8 @@ abstract interface class _LogRecordCopyWithProxy {
   LogRecord datetime(DateTime newValue);
 
   LogRecord call({
-    final String text,
-    final DateTime datetime,
+    final String? text,
+    final DateTime? datetime,
   });
 }
 
@@ -103,8 +103,8 @@ sealed class $LogRecordCopyWithProxyChain<$Result> {
   $Result datetime(DateTime newValue);
 
   $Result call({
-    final String text,
-    final DateTime datetime,
+    final String? text,
+    final DateTime? datetime,
   });
 }
 

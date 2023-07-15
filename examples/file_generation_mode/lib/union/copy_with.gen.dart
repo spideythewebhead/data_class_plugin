@@ -70,7 +70,7 @@ abstract interface class _AsyncResultErrorCopyWithProxy {
   AsyncResultError stackTrace(StackTrace? newValue);
 
   AsyncResultError call({
-    final Object error,
+    final Object? error,
     final StackTrace? stackTrace,
   });
 }
@@ -112,7 +112,7 @@ sealed class $AsyncResultErrorCopyWithProxyChain<$Result> {
   $Result stackTrace(StackTrace? newValue);
 
   $Result call({
-    final Object error,
+    final Object? error,
     final StackTrace? stackTrace,
   });
 }
