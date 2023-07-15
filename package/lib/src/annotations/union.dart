@@ -98,7 +98,6 @@ class Union {
 }
 
 class UnionJsonKeyValue {
-  const UnionJsonKeyValue(this.key);
-
-  final String key;
+  /// [key] should be a primitive type (int, double, String)
+  const UnionJsonKeyValue(dynamic key);
 }
