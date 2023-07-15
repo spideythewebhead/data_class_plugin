@@ -124,8 +124,8 @@ abstract interface class _UserCopyWithProxy {
   User username(String newValue);
 
   User call({
-    final int id,
-    final String username,
+    final int? id,
+    final String? username,
   });
 }
 
@@ -164,8 +164,8 @@ sealed class $UserCopyWithProxyChain<$Result> {
   $Result username(String newValue);
 
   $Result call({
-    final int id,
-    final String username,
+    final int? id,
+    final String? username,
   });
 }
 
@@ -267,10 +267,10 @@ abstract interface class _SuperUserCopyWithProxy {
   SuperUser isEnabled(bool newValue);
 
   SuperUser call({
-    final int id,
-    final String username,
-    final String nickname,
-    final bool isEnabled,
+    final int? id,
+    final String? username,
+    final String? nickname,
+    final bool? isEnabled,
   });
 }
 
@@ -326,10 +326,10 @@ sealed class $SuperUserCopyWithProxyChain<$Result> {
   $Result isEnabled(bool newValue);
 
   $Result call({
-    final int id,
-    final String username,
-    final String nickname,
-    final bool isEnabled,
+    final int? id,
+    final String? username,
+    final String? nickname,
+    final bool? isEnabled,
   });
 }
 

@@ -58,8 +58,8 @@ abstract interface class _PostCopyWithProxy {
   Post title(String newValue);
 
   Post call({
-    final String id,
-    final String title,
+    final String? id,
+    final String? title,
   });
 }
 
@@ -98,8 +98,8 @@ sealed class $PostCopyWithProxyChain<$Result> {
   $Result title(String newValue);
 
   $Result call({
-    final String id,
-    final String title,
+    final String? id,
+    final String? title,
   });
 }
 

@@ -92,7 +92,8 @@ class CopyWithGenerator implements Generator {
       _codeWriter.write('{');
       for (final DeclarationInfo field in _fields) {
         final TachyonDartType dartType = field.type.customDartType;
-        _codeWriter.write('final ${dartType.fullTypeName} ${field.name},');
+        _codeWriter.write(
+            'final ${dartType.fullTypeName}${dartType.isNullable ? '' : '?'} ${field.name},');
       }
       _codeWriter.write('}');
     }
@@ -239,7 +240,8 @@ class CopyWithGenerator implements Generator {
       _codeWriter.write('{');
       for (final DeclarationInfo field in _fields) {
         final TachyonDartType dartType = field.type.customDartType;
-        _codeWriter.write('final ${dartType.fullTypeName} ${field.name},');
+        _codeWriter.write(
+            'final ${dartType.fullTypeName}${dartType.isNullable ? '' : '?'} ${field.name},');
       }
       _codeWriter.write('}');
     }
