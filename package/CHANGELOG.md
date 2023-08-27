@@ -1,3 +1,10 @@
+## 1.0.4
+
+- Bump dart sdk minimum version to 3.1.0
+- Bump "tachyon" version to ^0.0.8
+- Fix lint issue with generated file
+- Bump dart version on workflows
+
 ## 1.0.3
 
 - Change UnionJsonKeyValue "key" type from "String" to "dynamic" [(issue #330)](https://github.com/spideythewebhead/data_class_plugin/issues/330)
