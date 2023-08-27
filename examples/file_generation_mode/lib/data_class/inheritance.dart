@@ -14,10 +14,16 @@ abstract class Rectangle extends Shape {
   Rectangle.ctor();
 
   /// Default constructor
-  factory Rectangle() = _$RectangleImpl;
+  factory Rectangle({
+    required double width,
+    required double height,
+  }) = _$RectangleImpl;
+
+  double get width;
+  double get height;
 
   @override
-  double get area => 0;
+  double get area => width * height;
 }
 
 // Inherit from data class
