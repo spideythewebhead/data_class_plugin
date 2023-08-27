@@ -5,17 +5,32 @@
 part of 'inheritance.dart';
 
 class _$RectangleImpl extends Rectangle {
-  _$RectangleImpl() : super.ctor();
+  _$RectangleImpl({
+    required this.width,
+    required this.height,
+  }) : super.ctor();
+
+  @override
+  final double width;
+
+  @override
+  final double height;
 
   @override
   bool operator ==(Object? other) {
-    return identical(this, other) || other is Rectangle && runtimeType == other.runtimeType;
+    return identical(this, other) ||
+        other is Rectangle &&
+            runtimeType == other.runtimeType &&
+            width == other.width &&
+            height == other.height;
   }
 
   @override
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
+      width,
+      height,
     ]);
   }
 
@@ -23,7 +38,7 @@ class _$RectangleImpl extends Rectangle {
   String toString() {
     String toStringOutput = 'Rectangle{<optimized out>}';
     assert(() {
-      toStringOutput = 'Rectangle@<$hexIdentity>{}';
+      toStringOutput = 'Rectangle@<$hexIdentity>{width: $width, height: $height}';
       return true;
     }());
     return toStringOutput;
@@ -34,7 +49,14 @@ class _$RectangleImpl extends Rectangle {
 }
 
 abstract interface class _RectangleCopyWithProxy {
-  Rectangle call();
+  Rectangle width(double newValue);
+
+  Rectangle height(double newValue);
+
+  Rectangle call({
+    final double? width,
+    final double? height,
+  });
 }
 
 class _RectangleCopyWithProxyImpl implements _RectangleCopyWithProxy {
@@ -44,8 +66,22 @@ class _RectangleCopyWithProxyImpl implements _RectangleCopyWithProxy {
 
   @pragma('vm:prefer-inline')
   @override
-  Rectangle call() {
-    return _$RectangleImpl();
+  Rectangle width(double newValue) => this(width: newValue);
+
+  @pragma('vm:prefer-inline')
+  @override
+  Rectangle height(double newValue) => this(height: newValue);
+
+  @pragma('vm:prefer-inline')
+  @override
+  Rectangle call({
+    final double? width,
+    final double? height,
+  }) {
+    return _$RectangleImpl(
+      width: width ?? _value.width,
+      height: height ?? _value.height,
+    );
   }
 }
 
@@ -54,7 +90,14 @@ sealed class $RectangleCopyWithProxyChain<$Result> {
           final Rectangle value, final $Result Function(Rectangle update) chain) =
       _RectangleCopyWithProxyChainImpl<$Result>;
 
-  $Result call();
+  $Result width(double newValue);
+
+  $Result height(double newValue);
+
+  $Result call({
+    final double? width,
+    final double? height,
+  });
 }
 
 class _RectangleCopyWithProxyChainImpl<$Result> implements $RectangleCopyWithProxyChain<$Result> {
@@ -65,8 +108,22 @@ class _RectangleCopyWithProxyChainImpl<$Result> implements $RectangleCopyWithPro
 
   @pragma('vm:prefer-inline')
   @override
-  $Result call() {
-    return _chain(_$RectangleImpl());
+  $Result width(double newValue) => this(width: newValue);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Result height(double newValue) => this(height: newValue);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Result call({
+    final double? width,
+    final double? height,
+  }) {
+    return _chain(_$RectangleImpl(
+      width: width ?? _value.width,
+      height: height ?? _value.height,
+    ));
   }
 }
 
