@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Fixes "toJson" not checking nullable fields for DateTime/Uri/Duration fields [(issue #340)](https://github.com/spideythewebhead/data_class_plugin/issues/340)
+
 ## 1.0.4
 
 - Bump dart sdk minimum version to 3.1.0
