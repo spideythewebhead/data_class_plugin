@@ -155,6 +155,10 @@ class ToJsonGenerator implements Generator {
     }
 
     if (dartType.isDateTime || dartType.isDuration || dartType.isUri) {
+      if (dartType.isNullable) {
+        _writeNullableParsingPrefix(parentVariableName: parentVariableName);
+      }
+
       _codeWriter
           .writeln('jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),');
       return;
