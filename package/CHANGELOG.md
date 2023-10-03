@@ -1,3 +1,8 @@
+## 1.1.0
+
+- Bump dependencies versions [(issue #347)](https://github.com/spideythewebhead/data_class_plugin/issues/347)
+- Fix copyWith and generics producing wrong code [(issue #347)](https://github.com/spideythewebhead/data_class_plugin/issues/347)
+
 ## 1.0.5
 
 - Fixes "toJson" not checking nullable fields for DateTime/Uri/Duration fields [(issue #340)](https://github.com/spideythewebhead/data_class_plugin/issues/340)
