@@ -40,15 +40,25 @@ class _$ValueWrapperImpl<T> extends ValueWrapper<T> {
   Type get runtimeType => ValueWrapper<T>;
 }
 
-class _$ValueWrapperCopyWithProxy<T> {
-  _$ValueWrapperCopyWithProxy(this._value);
+abstract interface class _ValueWrapperCopyWithProxy<T> {
+  ValueWrapper<T> value(T newValue);
+
+  ValueWrapper<T> call({
+    final T? value,
+  });
+}
+
+class _ValueWrapperCopyWithProxyImpl<T> implements _ValueWrapperCopyWithProxy<T> {
+  _ValueWrapperCopyWithProxyImpl(this._value);
 
   final ValueWrapper<T> _value;
 
   @pragma('vm:prefer-inline')
+  @override
   ValueWrapper<T> value(T newValue) => this(value: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   ValueWrapper<T> call({
     final T? value,
   }) {
@@ -58,16 +68,31 @@ class _$ValueWrapperCopyWithProxy<T> {
   }
 }
 
-class $ValueWrapperCopyWithProxyChain<T, $Result> {
-  $ValueWrapperCopyWithProxyChain(this._value, this._chain);
+sealed class $ValueWrapperCopyWithProxyChain<T, $Result> {
+  factory $ValueWrapperCopyWithProxyChain(
+          final ValueWrapper<T> value, final $Result Function(ValueWrapper<T> update) chain) =
+      _ValueWrapperCopyWithProxyChainImpl<T, $Result>;
+
+  $Result value(T newValue);
+
+  $Result call({
+    final T? value,
+  });
+}
+
+class _ValueWrapperCopyWithProxyChainImpl<T, $Result>
+    implements $ValueWrapperCopyWithProxyChain<T, $Result> {
+  _ValueWrapperCopyWithProxyChainImpl(this._value, this._chain);
 
   final ValueWrapper<T> _value;
   final $Result Function(ValueWrapper<T> update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result value(T newValue) => this(value: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final T? value,
   }) {
@@ -78,7 +103,7 @@ class $ValueWrapperCopyWithProxyChain<T, $Result> {
 }
 
 extension $ValueWrapperExtension<T> on ValueWrapper<T> {
-  _$ValueWrapperCopyWithProxy<T> get copyWith => _$ValueWrapperCopyWithProxy<T>(this);
+  _ValueWrapperCopyWithProxy<T> get copyWith => _ValueWrapperCopyWithProxyImpl<T>(this);
 }
 
 class _$UserImpl extends User {
@@ -117,15 +142,25 @@ class _$UserImpl extends User {
   Type get runtimeType => User;
 }
 
-class _$UserCopyWithProxy {
-  _$UserCopyWithProxy(this._value);
+abstract interface class _UserCopyWithProxy {
+  User id(int newValue);
+
+  User call({
+    final int? id,
+  });
+}
+
+class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
+  _UserCopyWithProxyImpl(this._value);
 
   final User _value;
 
   @pragma('vm:prefer-inline')
+  @override
   User id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   User call({
     final int? id,
   }) {
@@ -135,16 +170,29 @@ class _$UserCopyWithProxy {
   }
 }
 
-class $UserCopyWithProxyChain<$Result> {
-  $UserCopyWithProxyChain(this._value, this._chain);
+sealed class $UserCopyWithProxyChain<$Result> {
+  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+      _UserCopyWithProxyChainImpl<$Result>;
+
+  $Result id(int newValue);
+
+  $Result call({
+    final int? id,
+  });
+}
+
+class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$Result> {
+  _UserCopyWithProxyChainImpl(this._value, this._chain);
 
   final User _value;
   final $Result Function(User update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final int? id,
   }) {
@@ -155,7 +203,7 @@ class $UserCopyWithProxyChain<$Result> {
 }
 
 extension $UserExtension on User {
-  _$UserCopyWithProxy get copyWith => _$UserCopyWithProxy(this);
+  _UserCopyWithProxy get copyWith => _UserCopyWithProxyImpl(this);
 }
 
 class _$ValueWrapperWithGenericsConstraintsImpl<T extends User>
@@ -197,15 +245,26 @@ class _$ValueWrapperWithGenericsConstraintsImpl<T extends User>
   Type get runtimeType => ValueWrapperWithGenericsConstraints<T>;
 }
 
-class _$ValueWrapperWithGenericsConstraintsCopyWithProxy<T extends User> {
-  _$ValueWrapperWithGenericsConstraintsCopyWithProxy(this._value);
+abstract interface class _ValueWrapperWithGenericsConstraintsCopyWithProxy<T extends User> {
+  ValueWrapperWithGenericsConstraints<T> value(T newValue);
+
+  ValueWrapperWithGenericsConstraints<T> call({
+    final T? value,
+  });
+}
+
+class _ValueWrapperWithGenericsConstraintsCopyWithProxyImpl<T extends User>
+    implements _ValueWrapperWithGenericsConstraintsCopyWithProxy<T> {
+  _ValueWrapperWithGenericsConstraintsCopyWithProxyImpl(this._value);
 
   final ValueWrapperWithGenericsConstraints<T> _value;
 
   @pragma('vm:prefer-inline')
+  @override
   ValueWrapperWithGenericsConstraints<T> value(T newValue) => this(value: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   ValueWrapperWithGenericsConstraints<T> call({
     final T? value,
   }) {
@@ -215,16 +274,32 @@ class _$ValueWrapperWithGenericsConstraintsCopyWithProxy<T extends User> {
   }
 }
 
-class $ValueWrapperWithGenericsConstraintsCopyWithProxyChain<T extends User, $Result> {
-  $ValueWrapperWithGenericsConstraintsCopyWithProxyChain(this._value, this._chain);
+sealed class $ValueWrapperWithGenericsConstraintsCopyWithProxyChain<T extends User, $Result> {
+  factory $ValueWrapperWithGenericsConstraintsCopyWithProxyChain(
+          final ValueWrapperWithGenericsConstraints<T> value,
+          final $Result Function(ValueWrapperWithGenericsConstraints<T> update) chain) =
+      _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl<T, $Result>;
+
+  $Result value(T newValue);
+
+  $Result call({
+    final T? value,
+  });
+}
+
+class _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl<T extends User, $Result>
+    implements $ValueWrapperWithGenericsConstraintsCopyWithProxyChain<T, $Result> {
+  _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl(this._value, this._chain);
 
   final ValueWrapperWithGenericsConstraints<T> _value;
   final $Result Function(ValueWrapperWithGenericsConstraints<T> update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result value(T newValue) => this(value: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final T? value,
   }) {
@@ -236,8 +311,8 @@ class $ValueWrapperWithGenericsConstraintsCopyWithProxyChain<T extends User, $Re
 
 extension $ValueWrapperWithGenericsConstraintsExtension<T extends User>
     on ValueWrapperWithGenericsConstraints<T> {
-  _$ValueWrapperWithGenericsConstraintsCopyWithProxy<T> get copyWith =>
-      _$ValueWrapperWithGenericsConstraintsCopyWithProxy<T>(this);
+  _ValueWrapperWithGenericsConstraintsCopyWithProxy<T> get copyWith =>
+      _ValueWrapperWithGenericsConstraintsCopyWithProxyImpl<T>(this);
 }
 
 class _$SuperUserImpl extends SuperUser {
@@ -276,15 +351,25 @@ class _$SuperUserImpl extends SuperUser {
   Type get runtimeType => SuperUser;
 }
 
-class _$SuperUserCopyWithProxy {
-  _$SuperUserCopyWithProxy(this._value);
+abstract interface class _SuperUserCopyWithProxy {
+  SuperUser id(int newValue);
+
+  SuperUser call({
+    final int? id,
+  });
+}
+
+class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
+  _SuperUserCopyWithProxyImpl(this._value);
 
   final SuperUser _value;
 
   @pragma('vm:prefer-inline')
+  @override
   SuperUser id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   SuperUser call({
     final int? id,
   }) {
@@ -294,16 +379,30 @@ class _$SuperUserCopyWithProxy {
   }
 }
 
-class $SuperUserCopyWithProxyChain<$Result> {
-  $SuperUserCopyWithProxyChain(this._value, this._chain);
+sealed class $SuperUserCopyWithProxyChain<$Result> {
+  factory $SuperUserCopyWithProxyChain(
+          final SuperUser value, final $Result Function(SuperUser update) chain) =
+      _SuperUserCopyWithProxyChainImpl<$Result>;
+
+  $Result id(int newValue);
+
+  $Result call({
+    final int? id,
+  });
+}
+
+class _SuperUserCopyWithProxyChainImpl<$Result> implements $SuperUserCopyWithProxyChain<$Result> {
+  _SuperUserCopyWithProxyChainImpl(this._value, this._chain);
 
   final SuperUser _value;
   final $Result Function(SuperUser update) _chain;
 
   @pragma('vm:prefer-inline')
+  @override
   $Result id(int newValue) => this(id: newValue);
 
   @pragma('vm:prefer-inline')
+  @override
   $Result call({
     final int? id,
   }) {
@@ -314,5 +413,5 @@ class $SuperUserCopyWithProxyChain<$Result> {
 }
 
 extension $SuperUserExtension on SuperUser {
-  _$SuperUserCopyWithProxy get copyWith => _$SuperUserCopyWithProxy(this);
+  _SuperUserCopyWithProxy get copyWith => _SuperUserCopyWithProxyImpl(this);
 }

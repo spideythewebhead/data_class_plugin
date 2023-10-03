@@ -107,7 +107,7 @@ class CopyWithGenerator implements Generator {
     _codeWriter
       ..writeln()
       ..writeln(
-          'class _${_className}CopyWithProxyImpl$_classTypeParametersSource implements _${_className}CopyWithProxy$_classTypeParametersSource {');
+          'class _${_className}CopyWithProxyImpl$_classTypeParametersSource implements _${_className}CopyWithProxy$_classTypeParametersWithoutConstraints {');
 
     _codeWriter
       ..writeln('_${_className}CopyWithProxyImpl(this._value);')
@@ -212,6 +212,7 @@ class CopyWithGenerator implements Generator {
 
   Future<void> _writeCopyWithProxyChainClass({
     required final String proxyChainGenericArgs,
+    required final String proxyChainGenericArgsWithoutConstraints,
   }) async {
     _codeWriter
       ..writeln()
@@ -219,7 +220,7 @@ class CopyWithGenerator implements Generator {
 
     _codeWriter
       ..writeln(
-          'factory \$${_className}CopyWithProxyChain(final $_className$_classTypeParametersWithoutConstraints value, final \$Result Function($_className$_classTypeParametersWithoutConstraints update) chain) = _${_className}CopyWithProxyChainImpl$proxyChainGenericArgs;')
+          'factory \$${_className}CopyWithProxyChain(final $_className$_classTypeParametersWithoutConstraints value, final \$Result Function($_className$_classTypeParametersWithoutConstraints update) chain) = _${_className}CopyWithProxyChainImpl$proxyChainGenericArgsWithoutConstraints;')
       ..writeln();
 
     for (final DeclarationInfo field in _fields) {
@@ -253,11 +254,12 @@ class CopyWithGenerator implements Generator {
 
   Future<void> _writeCopyWithProxyChainImplClass({
     required final String proxyChainGenericArgs,
+    required final String proxyChaingenericArgsWithoutConstraints,
   }) async {
     _codeWriter
       ..writeln()
       ..writeln(
-          'class _${_className}CopyWithProxyChainImpl$proxyChainGenericArgs implements \$${_className}CopyWithProxyChain$proxyChainGenericArgs {');
+          'class _${_className}CopyWithProxyChainImpl$proxyChainGenericArgs implements \$${_className}CopyWithProxyChain$proxyChaingenericArgsWithoutConstraints {');
 
     _codeWriter
       ..writeln('_${_className}CopyWithProxyChainImpl(this._value, this._chain);')
@@ -334,15 +336,26 @@ class CopyWithGenerator implements Generator {
     await _writeCopyWithProxyImplClass();
 
     late final String proxyChainGenericArgs;
+    late final String proxyChainGenericArgsWithoutConstraints;
     if (_classTypeParametersSource.isEmpty) {
-      proxyChainGenericArgs = '<\$Result>';
+      proxyChainGenericArgs = proxyChainGenericArgsWithoutConstraints = '<\$Result>';
     } else {
-      final int lastGreaterThanIndex = _classTypeParametersSource.lastIndexOf('>');
+      int lastGreaterThanIndex = _classTypeParametersSource.lastIndexOf('>');
       proxyChainGenericArgs =
           '${_classTypeParametersSource.substring(0, lastGreaterThanIndex)}, \$Result>';
+
+      lastGreaterThanIndex = _classTypeParametersWithoutConstraints.lastIndexOf('>');
+      proxyChainGenericArgsWithoutConstraints =
+          '${_classTypeParametersWithoutConstraints.substring(0, lastGreaterThanIndex)}, \$Result>';
     }
 
-    await _writeCopyWithProxyChainClass(proxyChainGenericArgs: proxyChainGenericArgs);
-    await _writeCopyWithProxyChainImplClass(proxyChainGenericArgs: proxyChainGenericArgs);
+    await _writeCopyWithProxyChainClass(
+      proxyChainGenericArgs: proxyChainGenericArgs,
+      proxyChainGenericArgsWithoutConstraints: proxyChainGenericArgsWithoutConstraints,
+    );
+    await _writeCopyWithProxyChainImplClass(
+      proxyChainGenericArgs: proxyChainGenericArgs,
+      proxyChaingenericArgsWithoutConstraints: proxyChainGenericArgsWithoutConstraints,
+    );
   }
 }

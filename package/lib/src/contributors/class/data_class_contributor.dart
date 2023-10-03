@@ -12,9 +12,7 @@ import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:data_class_plugin/src/visitors/visitors.dart';
 
-class DataClassAssistContributor extends Object
-    with AssistContributorMixin, RelativeFilePathMixin
-    implements AssistContributor {
+class DataClassAssistContributor extends AssistContributorMixin with RelativeFilePathMixin {
   DataClassAssistContributor(
     this.targetFilePath, {
     DataClassPluginOptions? pluginOptions,

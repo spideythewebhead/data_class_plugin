@@ -14,9 +14,8 @@ import 'package:data_class_plugin/src/mixins.dart';
 import 'package:data_class_plugin/src/options/data_class_plugin_options.dart';
 import 'package:tachyon/tachyon.dart';
 
-class EnumAnnotationAssistContributor extends Object
-    with AssistContributorMixin, EnumAstVisitorMixin, RelativeFilePathMixin
-    implements AssistContributor {
+class EnumAnnotationAssistContributor extends AssistContributorMixin
+    with EnumAstVisitorMixin, RelativeFilePathMixin {
   EnumAnnotationAssistContributor(this.targetFilePath);
 
   @override

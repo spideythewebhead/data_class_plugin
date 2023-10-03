@@ -10,9 +10,8 @@ import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class EnumToJsonAssistContributor extends Object
-    with AssistContributorMixin, EnumAstVisitorMixin, RelativeFilePathMixin
-    implements AssistContributor {
+class EnumToJsonAssistContributor extends AssistContributorMixin
+    with EnumAstVisitorMixin, RelativeFilePathMixin {
   EnumToJsonAssistContributor(this.targetFilePath);
 
   @override

@@ -10,9 +10,8 @@ import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
 import 'package:data_class_plugin/src/mixins.dart';
 
-class ShorthandConstructorAssistContributor extends Object
-    with AssistContributorMixin, ClassAstVisitorMixin
-    implements AssistContributor {
+class ShorthandConstructorAssistContributor extends AssistContributorMixin
+    with ClassAstVisitorMixin {
   ShorthandConstructorAssistContributor(this.filePath);
 
   final String filePath;
