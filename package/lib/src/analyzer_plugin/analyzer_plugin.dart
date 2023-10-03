@@ -1,12 +1,17 @@
 import 'package:analyzer/dart/analysis/analysis_context.dart' as analyzer;
+import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/file_system/file_system.dart' as analyzer;
 import 'package:analyzer_plugin/plugin/assist_mixin.dart';
 import 'package:analyzer_plugin/plugin/plugin.dart';
+import 'package:analyzer_plugin/protocol/protocol_generated.dart';
+// Workaround until DartAssistsMixin can be actually used as a mixin
+// ignore: implementation_imports
+import 'package:analyzer_plugin/src/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 
-class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin {
+class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, WorkaroundDartAssistsMixin {
   DcpAnalyzerPlugin(
     final analyzer.ResourceProvider resourceProvider,
   ) : super(resourceProvider: resourceProvider);
@@ -56,4 +61,14 @@ class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, DartAssistsMixin
   // void onError(Object exception, StackTrace stackTrace) {
   // _logger.exception(exception, stackTrace);
   // }
+}
+
+// TODO(): Remove once [DartAssistsMixin] can be used
+abstract mixin class WorkaroundDartAssistsMixin implements AssistsMixin {
+  @override
+  Future<AssistRequest> getAssistRequest(EditGetAssistsParams parameters) async {
+    final String path = parameters.file;
+    final ResolvedUnitResult result = await getResolvedUnitResult(path);
+    return DartAssistRequestImpl(resourceProvider, parameters.offset, parameters.length, result);
+  }
 }
