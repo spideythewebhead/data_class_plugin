@@ -56,7 +56,8 @@ class CopyWithGenerator implements Generator {
           !dartType.isUri &&
           !dartType.isDateTime &&
           !dartType.isDuration) {
-        final ClassOrEnumDeclarationMatch? match = await _classDeclarationFinder(dartType.name);
+        final FinderDeclarationMatch<NamedCompilationUnitMember>? match =
+            await _classDeclarationFinder(dartType.name);
 
         final NamedCompilationUnitMember? node = match?.node;
         if (match != null && node is ClassDeclaration && node.hasDataClassAnnotation) {
@@ -125,7 +126,8 @@ class CopyWithGenerator implements Generator {
           !dartType.isUri &&
           !dartType.isDateTime &&
           !dartType.isDuration) {
-        final ClassOrEnumDeclarationMatch? match = await _classDeclarationFinder(dartType.name);
+        final FinderDeclarationMatch<NamedCompilationUnitMember>? match =
+            await _classDeclarationFinder(dartType.name);
 
         final NamedCompilationUnitMember? node = match?.node;
         if (match != null && node is ClassDeclaration && node.hasDataClassAnnotation) {

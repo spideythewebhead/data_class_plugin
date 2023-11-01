@@ -224,7 +224,7 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       // as it would not make sense to have copyWith for super class and not a subclass
       if (classDeclaration.extendsClause?.superclass != null) {
         final String superClassName = classDeclaration.extendsClause!.superclass.name2.lexeme;
-        final ClassOrEnumDeclarationMatch? superClassMatch =
+        final FinderDeclarationMatch<NamedCompilationUnitMember>? superClassMatch =
             await declarationFinder.findClassOrEnum(superClassName);
         final NamedCompilationUnitMember? superClassDeclaration = superClassMatch?.node;
 

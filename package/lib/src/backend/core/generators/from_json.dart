@@ -50,7 +50,7 @@ class FromJsonGenerator implements Generator {
 
         final String className = annotation.name.name;
         final NamedCompilationUnitMember? node = await _classOrEnumDeclarationFinder(className)
-            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
+            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
 
         // handle JsonConverter interface implementer
         if (node is ClassDeclaration) {
@@ -199,7 +199,7 @@ class FromJsonGenerator implements Generator {
 
     final NamedCompilationUnitMember? typeDeclarationNode =
         await _classOrEnumDeclarationFinder(dartType.name)
-            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
+            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
 
     if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasFactory('fromJson') ||
         typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasFactory('fromJson')) {

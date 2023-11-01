@@ -51,7 +51,7 @@ class ToJsonGenerator implements Generator {
 
         final String className = annotation.name.name;
         final NamedCompilationUnitMember? node = await _classDeclarationFinder(className)
-            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
+            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
 
         // handle JsonConverter interface implementer
         if (node is ClassDeclaration) {
@@ -166,7 +166,7 @@ class ToJsonGenerator implements Generator {
 
     final NamedCompilationUnitMember? typeDeclarationNode =
         await _classDeclarationFinder(dartType.name)
-            .then((ClassOrEnumDeclarationMatch? match) => match?.node);
+            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
 
     if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasMethod('toJson') ||
         typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasMethod('toJson')) {
