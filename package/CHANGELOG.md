@@ -1,3 +1,9 @@
+## 1.2.0
+
+- Bump tachyon version [(issue #353)](https://github.com/spideythewebhead/data_class_plugin/issues/353)
+- Update READMEM
+- Update example
+
 ## 1.1.0
 
 - Bump dependencies versions [(issue #347)](https://github.com/spideythewebhead/data_class_plugin/issues/347)

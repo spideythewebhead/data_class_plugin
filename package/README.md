@@ -100,10 +100,60 @@ These `code actions` are similar to the ones provide by the language - e.g. `wra
 1. Create a simple class, annotate it with `@DataClass()` and provide `abstract getter` fields for your model.
 
    ```dart
+   import 'package:data_class_plugin/data_class_plugin.dart';
+
    @DataClass()
    class User {
       String get id;
       String get username;
+   }
+   ```
+
+   Generated code:
+
+   ```dart
+   class _$UserImpl extends User {
+      _$UserImpl({
+         required this.id,
+         required this.username,
+      }) : super.ctor();
+
+      @override
+      final String id;
+
+      @override
+      final String username;
+
+      @override
+      bool operator ==(Object? other) {
+         return identical(this, other) ||
+            other is User &&
+                  runtimeType == other.runtimeType &&
+                  id == other.id &&
+                  username == other.username;
+      }
+
+      @override
+      int get hashCode {
+         return Object.hashAll(<Object?>[
+            runtimeType,
+            id,
+            username,
+         ]);
+      }
+
+      @override
+      String toString() {
+         String toStringOutput = 'User{<optimized out>}';
+         assert(() {
+            toStringOutput = 'User@<$hexIdentity>{id: $id, username: $username}';
+            return true;
+         }());
+         return toStringOutput;
+      }
+
+      @override
+      Type get runtimeType => User;
    }
    ```
 
