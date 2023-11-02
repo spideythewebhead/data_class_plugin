@@ -8,7 +8,7 @@
 [![Pub Publisher](https://img.shields.io/pub/publisher/data_class_plugin)](https://github.com/spideythewebhead)
 -->
 
-**Data Class Plugin** code generator powered by `Tachyon`.
+**Data Class Plugin** code generator powered by [Tachyon](https://pub.dev/packages/tachyon).
 
 ---
 

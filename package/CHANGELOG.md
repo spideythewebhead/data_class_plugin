@@ -1,7 +1,11 @@
+## 1.2.1
+
+- Lower meta dependency version and bump tachyon
+
 ## 1.2.0
 
 - Bump tachyon version [(issue #353)](https://github.com/spideythewebhead/data_class_plugin/issues/353)
-- Update READMEM
+- Update README
 - Update example
 
 ## 1.1.0
