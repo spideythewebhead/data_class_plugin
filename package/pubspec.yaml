@@ -15,12 +15,12 @@ dependencies:
   analyzer_plugin: ^0.11.3
   args: ^2.4.2
   dart_style: ^2.3.3
-  meta: ^1.10.0
+  meta: ^1.9.0
   yaml: ^3.1.2
   glob: ^2.1.2
   path: ^1.8.3
   file: ">=6.0.0 <8.0.0"
-  tachyon: ^0.2.0
+  tachyon: ^0.2.1
 
 dev_dependencies:
   lints: ^2.1.1
