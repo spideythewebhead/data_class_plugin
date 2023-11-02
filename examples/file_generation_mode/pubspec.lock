@@ -95,7 +95,7 @@ packages:
       path: "../../package"
       relative: true
     source: path
-    version: "1.2.0"
+    version: "1.2.1"
   file:
     dependency: transitive
     description:
