@@ -193,6 +193,22 @@ class FromJsonGenerator implements Generator {
     }
 
     if (dartType.isPrimitive) {
+      if (dartType.isDouble) {
+        if (dartType.isNullable) {
+          _codeWriter.write('($parentVariableName as num?)?.toDouble()');
+          return;
+        }
+        _codeWriter.write('($parentVariableName as num).toDouble()');
+        return;
+      }
+      if (dartType.isInt) {
+        if (dartType.isNullable) {
+          _codeWriter.write('($parentVariableName as num?)?.toInt()');
+          return;
+        }
+        _codeWriter.write('($parentVariableName as num).toInt()');
+        return;
+      }
       _codeWriter.write('$parentVariableName as ${dartType.fullTypeName}');
       return;
     }
