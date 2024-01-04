@@ -1,3 +1,7 @@
+## 1.2.2
+
+- Fix number parsing in "fromJson" [(issue #363)](https://github.com/spideythewebhead/data_class_plugin/issues/363)
+
 ## 1.2.1
 
 - Lower meta dependency version and bump tachyon
