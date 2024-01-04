@@ -23,7 +23,7 @@ class _$UserImpl extends User {
 
   factory _$UserImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$UserImpl(
-      id: json['_id'] as int,
+      id: (json['_id'] as num).toInt(),
       username: User._customUsernameFromJson(json['username'], json, 'username'),
       isVerified: json['is-verified'] as bool,
     );
