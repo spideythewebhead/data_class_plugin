@@ -169,16 +169,8 @@ class FromJsonGenerator implements Generator {
     await _parsePrimary(
       dartType: dartType,
       parentVariableName: parentVariableName,
+      defaultValue: defaultValue,
     );
-
-    if (dartType.isPrimitive && defaultValue != null) {
-      if (dartType.isNullable) {
-        _logger.warning('Declared a nullable type ${dartType.fullTypeName} with default');
-      } else {
-        _codeWriter.writeln('?');
-      }
-      _codeWriter.write(' ?? $defaultValue');
-    }
 
     _codeWriter.writeln(',');
   }
@@ -186,30 +178,47 @@ class FromJsonGenerator implements Generator {
   Future<void> _parsePrimary({
     required final TachyonDartType dartType,
     required final String parentVariableName,
+    required final Expression? defaultValue,
   }) async {
     if (dartType.isDynamic) {
       _codeWriter.writeln(parentVariableName);
       return;
     }
 
+    if (dartType.isDouble) {
+      if (defaultValue != null) {
+        _codeWriter.write('($parentVariableName as num?)?.toDouble() ?? $defaultValue');
+        return;
+      }
+      if (dartType.isNullable) {
+        _codeWriter.write('($parentVariableName as num?)?.toDouble()');
+        return;
+      }
+      _codeWriter.write('($parentVariableName as num).toDouble()');
+      return;
+    }
+
+    if (dartType.isInt) {
+      if (defaultValue != null) {
+        _codeWriter.write('($parentVariableName as num?)?.toInt() ?? $defaultValue');
+        return;
+      }
+      if (dartType.isNullable) {
+        _codeWriter.write('($parentVariableName as num?)?.toInt()');
+        return;
+      }
+      _codeWriter.write('($parentVariableName as num).toInt()');
+      return;
+    }
+
     if (dartType.isPrimitive) {
-      if (dartType.isDouble) {
-        if (dartType.isNullable) {
-          _codeWriter.write('($parentVariableName as num?)?.toDouble()');
-          return;
-        }
-        _codeWriter.write('($parentVariableName as num).toDouble()');
-        return;
-      }
-      if (dartType.isInt) {
-        if (dartType.isNullable) {
-          _codeWriter.write('($parentVariableName as num?)?.toInt()');
-          return;
-        }
-        _codeWriter.write('($parentVariableName as num).toInt()');
-        return;
-      }
       _codeWriter.write('$parentVariableName as ${dartType.fullTypeName}');
+      if (!dartType.isNullable && defaultValue != null) {
+        _codeWriter.write('?');
+      }
+      if (defaultValue != null) {
+        _codeWriter.write(' ?? $defaultValue');
+      }
       return;
     }
 
