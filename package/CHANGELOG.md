@@ -1,3 +1,8 @@
+## 1.3.0
+
+- Bump tachyon version [(issue #367)](https://github.com/spideythewebhead/data_class_plugin/issues/367)
+- Fix: fromJson generates wrong code if a number has default value [(issue #366)](https://github.com/spideythewebhead/data_class_plugin/issues/366)
+
 ## 1.2.2
 
 - Fix number parsing in "fromJson" [(issue #363)](https://github.com/spideythewebhead/data_class_plugin/issues/363)
