@@ -18,7 +18,7 @@ class _$RectangleImpl extends Rectangle {
   final double height;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is Rectangle &&
             runtimeType == other.runtimeType &&
@@ -145,7 +145,7 @@ class _$UserImpl extends User {
   final String username;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is User &&
             runtimeType == other.runtimeType &&
@@ -279,7 +279,7 @@ class _$SuperUserImpl extends SuperUser {
   final bool isEnabled;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is SuperUser &&
             runtimeType == other.runtimeType &&

@@ -25,7 +25,7 @@ class _$PostImpl extends Post {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is Post && runtimeType == other.runtimeType && id == other.id && title == other.title;
   }
@@ -188,7 +188,7 @@ class GetPostsResponseError extends GetPostsResponse {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is GetPostsResponseError && runtimeType == other.runtimeType;
   }
@@ -229,7 +229,7 @@ class GetPostsResponseOk extends GetPostsResponse {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is GetPostsResponseOk &&
             runtimeType == other.runtimeType &&

@@ -18,7 +18,7 @@ class _$UserImpl extends User {
   final String username;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is User &&
             runtimeType == other.runtimeType &&
@@ -144,7 +144,7 @@ class _$SuperUserImpl extends SuperUser {
   final String username;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is SuperUser &&
             runtimeType == other.runtimeType &&
@@ -306,7 +306,7 @@ class AsyncResultLoading<T> extends AsyncResult<T> {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is AsyncResultLoading<T> && runtimeType == other.runtimeType;
   }
@@ -338,7 +338,7 @@ class AsyncResultData<T> extends AsyncResult<T> {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is AsyncResultData<T> && runtimeType == other.runtimeType && data == other.data;
   }
@@ -374,7 +374,7 @@ class AsyncResultError<T> extends AsyncResult<T> {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is AsyncResultError<T> &&
             runtimeType == other.runtimeType &&
@@ -430,7 +430,7 @@ class UnionWithGenericConstraintsData<T extends User> extends UnionWithGenericCo
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is UnionWithGenericConstraintsData<T> &&
             runtimeType == other.runtimeType &&

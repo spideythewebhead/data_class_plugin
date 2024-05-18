@@ -26,7 +26,7 @@ class _$UserImpl extends User {
   final bool isVerified;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is User &&
             runtimeType == other.runtimeType &&
@@ -191,7 +191,7 @@ class _$CartImpl extends Cart {
   final List<Product> _products;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is Cart && runtimeType == other.runtimeType && deepEquality(products, other.products);
   }
@@ -294,7 +294,7 @@ class _$ProductImpl extends Product {
   final double price;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is Product &&
             runtimeType == other.runtimeType &&

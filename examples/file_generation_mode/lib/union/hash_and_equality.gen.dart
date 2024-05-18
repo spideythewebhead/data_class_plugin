@@ -50,7 +50,7 @@ class AsyncResultData extends AsyncResult {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is AsyncResultData && runtimeType == other.runtimeType && data == other.data;
   }
@@ -83,7 +83,7 @@ class AsyncResultListData extends AsyncResult {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is AsyncResultListData &&
             runtimeType == other.runtimeType &&
