@@ -26,7 +26,7 @@ class _$UserImpl extends User {
   final bool isVerified;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is User &&
             runtimeType == other.runtimeType &&

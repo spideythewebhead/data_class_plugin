@@ -58,7 +58,7 @@ class EqualsGenerator implements Generator {
     _codeWriter
       ..writeln()
       ..writeln('@override')
-      ..writeln('bool operator ==(Object? other) {')
+      ..writeln('bool operator ==(Object other) {')
       ..writeln(
           'return identical(this, other) || other is $_className$_classTypeParametersWithoutConstraints && runtimeType == other.runtimeType');
 

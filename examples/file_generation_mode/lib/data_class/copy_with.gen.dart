@@ -26,7 +26,7 @@ class _$UserImpl extends User {
   final bool isVerified;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is User &&
             runtimeType == other.runtimeType &&
@@ -193,7 +193,7 @@ class _$CompanyImpl extends Company {
   final User ceo;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is Company && runtimeType == other.runtimeType && id == other.id && ceo == other.ceo;
   }

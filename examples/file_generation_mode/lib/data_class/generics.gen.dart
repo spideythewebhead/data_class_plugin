@@ -14,7 +14,7 @@ class _$ValueWrapperImpl<T> extends ValueWrapper<T> {
   final T value;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is ValueWrapper<T> && runtimeType == other.runtimeType && value == other.value;
   }
@@ -116,7 +116,7 @@ class _$UserImpl extends User {
   final int id;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is User && runtimeType == other.runtimeType && id == other.id;
   }
@@ -217,7 +217,7 @@ class _$ValueWrapperWithGenericsConstraintsImpl<T extends User>
   final T value;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is ValueWrapperWithGenericsConstraints<T> &&
             runtimeType == other.runtimeType &&
@@ -325,7 +325,7 @@ class _$SuperUserImpl extends SuperUser {
   final int id;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is SuperUser && runtimeType == other.runtimeType && id == other.id;
   }

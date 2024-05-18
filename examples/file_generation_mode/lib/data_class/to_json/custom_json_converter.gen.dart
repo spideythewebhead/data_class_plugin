@@ -26,7 +26,7 @@ class _$LogRecordImpl extends LogRecord {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is LogRecord &&
             runtimeType == other.runtimeType &&

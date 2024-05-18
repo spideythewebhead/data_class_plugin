@@ -8,7 +8,7 @@ documentation: https://github.com/spideythewebhead/dart_data_class_plugin
 issue_tracker: https://github.com/spideythewebhead/dart_data_class_plugin/issues
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
+  sdk: ">=3.3.4 <4.0.0"
 
 dependencies:
   analyzer: ^6.2.0

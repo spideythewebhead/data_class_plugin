@@ -36,7 +36,7 @@ class _$UserImpl extends User {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is User &&
             runtimeType == other.runtimeType &&
@@ -210,7 +210,7 @@ class _$GetUsersResultImpl extends GetUsersResult {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is GetUsersResult &&
             runtimeType == other.runtimeType &&

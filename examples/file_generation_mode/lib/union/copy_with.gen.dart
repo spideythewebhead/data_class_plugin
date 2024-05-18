@@ -46,7 +46,7 @@ class AsyncResultError extends AsyncResult {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is AsyncResultError &&
             runtimeType == other.runtimeType &&

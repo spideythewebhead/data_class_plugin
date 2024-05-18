@@ -54,7 +54,7 @@ class HttpResponseOk<T> extends HttpResponse<T> {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is HttpResponseOk<T> &&
             runtimeType == other.runtimeType &&
@@ -93,7 +93,7 @@ class HttpResponseBadRequest<T> extends HttpResponse<T> {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is HttpResponseBadRequest<T> &&
             runtimeType == other.runtimeType &&

@@ -54,7 +54,7 @@ class _VideoInfoNetwork extends VideoInfo {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is _VideoInfoNetwork &&
             runtimeType == other.runtimeType &&
@@ -93,7 +93,7 @@ class _VideoInfoFile extends VideoInfo {
   }
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         other is _VideoInfoFile &&
             runtimeType == other.runtimeType &&
