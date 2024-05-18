@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:data_class_plugin/src/annotations/union_internal.dart';
@@ -211,8 +212,21 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
     required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
-    builder
-      ..writeln('/// Converts [${classElement.name}] to [Map] json')
-      ..writeln('Map<String, dynamic> toJson();');
+    final bool shouldAnnotateWithOverride = <InterfaceType>[
+      ...classElement.interfaces,
+      ...classElement.allSupertypes,
+    ].any((InterfaceType element) {
+      return element //
+          .methods
+          .any((MethodElement element) => element.name == 'toJson');
+    });
+
+    builder.writeln('/// Converts [${classElement.name}] to [Map] json');
+
+    if (shouldAnnotateWithOverride) {
+      builder.writeln('@override');
+    }
+
+    builder.writeln('Map<String, dynamic> toJson();');
   }
 }
