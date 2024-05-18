@@ -104,7 +104,7 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
             sourceRange: fromJsonSourceRange,
             fileEditBuilder: fileEditBuilder,
           );
-        } else if (fromJsonSourceRange != null) {
+        } else if (fromJsonSourceRange != null && pluginOptions.autoDeleteCodeFromAnnotation) {
           fileEditBuilder.addDeletion(fromJsonSourceRange);
         }
 
@@ -116,7 +116,7 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
             fileEditBuilder: fileEditBuilder,
             sourceRange: toJsonSourceRange,
           );
-        } else if (toJsonSourceRange != null) {
+        } else if (toJsonSourceRange != null && pluginOptions.autoDeleteCodeFromAnnotation) {
           fileEditBuilder.addDeletion(toJsonSourceRange);
         }
 

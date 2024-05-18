@@ -7,11 +7,15 @@ part of 'data_class_plugin_options.dart';
 
 class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
   const _$DataClassPluginOptionsImpl({
+    this.autoDeleteCodeFromAnnotation = false,
     this.json = const JsonOptions(),
     this.dataClass = const DataClassOptions(),
     this.$enum = const EnumOptions(),
     this.union = const UnionOptions(),
   }) : super.ctor();
+
+  @override
+  final bool autoDeleteCodeFromAnnotation;
 
   @override
   final JsonOptions json;
@@ -27,6 +31,7 @@ class _$DataClassPluginOptionsImpl extends DataClassPluginOptions {
 
   factory _$DataClassPluginOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$DataClassPluginOptionsImpl(
+      autoDeleteCodeFromAnnotation: json['auto_delete_code_from_annotation'] as bool? ?? false,
       json: json['json'] == null ? const JsonOptions() : JsonOptions.fromJson(json['json']),
       dataClass: json['data_class'] == null
           ? const DataClassOptions()
