@@ -26,7 +26,6 @@ class Union {
     this.unionJsonKey,
     this.unionFallbackJsonValue,
     this.unmodifiableCollections,
-    this.toJsonNamedKeyToFactoryName,
     this.when,
   });
 
@@ -66,33 +65,6 @@ class Union {
   final String? unionFallbackJsonValue;
 
   final bool? unmodifiableCollections;
-
-  /// Wraps the union fields into a new object with a key named after the factory
-  ///
-  /// ```
-  /// @Union()
-  /// class Result{
-  ///   factory Result.data(int value) = ResultData;
-  ///
-  ///   Map<String, dynamic> toJson();
-  /// }
-  /// ...
-  ///
-  /// // toJson call this produce
-  ///
-  /// {
-  ///   "data": {
-  ///     "value": value
-  ///   }
-  /// }
-  ///
-  /// instead of
-  ///
-  /// {
-  ///   "value": value
-  /// }
-  /// ```
-  final String? toJsonNamedKeyToFactoryName;
 
   final bool? when;
 }

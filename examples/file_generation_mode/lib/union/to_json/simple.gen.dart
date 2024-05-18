@@ -170,7 +170,9 @@ class GetPostsResponseError extends GetPostsResponse {
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{};
+    return <String, dynamic>{
+      'code': 'error',
+    };
   }
 
   @override
@@ -209,6 +211,7 @@ class GetPostsResponseOk extends GetPostsResponse {
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
+      'code': 'ok',
       'posts': <dynamic>[
         for (final Post i0 in posts) i0.toJson(),
       ],

@@ -179,6 +179,7 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           pluginOptions.dataClass.effectiveToJson(targetFileRelativePath)) {
         await ToJsonGenerator(
           codeWriter: codeWriter,
+          constructorName: '',
           fields: fields,
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: declarationFinder.findClassOrEnum,
@@ -389,15 +390,12 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
 
         if (unionAnnotationValueExtractor.getBool('toJson') ??
             pluginOptions.union.effectiveToJson(targetFileRelativePath)) {
-          final String? toJsonNamedKeyToFactoryName =
-              unionAnnotationValueExtractor.getString('toJsonNamedKeyToFactoryName');
           await ToJsonGenerator(
             codeWriter: codeWriter,
             fields: fields,
+            constructorName: ctor.name!.lexeme,
             jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
-            namedKeyToFactoryEntry: toJsonNamedKeyToFactoryName != null
-                ? "'$toJsonNamedKeyToFactoryName': '${ctor.name!.lexeme}'"
-                : null,
+            toJsonUnionKey: unionAnnotationValueExtractor.getString('unionJsonKey'),
             classDeclarationFinder: declarationFinder.findClassOrEnum,
             logger: logger,
           ).execute();
