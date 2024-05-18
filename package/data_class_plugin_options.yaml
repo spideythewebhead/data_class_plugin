@@ -1,3 +1,5 @@
+auto_delete_code_from_annotation: false
+
 json:
   # key_name_conventions glob match takes precedence over key_name_convention
   key_name_conventions:

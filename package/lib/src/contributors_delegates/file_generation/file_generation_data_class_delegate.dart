@@ -38,7 +38,6 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
             DataClassInternal.fromDartObject(dataClassElementAnnotation.computeConstantValue());
 
         final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
-        final SourceRange? copyWithSourceRange = classNode.members.copyWithSourceRange;
         final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
         final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
 
@@ -153,47 +152,35 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
 
         if (dataClassAnnotation.fromJson ??
             pluginOptions.dataClass.effectiveFromJson(relativeFilePath)) {
-          void createFromJson(DartEditBuilder builder) {
-            _createFromJson(
-              classElement: classElement,
-              builder: builder,
-            );
-          }
-
-          if (fromJsonSourceRange != null) {
-            fileEditBuilder.addReplacement(fromJsonSourceRange, createFromJson);
-          } else {
+          if (fromJsonSourceRange == null) {
             fileEditBuilder.addInsertion(
               classNode.rightBracket.offset,
-              createFromJson,
+              (DartEditBuilder builder) {
+                _createFromJson(
+                  classElement: classElement,
+                  builder: builder,
+                );
+              },
             );
           }
-        } else if (fromJsonSourceRange != null) {
+        } else if (fromJsonSourceRange != null && pluginOptions.autoDeleteCodeFromAnnotation) {
           fileEditBuilder.addDeletion(fromJsonSourceRange);
-        }
-
-        if (copyWithSourceRange != null) {
-          fileEditBuilder.addDeletion(copyWithSourceRange);
         }
 
         if (dataClassAnnotation.toJson ??
             pluginOptions.dataClass.effectiveToJson(relativeFilePath)) {
-          void createToJson(DartEditBuilder builder) {
-            _createToJson(
-              classElement: classElement,
-              builder: builder,
-            );
-          }
-
-          if (toJsonSourceRange != null) {
-            fileEditBuilder.addReplacement(toJsonSourceRange, createToJson);
-          } else {
+          if (toJsonSourceRange == null) {
             fileEditBuilder.addInsertion(
               classNode.rightBracket.offset,
-              createToJson,
+              (DartEditBuilder builder) {
+                _createToJson(
+                  classElement: classElement,
+                  builder: builder,
+                );
+              },
             );
           }
-        } else if (toJsonSourceRange != null) {
+        } else if (toJsonSourceRange != null && pluginOptions.autoDeleteCodeFromAnnotation) {
           fileEditBuilder.addDeletion(toJsonSourceRange);
         }
 

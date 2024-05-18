@@ -14,6 +14,7 @@ abstract class DataClassPluginOptions {
 
   /// Default constructor
   const factory DataClassPluginOptions({
+    bool autoDeleteCodeFromAnnotation,
     JsonOptions json,
     DataClassOptions dataClass,
     EnumOptions $enum,
@@ -23,6 +24,9 @@ abstract class DataClassPluginOptions {
   /// Creates an instance of [DataClassPluginOptions] from [json]
   factory DataClassPluginOptions.fromJson(Map<dynamic, dynamic> json) =
       _$DataClassPluginOptionsImpl.fromJson;
+
+  @DefaultValue(false)
+  bool get autoDeleteCodeFromAnnotation;
 
   @DefaultValue(JsonOptions())
   JsonOptions get json;
