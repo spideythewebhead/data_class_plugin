@@ -396,11 +396,18 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
-    builder
-      ..writeln()
-      ..writeln('/// Converts [${classElement.name}] to a [Map] json');
+    final bool shouldAnnotateWithOverride = <InterfaceType>[
+      ...classElement.interfaces,
+      ...classElement.allSupertypes,
+    ].any((InterfaceType element) {
+      return element //
+          .methods
+          .any((MethodElement element) => element.name == 'toJson');
+    });
 
-    if (classElement.supertype?.hasMethod('toJson') ?? false) {
+    builder.writeln('/// Converts [${classElement.name}] to a [Map] json');
+
+    if (shouldAnnotateWithOverride) {
       builder.writeln('@override');
     }
 
