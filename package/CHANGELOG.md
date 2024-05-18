@@ -1,3 +1,10 @@
+## 1.4.0
+
+- Remove nullable type in operator == [(issue #372)](https://github.com/spideythewebhead/data_class_plugin/issues/372)
+- Correctly annotate with @override toJson in data and union classes [(issue #375)](https://github.com/spideythewebhead/data_class_plugin/issues/375)
+- Add option not to automatically delete code that contradicts with annotation values [(issue #377)](https://github.com/spideythewebhead/data_class_plugin/issues/377)
+- "toJson" for unions now includes the "unionJsonKey" if available [(issue #379)](https://github.com/spideythewebhead/data_class_plugin/issues/379)
+
 ## 1.3.0
 
 - Bump tachyon version [(issue #367)](https://github.com/spideythewebhead/data_class_plugin/issues/367)
