@@ -1,3 +1,7 @@
+## 1.4.1
+
+- "fromJson" in union not respecting json.key_name_convention configuration [(issue #383)](https://github.com/spideythewebhead/data_class_plugin/issues/383)
+
 ## 1.4.0
 
 - Remove nullable type in operator == [(issue #372)](https://github.com/spideythewebhead/data_class_plugin/issues/372)
