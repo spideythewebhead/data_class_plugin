@@ -329,6 +329,7 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           classTypeParametersWithoutConstraints: classTypeParametersWithoutConstraints,
           factoriesWithRedirectedConstructors: factoriesWithRedirectedConstructors,
           unionAnnotationValueExtractor: unionAnnotationValueExtractor,
+          jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
         ).execute();
       }
 

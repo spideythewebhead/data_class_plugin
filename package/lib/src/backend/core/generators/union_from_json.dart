@@ -1,6 +1,7 @@
 import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/common/generator.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
+import 'package:data_class_plugin/src/typedefs.dart';
 import 'package:tachyon/tachyon.dart';
 
 class UnionFromJsonGenerator implements Generator {
@@ -11,12 +12,14 @@ class UnionFromJsonGenerator implements Generator {
     required final String classTypeParametersWithoutConstraints,
     required final List<ConstructorDeclaration> factoriesWithRedirectedConstructors,
     required final AnnotationValueExtractor unionAnnotationValueExtractor,
+    required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
   })  : _codeWriter = codeWriter,
         _className = className,
         _classTypeParametersSource = classTypeParametersSource,
         _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
         _factoriesWithRedirectedConstructors = factoriesWithRedirectedConstructors,
-        _unionAnnotationValueExtractor = unionAnnotationValueExtractor;
+        _unionAnnotationValueExtractor = unionAnnotationValueExtractor,
+        _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter;
 
   final CodeWriter _codeWriter;
   final String _className;
@@ -24,6 +27,7 @@ class UnionFromJsonGenerator implements Generator {
   final String _classTypeParametersWithoutConstraints;
   final List<ConstructorDeclaration> _factoriesWithRedirectedConstructors;
   final AnnotationValueExtractor _unionAnnotationValueExtractor;
+  final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
 
   @override
   void execute() {
@@ -58,7 +62,9 @@ class UnionFromJsonGenerator implements Generator {
       }
 
       if (unionJsonKeyValueAnnotations.isEmpty) {
-        _codeWriter.writeln("case '${ctor.name}':");
+        print(_jsonKeyNameConventionGetter(null));
+        _codeWriter
+            .writeln("case '${_jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme)}':");
       }
 
       _codeWriter.writeln(
