@@ -1,3 +1,8 @@
+## 1.5.0
+
+- Generate respective field in union classes when "unionJsonKey" is present [(issue #388)](https://github.com/spideythewebhead/data_class_plugin/issues/388)
+- Add option to drop nullable values in "toJson" [(issue #390)](https://github.com/spideythewebhead/data_class_plugin/issues/390)
+
 ## 1.4.1
 
 - "fromJson" in union not respecting json.key_name_convention configuration [(issue #383)](https://github.com/spideythewebhead/data_class_plugin/issues/383)
