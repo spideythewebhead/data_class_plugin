@@ -7,14 +7,12 @@ import 'package:tachyon/tachyon.dart';
 class ToJsonGenerator implements Generator {
   ToJsonGenerator({
     required final CodeWriter codeWriter,
-    required final String constructorName,
     required final List<DeclarationInfo> fields,
     required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required final ClassOrEnumDeclarationFinder classDeclarationFinder,
     final String? toJsonUnionKey,
     required final Logger logger,
   })  : _codeWriter = codeWriter,
-        _constructorName = constructorName,
         _fields = fields,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
         _classDeclarationFinder = classDeclarationFinder,
@@ -22,7 +20,6 @@ class ToJsonGenerator implements Generator {
         _logger = logger;
 
   final CodeWriter _codeWriter;
-  final String _constructorName;
   final List<DeclarationInfo> _fields;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
   final ClassOrEnumDeclarationFinder _classDeclarationFinder;
@@ -38,10 +35,11 @@ class ToJsonGenerator implements Generator {
       ..writeln('return <String, dynamic>{');
 
     if (_toJsonUnionKey != null &&
+        _toJsonUnionKey.trim().isNotEmpty &&
         !_fields.any((DeclarationInfo field) => field.name == _toJsonUnionKey)) {
       _codeWriter
         ..write("'$_toJsonUnionKey': ")
-        ..write("'${_jsonKeyNameConventionGetter(null).transform(_constructorName)}',");
+        ..write('$_toJsonUnionKey,');
     }
 
     for (final DeclarationInfo field in _fields) {

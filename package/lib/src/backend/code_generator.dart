@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:analyzer/dart/ast/token.dart';
+import 'package:analyzer/source/line_info.dart';
 import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/backend/core/generators/generators.dart';
 import 'package:data_class_plugin/src/backend/core/generators/union_from_json.dart';
@@ -179,7 +181,6 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           pluginOptions.dataClass.effectiveToJson(targetFileRelativePath)) {
         await ToJsonGenerator(
           codeWriter: codeWriter,
-          constructorName: '',
           fields: fields,
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: declarationFinder.findClassOrEnum,
@@ -334,6 +335,17 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
         ).execute();
       }
 
+      if (unionAnnotationValueExtractor.getString('unionJsonKey')?.trim().isEmpty == true) {
+        final Annotation annotation = classDeclaration.unionAnnotation!;
+        final String issueLocation = _buildIssueFileAndLineString(
+          startToken: annotation.beginToken,
+          isMatchingToken: (Token token) => token.lexeme == 'unionJsonKey',
+          buildInfo: buildInfo,
+        );
+
+        logger.warning('~ Provided empty "unionJsonKey" for class "$className" @ $issueLocation');
+      }
+
       for (final ConstructorDeclaration ctor in factoriesWithRedirectedConstructors) {
         final String generatedClassName = ctor.redirectedConstructor!.beginToken.lexeme;
 
@@ -377,6 +389,15 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           generateUnmodifiableCollections: generateUnmodifiableCollections,
         ).execute();
 
+        final String? unionJsonKey = unionAnnotationValueExtractor.getString('unionJsonKey');
+        if (unionJsonKey != null) {
+          codeWriter
+            ..write("final String code = '")
+            ..write(jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme))
+            ..writeln("';")
+            ..writeln();
+        }
+
         if (unionAnnotationValueExtractor.getBool('fromJson') ??
             pluginOptions.union.effectiveFromJson(targetFileRelativePath)) {
           await FromJsonGenerator(
@@ -395,7 +416,6 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           await ToJsonGenerator(
             codeWriter: codeWriter,
             fields: fields,
-            constructorName: ctor.name!.lexeme,
             jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
             toJsonUnionKey: unionAnnotationValueExtractor.getString('unionJsonKey'),
             classDeclarationFinder: declarationFinder.findClassOrEnum,
@@ -454,4 +474,28 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       }
     }
   }
+}
+
+String _buildIssueFileAndLineString({
+  required final Token startToken,
+  required final bool Function(Token token) isMatchingToken,
+  required final FileChangeBuildInfo buildInfo,
+}) {
+  Token? targetToken = startToken;
+  while (targetToken != null && !isMatchingToken(targetToken)) {
+    targetToken = targetToken.next;
+  }
+
+  final CharacterLocation? cl = targetToken != null
+      ? buildInfo.compilationUnit.lineInfo.getLocation(targetToken.offset)
+      : null;
+  final String relativePath = path.relative(
+    buildInfo.targetFilePath,
+    from: path.join(buildInfo.projectDirectoryPath, '..') /* preserve project folder name */,
+  );
+
+  return switch (cl) {
+    CharacterLocation() => '$relativePath:${cl.lineNumber}:${cl.columnNumber}',
+    null => relativePath,
+  };
 }

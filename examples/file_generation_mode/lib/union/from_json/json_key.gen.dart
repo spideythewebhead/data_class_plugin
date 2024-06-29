@@ -178,6 +178,8 @@ GetPostsResponse _$GetPostsResponseFromJson(Map<dynamic, dynamic> json) {
 class GetPostsResponseError extends GetPostsResponse {
   GetPostsResponseError() : super._();
 
+  final String code = 'error';
+
   factory GetPostsResponseError.fromJson(Map<dynamic, dynamic> json) {
     return GetPostsResponseError();
   }
@@ -217,6 +219,8 @@ class GetPostsResponseOk extends GetPostsResponse {
   final List<Post> _posts;
 
   final String authorName;
+
+  final String code = 'ok';
 
   factory GetPostsResponseOk.fromJson(Map<dynamic, dynamic> json) {
     return GetPostsResponseOk(

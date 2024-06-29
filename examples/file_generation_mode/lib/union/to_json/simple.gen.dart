@@ -168,10 +168,12 @@ extension $GetPostsResponse on GetPostsResponse {
 class GetPostsResponseError extends GetPostsResponse {
   GetPostsResponseError() : super._();
 
+  final String code = 'error';
+
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'code': 'error',
+      'code': code,
     };
   }
 
@@ -208,10 +210,12 @@ class GetPostsResponseOk extends GetPostsResponse {
   List<Post> get posts => List<Post>.unmodifiable(_posts);
   final List<Post> _posts;
 
+  final String code = 'ok';
+
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'code': 'ok',
+      'code': code,
       'posts': <dynamic>[
         for (final Post i0 in posts) i0.toJson(),
       ],
