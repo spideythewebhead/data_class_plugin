@@ -9,6 +9,7 @@ class _$JsonOptionsImpl extends JsonOptions {
   const _$JsonOptionsImpl({
     this.keyNameConvention,
     Map<String, List<String>> nameConventionGlobs = const <String, List<String>>{},
+    this.toJson = const ToJsonOptions(),
   })  : _nameConventionGlobs = nameConventionGlobs,
         super.ctor();
 
@@ -19,6 +20,9 @@ class _$JsonOptionsImpl extends JsonOptions {
   Map<String, List<String>> get nameConventionGlobs =>
       Map<String, List<String>>.unmodifiable(_nameConventionGlobs);
   final Map<String, List<String>> _nameConventionGlobs;
+
+  @override
+  final ToJsonOptions toJson;
 
   factory _$JsonOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
     return _$JsonOptionsImpl(
@@ -32,9 +36,38 @@ class _$JsonOptionsImpl extends JsonOptions {
                   for (final dynamic i1 in (e0.value as List<dynamic>)) i1 as String,
                 ],
             },
+      toJson:
+          json['to_json'] == null ? const ToJsonOptions() : ToJsonOptions.fromJson(json['to_json']),
     );
   }
 
   @override
   Type get runtimeType => JsonOptions;
+}
+
+class _$ToJsonOptionsImpl extends ToJsonOptions {
+  const _$ToJsonOptionsImpl({
+    Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
+  })  : _optionsConfig = optionsConfig,
+        super.ctor();
+
+  @override
+  Map<String, OptionConfig> get optionsConfig =>
+      Map<String, OptionConfig>.unmodifiable(_optionsConfig);
+  final Map<String, OptionConfig> _optionsConfig;
+
+  factory _$ToJsonOptionsImpl.fromJson(Map<dynamic, dynamic> json) {
+    return _$ToJsonOptionsImpl(
+      optionsConfig: json['options_config'] == null
+          ? const <String, OptionConfig>{}
+          : <String, OptionConfig>{
+              for (final MapEntry<dynamic, dynamic> e0
+                  in (json['options_config'] as Map<dynamic, dynamic>).entries)
+                e0.key as String: OptionConfig.fromJson(e0.value),
+            },
+    );
+  }
+
+  @override
+  Type get runtimeType => ToJsonOptions;
 }

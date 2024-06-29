@@ -10,12 +10,14 @@ class ToJsonGenerator implements Generator {
     required final List<DeclarationInfo> fields,
     required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required final ClassOrEnumDeclarationFinder classDeclarationFinder,
+    required final bool dropNullValues,
     final String? toJsonUnionKey,
     required final Logger logger,
   })  : _codeWriter = codeWriter,
         _fields = fields,
         _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
         _classDeclarationFinder = classDeclarationFinder,
+        _dropNullValues = dropNullValues,
         _toJsonUnionKey = toJsonUnionKey,
         _logger = logger;
 
@@ -24,6 +26,7 @@ class ToJsonGenerator implements Generator {
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
   final ClassOrEnumDeclarationFinder _classDeclarationFinder;
   final String? _toJsonUnionKey;
+  final bool _dropNullValues;
   final Logger _logger;
 
   @override
@@ -82,6 +85,10 @@ class ToJsonGenerator implements Generator {
           jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
       final TachyonDartType dartType = field.type?.customDartType ?? TachyonDartType.dynamic;
 
+      if (_dropNullValues && dartType.isNullable) {
+        _codeWriter.writeln('if ($fieldName != null)');
+      }
+
       _codeWriter.write("'$jsonFieldName': ");
 
       if (customJsonConverter != null) {
@@ -112,6 +119,9 @@ class ToJsonGenerator implements Generator {
   void _writeNullableParsingPrefix({
     required final String parentVariableName,
   }) {
+    if (_dropNullValues) {
+      return;
+    }
     _codeWriter.write('$parentVariableName == null ? null : ');
   }
 
@@ -174,7 +184,11 @@ class ToJsonGenerator implements Generator {
 
     if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasMethod('toJson') ||
         typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasMethod('toJson')) {
-      final String accessOperator = dartType.isNullable ? '?.' : '.';
+      final String accessOperator = switch (dartType.isNullable) {
+        true when _dropNullValues => '!.',
+        true => '?.',
+        false => '.',
+      };
       _codeWriter.writeln('$parentVariableName${accessOperator}toJson(),');
       return;
     }

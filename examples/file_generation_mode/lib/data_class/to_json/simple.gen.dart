@@ -30,7 +30,7 @@ class _$UserImpl extends User {
     return <String, dynamic>{
       'id': id,
       'username': username,
-      'email': email,
+      if (email != null) 'email': email,
       'isVerified': isVerified,
     };
   }

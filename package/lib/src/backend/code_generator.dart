@@ -185,6 +185,7 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: declarationFinder.findClassOrEnum,
           logger: logger,
+          dropNullValues: pluginOptions.json.toJson.effectiveDropNullValues(targetFileRelativePath),
         ).execute();
       }
 
@@ -420,6 +421,8 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
             toJsonUnionKey: unionAnnotationValueExtractor.getString('unionJsonKey'),
             classDeclarationFinder: declarationFinder.findClassOrEnum,
             logger: logger,
+            dropNullValues:
+                pluginOptions.json.toJson.effectiveDropNullValues(targetFileRelativePath),
           ).execute();
         }
 
