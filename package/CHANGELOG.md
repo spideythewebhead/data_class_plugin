@@ -1,3 +1,8 @@
+## 1.5.1
+
+- Fix code generation for "unionJsonKey" field [(issue #396)](https://github.com/spideythewebhead/data_class_plugin/issues/396)
+
+
 ## 1.5.0
 
 - Generate respective field in union classes when "unionJsonKey" is present [(issue #388)](https://github.com/spideythewebhead/data_class_plugin/issues/388)
