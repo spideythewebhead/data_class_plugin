@@ -289,7 +289,7 @@ To create a custom configuration you need to add a file named `data_class_plugin
    ```
 
    When `auto_delete_code_from_annotation` is `true` => `toJson` will be removed because is set as `false` in the `@DataClass`.
-   
+
    When `auto_delete_code_from_annotation` is `false` => `toJson` will be kept as it is even when `toJson` is set as `false` in the `@DataClass`. This allows to create custom `fromJson/toJson` implementations.
 
 1. `json`
@@ -332,6 +332,19 @@ json:
     <camel_case | snake_case | kebab_case | pascal_case>:
       - "a/glob/here"
       - "another/glob/here"
+
+  # Allows to configure "toJson" code generation
+  # If no config is provided, null values will be dropped by default
+  to_json:
+    options_config:
+      drop_null_values:
+        default: boolean # default value is there is no match in enabled or disabled lists
+        enabled: # list of globs
+          - "a/glob/here"
+          - "another/glob/here"
+        disabled: # list of globs
+          - "a/glob/here"
+          - "another/glob/here"
 
 data_class:
   options_config:

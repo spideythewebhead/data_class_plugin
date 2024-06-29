@@ -1,6 +1,12 @@
 # default config
 auto_delete_code_from_annotation: false
 
+json:
+  to_json:
+    options_config:
+      drop_null_values:
+        default: true
+
 data_class:
   options_config:
     # default config

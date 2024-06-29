@@ -49,6 +49,10 @@ extension OptionsGlobMatch on Map<String, OptionConfig> {
     return _effectiveValue('when', filePath, defaultValue);
   }
 
+  bool effectiveToJsonDropNullValues({required String filePath, required bool defaultValue}) {
+    return _effectiveValue('drop_null_values', filePath, defaultValue);
+  }
+
   bool _effectiveValue(
     String method,
     String filePath,
