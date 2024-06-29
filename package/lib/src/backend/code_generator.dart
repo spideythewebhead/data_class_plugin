@@ -392,11 +392,22 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
 
         final String? unionJsonKey = unionAnnotationValueExtractor.getString('unionJsonKey');
         if (unionJsonKey != null) {
-          codeWriter
-            ..write("final String code = '")
-            ..write(jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme))
-            ..writeln("';")
-            ..writeln();
+          final bool isFieldAlreadyDeclared =
+              fields.any((DeclarationInfo field) => field.name == unionJsonKey);
+          if (!isFieldAlreadyDeclared) {
+            final String? unionJsonKeyValue = AnnotationValueExtractor(ctor.metadata
+                    .getAllAnnotationsByType(AnnotationType.unionJsonKeyValue)
+                    .firstOrNull)
+                .getPositionedArgument(0)
+                ?.toSource();
+
+            codeWriter
+              ..write('final String $unionJsonKey = ')
+              ..write(unionJsonKeyValue ??
+                  "'${jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme)}'")
+              ..writeln(';')
+              ..writeln();
+          }
         }
 
         if (unionAnnotationValueExtractor.getBool('fromJson') ??
