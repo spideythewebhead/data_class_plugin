@@ -12,6 +12,7 @@ class UnionFromJsonGenerator implements Generator {
     required final String classTypeParametersWithoutConstraints,
     required final List<ConstructorDeclaration> factoriesWithRedirectedConstructors,
     required final AnnotationValueExtractor unionAnnotationValueExtractor,
+    required final Logger logger,
     required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
   })  : _codeWriter = codeWriter,
         _className = className,
@@ -19,7 +20,8 @@ class UnionFromJsonGenerator implements Generator {
         _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
         _factoriesWithRedirectedConstructors = factoriesWithRedirectedConstructors,
         _unionAnnotationValueExtractor = unionAnnotationValueExtractor,
-        _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter;
+        _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
+        _logger = logger;
 
   final CodeWriter _codeWriter;
   final String _className;
@@ -28,6 +30,7 @@ class UnionFromJsonGenerator implements Generator {
   final List<ConstructorDeclaration> _factoriesWithRedirectedConstructors;
   final AnnotationValueExtractor _unionAnnotationValueExtractor;
   final JsonKeyNameConventionGetter _jsonKeyNameConventionGetter;
+  final Logger _logger;
 
   @override
   void execute() {
@@ -62,7 +65,6 @@ class UnionFromJsonGenerator implements Generator {
       }
 
       if (unionJsonKeyValueAnnotations.isEmpty) {
-        print(_jsonKeyNameConventionGetter(null));
         _codeWriter
             .writeln("case '${_jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme)}':");
       }
@@ -72,8 +74,8 @@ class UnionFromJsonGenerator implements Generator {
     }
 
     if (unionFallbackJsonValue != null && defaultFallbackConstructor == null) {
-      print(
-          'WARNING: "unionFallbackJsonValue: $unionFallbackJsonValue" is not declared as UnionJsonKeyValue');
+      _logger.warning(
+          '"unionFallbackJsonValue: $unionFallbackJsonValue" is not declared as UnionJsonKeyValue');
     }
 
     _codeWriter.writeln('default:');
