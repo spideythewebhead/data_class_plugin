@@ -1,3 +1,8 @@
+## 1.5.2
+
+- Add support for json maps to support enum as key [(issue #100)](https://github.com/spideythewebhead/data_class_plugin/issues/100)
+- Bump tachyon [(issue #399)](https://github.com/spideythewebhead/data_class_plugin/issues/399)
+
 ## 1.5.1
 
 - Fix code generation for "unionJsonKey" field [(issue #396)](https://github.com/spideythewebhead/data_class_plugin/issues/396)
