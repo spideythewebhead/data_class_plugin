@@ -272,20 +272,46 @@ class FromJsonGenerator implements Generator {
     required final String parentVariableName,
     required final int depthIndex,
   }) async {
-    if (!dartType.typeArguments[0].isString) {
-      _logger.error(
-          'Key of type "${dartType.typeArguments[0].fullTypeName}" can not be used as a map key in json conversion');
-      return;
+    final TachyonDartType keyType = dartType.typeArguments[0];
+    String? keyFromJsonSuffix;
+
+    if (!keyType.isString) {
+      if (keyType.isNullable) {
+        _logger.error('Key can not be nullable. Given "${keyType.fullTypeName}".');
+        return;
+      }
+
+      final NamedCompilationUnitMember? typeDeclarationNode =
+          await _classOrEnumDeclarationFinder(keyType.name)
+              .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+
+      if (typeDeclarationNode is! EnumDeclaration) {
+        _logger.error(
+            'Map key type can only be "String" or an enum. Given "${keyType.fullTypeName}".');
+        return;
+      } else if (!typeDeclarationNode.hasFactory('fromJson')) {
+        _logger.error(
+            'Enum with name "${keyType.fullTypeName}" does not provide a "fromJson" constructor.');
+        return;
+      }
+
+      keyFromJsonSuffix = '${keyType.fullTypeName}.fromJson';
     }
 
     final String secondArgumentFullType = dartType.typeArguments[1].fullTypeName;
-    _codeWriter.write('<String, $secondArgumentFullType>{');
+    _codeWriter.write('<${keyType.fullTypeName}, $secondArgumentFullType>{');
 
     final String loopVariableName = 'e$depthIndex';
-    _codeWriter
-      ..writeln(
-          'for (final MapEntry<dynamic, dynamic> $loopVariableName in ($parentVariableName as Map<dynamic, dynamic>).entries)')
-      ..write('$loopVariableName.key as String: ');
+    _codeWriter.writeln(
+        'for (final MapEntry<dynamic, dynamic> $loopVariableName in ($parentVariableName as Map<dynamic, dynamic>).entries)');
+
+    if (keyFromJsonSuffix != null) {
+      _codeWriter
+        ..write('$keyFromJsonSuffix(')
+        ..write('$loopVariableName.key as String): ');
+    } else {
+      _codeWriter.write('$loopVariableName.key as String: ');
+    }
 
     await _parse(
       dartType: dartType.typeArguments[1],
