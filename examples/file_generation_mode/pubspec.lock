@@ -232,14 +232,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  rxdart:
-    dependency: transitive
-    description:
-      name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.27.7"
   shelf:
     dependency: transitive
     description:
@@ -324,10 +316,10 @@ packages:
     dependency: "direct dev"
     description:
       name: tachyon
-      sha256: a5ada9976a53bb923d2be93f1d9287602b3c3e3135ff028fdec51ed2f7af7893
+      sha256: f8b916bbb6ecf4165b2a24ccd1873c272c6262455cf37dd3403675b6094219b5
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.3.2"
   term_glyph:
     dependency: transitive
     description:
