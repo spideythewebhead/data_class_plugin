@@ -203,7 +203,7 @@ class ToJsonGenerator implements Generator {
         .writeln('jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),');
   }
 
-  bool _shouldSkipForCollection(final TachyonDartType originalDartType) {
+  bool _shouldSkipEncodingForCollection(final TachyonDartType originalDartType) {
     TachyonDartType dartType = originalDartType;
     while (true) {
       if (dartType.isList) {
@@ -223,7 +223,7 @@ class ToJsonGenerator implements Generator {
     required final int depthIndex,
     required final bool requiresBangOperator,
   }) async {
-    if (_shouldSkipForCollection(dartType)) {
+    if (_shouldSkipEncodingForCollection(dartType)) {
       _codeWriter.writeln(parentVariableName);
       return;
     }
@@ -257,13 +257,50 @@ class ToJsonGenerator implements Generator {
     required final int depthIndex,
     required final bool requiresBangOperator,
   }) async {
-    if (!dartType.typeArguments[0].isPrimitive) {
-      return;
-    }
+    final TachyonDartType keyType = dartType.typeArguments[0];
+    String? keyToStringSuffix;
 
-    if (_shouldSkipForCollection(dartType)) {
-      _codeWriter.writeln(parentVariableName);
-      return;
+    if (!keyType.isString) {
+      if (keyType.isNullable) {
+        _logger.error('Key can not be nullable. Given "${keyType.fullTypeName}".');
+        return;
+      }
+
+      final NamedCompilationUnitMember? typeDeclarationNode =
+          await _classDeclarationFinder(keyType.name)
+              .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+
+      if (typeDeclarationNode is! EnumDeclaration) {
+        _logger.error(
+            'Map key type can only be "String" or an enum. Given "${keyType.fullTypeName}".');
+        return;
+      }
+
+      for (final ClassMember member in typeDeclarationNode.members) {
+        if (member case MethodDeclaration method
+            when method.name.lexeme == 'toJson' &&
+                TachyonDartType.fromTypeAnnotation(method.returnType).isString) {
+          keyToStringSuffix = '.toJson()';
+          break;
+        }
+      }
+
+      if (keyToStringSuffix == null) {
+        final ClassMember? firstFinalStringField =
+            typeDeclarationNode.members.firstWhereOrNull((ClassMember member) {
+          return member is FieldDeclaration &&
+              member.fields.isFinal &&
+              TachyonDartType.fromTypeAnnotation(member.fields.type).isString;
+        });
+
+        if (firstFinalStringField is FieldDeclaration) {
+          keyToStringSuffix = '.${firstFinalStringField.fields.variables[0].name.lexeme}';
+        } else {
+          _logger.warning(
+              'Is recommended to provide a "toJson" method instead of using the default "name" field for enums.');
+          keyToStringSuffix = '.name';
+        }
+      }
     }
 
     if (dartType.isNullable) {
@@ -277,11 +314,11 @@ class ToJsonGenerator implements Generator {
     final String loopVariableName = 'e$depthIndex';
     _codeWriter
       ..writeln('for (final '
-          'MapEntry<String, ${dartType.typeArguments[1].fullTypeName}> '
+          'MapEntry<${keyType.fullTypeName}, ${dartType.typeArguments[1].fullTypeName}> '
           '$loopVariableName in $parentVariableName'
           '${requiresBangOperator ? '!' : ''}'
           '.entries)')
-      ..write('$loopVariableName.key: ');
+      ..write('$loopVariableName.key$keyToStringSuffix: ');
 
     await _encode(
       dartType: dartType.typeArguments[1],
