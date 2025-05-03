@@ -303,6 +303,8 @@ class ToJsonGenerator implements Generator {
       }
     }
 
+    keyToStringSuffix ??= '';
+
     if (dartType.isNullable) {
       _writeNullableParsingPrefix(
         parentVariableName: parentVariableName,
