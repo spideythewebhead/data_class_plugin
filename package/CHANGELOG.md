@@ -1,3 +1,7 @@
+## 1.5.3
+
+- Fix invalid toJson for maps when key is String [(issue #403)](https://github.com/spideythewebhead/data_class_plugin/issues/403)
+
 ## 1.5.2
 
 - Add support for json maps to support enum as key [(issue #100)](https://github.com/spideythewebhead/data_class_plugin/issues/100)
