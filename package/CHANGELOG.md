@@ -1,3 +1,7 @@
+## 1.6.0-dev.0
+
+- Update tachyon to version 0.4.0-dev.0
+
 ## 1.5.3
 
 - Fix invalid toJson for maps when key is String [(issue #403)](https://github.com/spideythewebhead/data_class_plugin/issues/403)
@@ -10,7 +14,6 @@
 ## 1.5.1
 
 - Fix code generation for "unionJsonKey" field [(issue #396)](https://github.com/spideythewebhead/data_class_plugin/issues/396)
-
 
 ## 1.5.0
 
