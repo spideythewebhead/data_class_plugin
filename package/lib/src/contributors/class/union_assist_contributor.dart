@@ -3,6 +3,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
+import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin.dart';
 import 'package:data_class_plugin/src/contributors/available_assists.dart';
 import 'package:data_class_plugin/src/contributors_delegates/code_generation_delegate.dart';
 import 'package:data_class_plugin/src/contributors_delegates/file_generation/file_generation_union_delegate.dart';
@@ -35,9 +36,14 @@ class UnionAssistContributor extends AssistContributorMixin with RelativeFilePat
     covariant DartAssistRequest request,
     AssistCollector collector,
   ) async {
-    assistRequest = request;
-    this.collector = collector;
-    await _generateUnion();
+    try {
+      assistRequest = request;
+      this.collector = collector;
+      await _generateUnion();
+    } catch (error, stackTrace) {
+      debugTcpSocket?.writeln(error.toString());
+      debugTcpSocket?.writeln(stackTrace.toString());
+    }
   }
 
   Future<void> _generateUnion() async {
@@ -45,8 +51,9 @@ class UnionAssistContributor extends AssistContributorMixin with RelativeFilePat
     final DataClassPluginOptions pluginOptions =
         _pluginOptions ?? await session.analysisContext.contextRoot.root.getPluginOptions();
 
-    final ClassCollectorAstVisitor visitor =
-        ClassCollectorAstVisitor(matcher: (ClassDeclaration node) => node.hasUnionAnnotation);
+    final ClassCollectorAstVisitor visitor = ClassCollectorAstVisitor(
+      matcher: (ClassDeclaration node) => node.hasUnionAnnotation,
+    );
     assistRequest.result.unit.visitChildren(visitor);
 
     if (visitor.matchedNodes.isEmpty) {

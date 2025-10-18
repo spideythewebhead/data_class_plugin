@@ -1,29 +1,11 @@
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/source/line_info.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/protocol/protocol_common.dart' as protocol;
 import 'package:data_class_plugin/src/annotations/constants.dart';
 import 'package:data_class_plugin/src/extensions/extensions.dart';
-
-extension ElementX on Element {
-  bool get hasDataClassAnnotation => dataClassAnnotation != null;
-  ElementAnnotation? get dataClassAnnotation => metadata.getAnnotation(AnnotationType.dataClass);
-
-  bool get hasUnionAnnotation => unionAnnotation != null;
-  ElementAnnotation? get unionAnnotation => metadata.getAnnotation(AnnotationType.union);
-
-  bool get hasEnumAnnotation => enumAnnotation != null;
-  ElementAnnotation? get enumAnnotation => metadata.getAnnotation(AnnotationType.enumeration);
-
-  bool get hasDefaultValueAnnotation => defaultValueAnnotation != null;
-  ElementAnnotation? get defaultValueAnnotation =>
-      metadata.getAnnotation(AnnotationType.defaultValue);
-
-  bool get hasJsonKeyAnnotation => jsonKeyAnnotation != null;
-  ElementAnnotation? get jsonKeyAnnotation => metadata.getAnnotation(AnnotationType.jsonKey);
-}
 
 extension ClassDeclarationX on ClassDeclaration {
   bool get hasDataClassAnnotation => dataClassAnnotation != null;
@@ -48,23 +30,32 @@ extension ElementAnnotationX on ElementAnnotation {
   bool get isDefaultValueAnnotation => isPluginAnnotation(AnnotationType.defaultValue);
 
   bool isPluginAnnotation(AnnotationType type) {
-    if (element == null) {
+    if (element2 == null) {
       return toSource().startsWith('@${type.name}(');
     } else {
-      return element?.displayName == type.name;
+      return element2?.displayName == type.name;
     }
   }
 }
 
-extension ElementAnnotationListX on List<ElementAnnotation> {
+extension MetadataX on Metadata {
   ElementAnnotation? getAnnotation(AnnotationType annotation) {
-    return firstWhereOrNull((ElementAnnotation a) => a.element?.displayName == annotation.name);
+    return annotations.firstWhereOrNull(
+      (ElementAnnotation a) => a.element2?.displayName == annotation.name,
+    );
   }
 
   ElementAnnotation? get dataClassAnnotation => getAnnotation(AnnotationType.dataClass);
   ElementAnnotation? get enumAnnotation => getAnnotation(AnnotationType.enumeration);
   ElementAnnotation? get unionAnnotation => getAnnotation(AnnotationType.union);
   ElementAnnotation? get defaultValueAnnotation => getAnnotation(AnnotationType.defaultValue);
+  ElementAnnotation? get jsonKeyAnnotation => getAnnotation(AnnotationType.jsonKey);
+
+  bool get hasDataClassAnnotation => dataClassAnnotation != null;
+  bool get hasUnionAnnotation => unionAnnotation != null;
+  bool get hasEnumAnnotation => enumAnnotation != null;
+  bool get hasDefaultValueAnnotation => defaultValueAnnotation != null;
+  bool get hasJsonKeyAnnotation => jsonKeyAnnotation != null;
 }
 
 extension AnnotationNodeListX on NodeList<Annotation> {
@@ -73,13 +64,16 @@ extension AnnotationNodeListX on NodeList<Annotation> {
   }
 
   List<Annotation> getAllAnnotationsByType(AnnotationType annotation) {
-    return where((Annotation a) => a.name.name == annotation.name).toList(growable: false);
+    return where(
+      (Annotation a) => a.name.name == annotation.name,
+    ).toList(growable: false);
   }
 
   List<Annotation> get annotations {
     return where((Annotation annotation) {
-      return AnnotationType.values
-              .firstWhereOrNull((AnnotationType element) => annotation.name.name == element.name) !=
+      return AnnotationType.values.firstWhereOrNull(
+            (AnnotationType element) => annotation.name.name == element.name,
+          ) !=
           null;
     }).toList(growable: false);
   }
@@ -110,7 +104,9 @@ extension AnnotationX on Annotation {
     required final String path,
     required final ResolvedUnitResult unit,
   }) {
-    final CharacterLocation characterLocation = unit.lineInfo.getLocation(offset);
+    final CharacterLocation characterLocation = unit.lineInfo.getLocation(
+      offset,
+    );
 
     return protocol.Location(
       path,

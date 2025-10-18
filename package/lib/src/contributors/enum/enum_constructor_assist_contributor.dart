@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -38,63 +38,65 @@ class EnumConstructorAssistContributor extends AssistContributorMixin
 
   Future<void> _generateConstructor() async {
     final EnumDeclaration? enumNode = findEnumDeclaration();
-    if (enumNode == null || enumNode.declaredElement == null || enumNode.semicolon == null) {
+    if (enumNode == null ||
+        enumNode.declaredFragment?.element == null ||
+        enumNode.semicolon == null) {
       return;
     }
 
-    final EnumElement enumElement = enumNode.declaredElement!;
-    if (enumElement.hasEnumAnnotation) {
+    final EnumElement2 enumElement = enumNode.declaredFragment!.element;
+    if (enumElement.metadata2.hasEnumAnnotation) {
       return;
     }
 
     final SourceRange? copyWithSourceRange = enumNode.members.defaultConstructorSourceRange;
-    final List<FieldElement> finalFieldsElements = enumElement.fields.where((FieldElement field) {
-      return field.isFinal && field.isPublic && !field.hasInitializer;
-    }).toList(growable: false);
+    final List<FieldElement2> finalFieldsElements = enumElement.fields2
+        .where(
+          (FieldElement2 field) =>
+              field.isFinal /* && field.isPublic - crashes / freezes and blocks execution */ &&
+              !field.hasInitializer,
+        )
+        .toList(growable: false);
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
-    await changeBuilder.addDartFileEdit(
-      targetFilePath,
-      (DartFileEditBuilder fileEditBuilder) {
-        void writerConstructor(DartEditBuilder builder) {
-          writeConstructor(
-            enumElement: enumElement,
-            finalFieldsElements: finalFieldsElements,
-            builder: builder,
-          );
-        }
+    await changeBuilder.addDartFileEdit(targetFilePath, (
+      DartFileEditBuilder fileEditBuilder,
+    ) {
+      void writerConstructor(DartEditBuilder builder) {
+        writeConstructor(
+          enumElement: enumElement,
+          finalFieldsElements: finalFieldsElements,
+          builder: builder,
+        );
+      }
 
-        if (copyWithSourceRange != null) {
-          fileEditBuilder.addReplacement(
-            copyWithSourceRange,
-            writerConstructor,
-          );
-        } else {
-          fileEditBuilder.addInsertion(
-            enumNode.semicolon!.charOffset + 1,
-            writerConstructor,
-          );
-        }
+      if (copyWithSourceRange != null) {
+        fileEditBuilder.addReplacement(copyWithSourceRange, writerConstructor);
+      } else {
+        fileEditBuilder.addInsertion(
+          enumNode.semicolon!.charOffset + 1,
+          writerConstructor,
+        );
+      }
 
-        fileEditBuilder.format(SourceRange(enumNode.offset, enumNode.length));
-      },
-    );
+      fileEditBuilder.format(SourceRange(enumNode.offset, enumNode.length));
+    });
 
     addAssist(AvailableAssists.enumConstructor, changeBuilder);
   }
 
   static void writeConstructor({
-    required final EnumElement enumElement,
-    required final List<FieldElement> finalFieldsElements,
+    required final EnumElement2 enumElement,
+    required final List<FieldElement2> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Default constructor of [${enumElement.name}]')
-      ..writeln('const ${enumElement.name}(');
+      ..writeln('/// Default constructor of [${enumElement.name3}]')
+      ..writeln('const ${enumElement.name3}(');
 
-    for (final FieldElement field in finalFieldsElements) {
-      builder.write('this.${field.name}');
+    for (final FieldElement2 field in finalFieldsElements) {
+      builder.write('this.${field.name3}');
       if (finalFieldsElements.length > 1) {
         builder.writeln(',');
       }

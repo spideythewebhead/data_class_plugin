@@ -10,17 +10,16 @@ import 'package:test/test.dart';
 )
 class _TestModel {
   /// Shorthand constructor
-  _TestModel({
-    required this.dateTime,
-  });
+  _TestModel({required this.dateTime});
 
   final DateTime dateTime;
 
   /// Creates an instance of [_TestModel] from [json]
   factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
-      dateTime: jsonConverterRegistrant.find(DateTime).fromJson(json['dateTime'], json, 'dateTime')
-          as DateTime,
+      dateTime:
+          jsonConverterRegistrant.find(DateTime).fromJson(json['dateTime'], json, 'dateTime')
+              as DateTime,
     );
   }
 
@@ -34,10 +33,7 @@ class _TestModel {
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      dateTime,
-    ]);
+    return Object.hashAll(<Object?>[runtimeType, dateTime]);
   }
 
   /// Compares [this] with [other] on identity, class type, and properties
@@ -51,7 +47,9 @@ class _TestModel {
 void main() {
   group('Datetime json converter', () {
     final DateTime dateTime = DateTime(2022, 10, 4, 3, 20, 232);
-    final Map<String, dynamic> json = <String, dynamic>{'dateTime': dateTime.toIso8601String()};
+    final Map<String, dynamic> json = <String, dynamic>{
+      'dateTime': dateTime.toIso8601String(),
+    };
     final _TestModel testModel = _TestModel(dateTime: dateTime);
 
     test('toJson', () => expect(testModel.toJson(), json));

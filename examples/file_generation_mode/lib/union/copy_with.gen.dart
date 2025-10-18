@@ -97,16 +97,18 @@ class _AsyncResultErrorCopyWithProxyImpl implements _AsyncResultErrorCopyWithPro
   }) {
     return AsyncResultError(
       error ?? _value.error,
-      stackTrace:
-          identical(stackTrace, const Object()) ? _value.stackTrace : (stackTrace as StackTrace?),
+      stackTrace: identical(stackTrace, const Object())
+          ? _value.stackTrace
+          : (stackTrace as StackTrace?),
     );
   }
 }
 
 sealed class $AsyncResultErrorCopyWithProxyChain<$Result> {
   factory $AsyncResultErrorCopyWithProxyChain(
-          final AsyncResultError value, final $Result Function(AsyncResultError update) chain) =
-      _AsyncResultErrorCopyWithProxyChainImpl<$Result>;
+    final AsyncResultError value,
+    final $Result Function(AsyncResultError update) chain,
+  ) = _AsyncResultErrorCopyWithProxyChainImpl<$Result>;
 
   $Result error(Object newValue);
 
@@ -139,11 +141,14 @@ class _AsyncResultErrorCopyWithProxyChainImpl<$Result>
     final Object? error,
     final Object? stackTrace = const Object(),
   }) {
-    return _chain(AsyncResultError(
-      error ?? _value.error,
-      stackTrace:
-          identical(stackTrace, const Object()) ? _value.stackTrace : (stackTrace as StackTrace?),
-    ));
+    return _chain(
+      AsyncResultError(
+        error ?? _value.error,
+        stackTrace: identical(stackTrace, const Object())
+            ? _value.stackTrace
+            : (stackTrace as StackTrace?),
+      ),
+    );
   }
 }
 

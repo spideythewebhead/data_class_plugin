@@ -26,8 +26,9 @@ void main() async {
       offsetProvider: (CompilationUnit unit) {
         // we need the offset to be between a class declaration
         // so we find the first class node, because of the import statement
-        final ClassAstVisitor classVisitor =
-            ClassAstVisitor(matcher: (ClassDeclaration node) => true);
+        final ClassAstVisitor classVisitor = ClassAstVisitor(
+          matcher: (ClassDeclaration node) => true,
+        );
         unit.visitChildren(classVisitor);
         return classVisitor.classNode?.offset ?? -1;
       },

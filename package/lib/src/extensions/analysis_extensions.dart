@@ -1,7 +1,7 @@
 import 'dart:core';
 
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
@@ -23,11 +23,11 @@ extension DartTypeX on DartType {
   }
 
   bool get isDateTime {
-    return element!.name == 'DateTime';
+    return element3?.name3 == 'DateTime';
   }
 
   bool get isUri {
-    return element!.name == 'Uri';
+    return element3?.name3 == 'Uri';
   }
 
   bool get isJsonSupported {
@@ -40,15 +40,13 @@ extension DartTypeX on DartType {
         alias == null;
   }
 
-  String typeStringValue({
-    required List<LibraryImportElement> enclosingImports,
-  }) {
+  String typeStringValue({required List<LibraryImport> enclosingImports}) {
     final StringBuffer buffer = StringBuffer();
 
     void visit(DartType type) {
       if (type is InterfaceType && type.typeArguments.isNotEmpty) {
         buffer
-          ..write(type.element.name)
+          ..write(type.element3.name3)
           ..write('<');
 
         for (int i = 0; i < type.typeArguments.length; i += 1) {
@@ -67,15 +65,15 @@ extension DartTypeX on DartType {
         return;
       }
 
-      String qualifiedName = type.element!.name!;
+      String qualifiedName = type.element3!.name3!;
 
       // adds any potential prefixes on the class name
       // e.g
       // import 'user.dart' as u;
       // List<u.User>
-      for (final LibraryImportElement import in enclosingImports) {
-        if (import.prefix != null && import.importedLibrary?.id == type.element!.library?.id) {
-          qualifiedName = '${import.prefix!.element.name}.$qualifiedName';
+      for (final LibraryImport import in enclosingImports) {
+        if (import.prefix2 != null && import.importedLibrary2?.id == type.element3!.library2?.id) {
+          qualifiedName = '${import.prefix2!.element.name3}.$qualifiedName';
           break;
         }
       }
@@ -91,19 +89,17 @@ extension DartTypeX on DartType {
   }
 }
 
-extension ExecutableElementX<T> on ExecutableElement {
-  String fullyQualifiedName({
-    required List<LibraryImportElement> enclosingImports,
-  }) {
-    String qualifiedName = name;
+extension ExecutableElementX<T> on ExecutableElement2 {
+  String fullyQualifiedName({required List<LibraryImport> enclosingImports}) {
+    String qualifiedName = name3!;
 
-    if (enclosingElement.nameLength > 0) {
-      qualifiedName = '${enclosingElement.name!}.$qualifiedName';
+    if ((enclosingElement2?.name3?.length ?? 0) > 0) {
+      qualifiedName = '${enclosingElement2!.name3}.$qualifiedName';
     }
 
-    for (final LibraryImportElement import in enclosingImports) {
-      if (import.prefix != null && import.importedLibrary?.id == library.id) {
-        qualifiedName = '${import.prefix!.element.name}.$qualifiedName';
+    for (final LibraryImport import in enclosingImports) {
+      if (import.prefix2 != null && import.importedLibrary2?.id == library2.id) {
+        qualifiedName = '${import.prefix2!.element.name3}.$qualifiedName';
         break;
       }
     }
@@ -146,54 +142,65 @@ extension NodeListX on NodeList<ClassMember> {
       getSourceRangeForMethod(DataClassAnnotationArg.$toString.name);
 }
 
-extension InterfaceElementX on InterfaceElement {
-  ConstructorElement? get defaultConstructor {
-    return constructors.firstWhereOrNull((ConstructorElement ctor) => ctor.name.isEmpty);
+extension InterfaceElementX on InterfaceElement2 {
+  ConstructorElement2? get defaultConstructor {
+    return constructors2.firstWhereOrNull(
+      (ConstructorElement2 ctor) => ctor.name3 == 'new',
+    );
   }
 
-  List<FieldElement> get dataClassFinalFields {
-    return <FieldElement>[
-      for (final FieldElement field in fields)
-        if (field.isFinal && field.isPublic && !field.hasInitializer) field,
+  List<FieldElement2> get dataClassFinalFields {
+    return <FieldElement2>[
+      for (final FieldElement2 field in fields2)
+        if (field.isFinal /* && field.isPublic - crashes / freezes and blocks execution */ &&
+            !field.hasInitializer)
+          field,
     ];
   }
 
-  List<FieldElement> get chainSuperClassDataClassFinalFields {
-    final List<FieldElement> fields = <FieldElement>[];
+  List<FieldElement2> get chainSuperClassDataClassFinalFields {
+    final List<FieldElement2> fields = <FieldElement2>[];
 
-    ClassElement? superClassClassElement = supertype?.classElement;
+    if (supertype?.element3 is! ClassElement2) {
+      return fields;
+    }
+
+    ClassElement2? superClassClassElement = supertype!.element3 as ClassElement2;
     while (superClassClassElement != null) {
       fields.addAll(superClassClassElement.dataClassFinalFields);
-      superClassClassElement = superClassClassElement.supertype?.classElement;
+      if (superClassClassElement.supertype?.element3 case ClassElement2 classElement) {
+        superClassClassElement = classElement;
+      }
     }
 
     return fields;
   }
 
-  List<FieldElement> get jsonSupportedFields {
-    return <FieldElement>[
-      for (final FieldElement field in fields)
-        if (field.isFinal && field.isPublic && field.type.isJsonSupported) field,
+  List<FieldElement2> get jsonSupportedFields {
+    return <FieldElement2>[
+      for (final FieldElement2 field in fields2)
+        if (field.isFinal /* && field.isPublic - crashes / freezes and blocks execution */ &&
+            field.type.isJsonSupported)
+          field,
     ];
   }
 }
 
-extension ConstructorElementX on ConstructorElement {
-  List<ParameterElement> get dataClassSuperFields {
-    return <ParameterElement>[
-      for (final ParameterElement param in parameters)
-        if (param.isNamed && param.isSuperFormal) param
+extension ConstructorElement2X on ConstructorElement2 {
+  List<FormalParameterElement> get dataClassSuperFields {
+    return <FormalParameterElement>[
+      for (final FormalParameterElement param in formalParameters)
+        if (param.isNamed && param.isSuperFormal) param,
     ];
   }
 }
 
 extension InterfaceTypeX on InterfaceType {
-  ClassElement? get classElement {
-    return element is ClassElement ? element as ClassElement : null;
-  }
-
   bool hasMethod(String methodName) {
-    return null != methods.firstWhereOrNull((MethodElement member) => member.name == methodName);
+    return null !=
+        methods2.firstWhereOrNull(
+          (MethodElement2 member) => member.name3 == methodName,
+        );
   }
 }
 

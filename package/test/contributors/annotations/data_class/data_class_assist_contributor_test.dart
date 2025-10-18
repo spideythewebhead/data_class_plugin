@@ -21,8 +21,9 @@ final String _contributorsPath = path.join(
 
 void main() async {
   final List<InOutFilesPair> testFiles = getTestFiles(_contributorsPath);
-  final DataClassPluginOptions pluginOptions =
-      DataClassPluginOptions.fromFile(File(path.join('test', 'data_class_plugin_options.yaml')));
+  final DataClassPluginOptions pluginOptions = DataClassPluginOptions.fromFile(
+    File(path.join('test', 'data_class_plugin_options.yaml')),
+  );
 
   group('DataClass annotation contributor', () {
     testFiles.runContributorTests(
@@ -31,8 +32,11 @@ void main() async {
         // we need the offset to be between a class declaration
         // so we find the first class node, because of the import statement
         final ClassAstVisitor classVisitor = ClassAstVisitor(
-            matcher: (ClassDeclaration node) =>
-                node.declaredElement?.hasDataClassAnnotation ?? node.hasDataClassAnnotation);
+          matcher: (ClassDeclaration node) {
+            return node.declaredFragment?.element.metadata2.hasDataClassAnnotation ??
+                node.hasDataClassAnnotation;
+          },
+        );
         unit.visitChildren(classVisitor);
         return classVisitor.classNode?.offset ?? -1;
       },

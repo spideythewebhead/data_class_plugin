@@ -1,8 +1,6 @@
 part 'in_5_to_json.gen.dart';
 
-@Union(
-  toJson: true,
-)
+@Union(toJson: true)
 sealed class AsyncResult {
   const AsyncResult._();
 

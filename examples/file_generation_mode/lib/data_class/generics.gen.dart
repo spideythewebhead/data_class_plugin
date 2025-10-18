@@ -71,8 +71,9 @@ class _ValueWrapperCopyWithProxyImpl<T> implements _ValueWrapperCopyWithProxy<T>
 
 sealed class $ValueWrapperCopyWithProxyChain<T, $Result> {
   factory $ValueWrapperCopyWithProxyChain(
-          final ValueWrapper<T> value, final $Result Function(ValueWrapper<T> update) chain) =
-      _ValueWrapperCopyWithProxyChainImpl<T, $Result>;
+    final ValueWrapper<T> value,
+    final $Result Function(ValueWrapper<T> update) chain,
+  ) = _ValueWrapperCopyWithProxyChainImpl<T, $Result>;
 
   $Result value(T newValue);
 
@@ -97,9 +98,11 @@ class _ValueWrapperCopyWithProxyChainImpl<T, $Result>
   $Result call({
     final T? value,
   }) {
-    return _chain(_$ValueWrapperImpl<T>(
-      value: value ?? _value.value,
-    ));
+    return _chain(
+      _$ValueWrapperImpl<T>(
+        value: value ?? _value.value,
+      ),
+    );
   }
 }
 
@@ -197,9 +200,11 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
   $Result call({
     final int? id,
   }) {
-    return _chain(_$UserImpl(
-      id: id ?? _value.id,
-    ));
+    return _chain(
+      _$UserImpl(
+        id: id ?? _value.id,
+      ),
+    );
   }
 }
 
@@ -277,9 +282,9 @@ class _ValueWrapperWithGenericsConstraintsCopyWithProxyImpl<T extends User>
 
 sealed class $ValueWrapperWithGenericsConstraintsCopyWithProxyChain<T extends User, $Result> {
   factory $ValueWrapperWithGenericsConstraintsCopyWithProxyChain(
-          final ValueWrapperWithGenericsConstraints<T> value,
-          final $Result Function(ValueWrapperWithGenericsConstraints<T> update) chain) =
-      _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl<T, $Result>;
+    final ValueWrapperWithGenericsConstraints<T> value,
+    final $Result Function(ValueWrapperWithGenericsConstraints<T> update) chain,
+  ) = _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl<T, $Result>;
 
   $Result value(T newValue);
 
@@ -304,9 +309,11 @@ class _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl<T extends User,
   $Result call({
     final T? value,
   }) {
-    return _chain(_$ValueWrapperWithGenericsConstraintsImpl<T>(
-      value: value ?? _value.value,
-    ));
+    return _chain(
+      _$ValueWrapperWithGenericsConstraintsImpl<T>(
+        value: value ?? _value.value,
+      ),
+    );
   }
 }
 
@@ -382,8 +389,9 @@ class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
 
 sealed class $SuperUserCopyWithProxyChain<$Result> {
   factory $SuperUserCopyWithProxyChain(
-          final SuperUser value, final $Result Function(SuperUser update) chain) =
-      _SuperUserCopyWithProxyChainImpl<$Result>;
+    final SuperUser value,
+    final $Result Function(SuperUser update) chain,
+  ) = _SuperUserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
 
@@ -407,9 +415,11 @@ class _SuperUserCopyWithProxyChainImpl<$Result> implements $SuperUserCopyWithPro
   $Result call({
     final int? id,
   }) {
-    return _chain(_$SuperUserImpl(
-      id: id ?? _value.id,
-    ));
+    return _chain(
+      _$SuperUserImpl(
+        id: id ?? _value.id,
+      ),
+    );
   }
 }
 

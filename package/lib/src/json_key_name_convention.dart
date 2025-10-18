@@ -9,8 +9,9 @@ enum JsonKeyNameConvention {
 
   /// Creates an instance of [JsonKeyNameConvention] from [json]
   factory JsonKeyNameConvention.fromJson(String json) {
-    return JsonKeyNameConvention.values
-        .firstWhere((JsonKeyNameConvention value) => value.name == json);
+    return JsonKeyNameConvention.values.firstWhere(
+      (JsonKeyNameConvention value) => value.name == json,
+    );
   }
 
   String transform(String key) {

@@ -6,9 +6,9 @@ class HashGenerator implements Generator {
     required final CodeWriter codeWriter,
     required final List<DeclarationInfo> fields,
     required final bool skipCollections,
-  })  : _codeWriter = codeWriter,
-        _fields = fields,
-        _skipCollections = skipCollections;
+  }) : _codeWriter = codeWriter,
+       _fields = fields,
+       _skipCollections = skipCollections;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
@@ -43,10 +43,10 @@ class EqualsGenerator implements Generator {
     required final String className,
     required final String classTypeParametersWithoutConstraints,
     required final List<DeclarationInfo> fields,
-  })  : _codeWriter = codeWriter,
-        _className = className,
-        _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
-        _fields = fields;
+  }) : _codeWriter = codeWriter,
+       _className = className,
+       _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
+       _fields = fields;
 
   final CodeWriter _codeWriter;
   final String _className;
@@ -60,16 +60,21 @@ class EqualsGenerator implements Generator {
       ..writeln('@override')
       ..writeln('bool operator ==(Object other) {')
       ..writeln(
-          'return identical(this, other) || other is $_className$_classTypeParametersWithoutConstraints && runtimeType == other.runtimeType');
+        'return identical(this, other) || other is $_className$_classTypeParametersWithoutConstraints && runtimeType == other.runtimeType',
+      );
 
     for (final DeclarationInfo field in _fields) {
-      if (field.metadata.any((Annotation element) => element.name.name == 'SkipHash')) {
+      if (field.metadata.any(
+        (Annotation element) => element.name.name == 'SkipHash',
+      )) {
         continue;
       }
 
       final TachyonDartType dartType = field.type.customDartType;
       if (dartType.isList || dartType.isMap) {
-        _codeWriter.write(' && deepEquality(${field.name}, other.${field.name})');
+        _codeWriter.write(
+          ' && deepEquality(${field.name}, other.${field.name})',
+        );
         continue;
       }
       _codeWriter.write(' && ${field.name} == other.${field.name}');

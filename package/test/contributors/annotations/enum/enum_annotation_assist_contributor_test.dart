@@ -27,8 +27,11 @@ void main() {
         // we need the offset to be between a class declaration
         // so we find the first class node, because of the import statement
         final EnumAstVisitor enumVisitor = EnumAstVisitor(
-            matcher: (EnumDeclaration node) =>
-                node.declaredElement?.hasEnumAnnotation ?? node.hasEnumAnnotation);
+          matcher: (EnumDeclaration node) {
+            return node.declaredFragment?.element.metadata2.hasEnumAnnotation ??
+                node.hasEnumAnnotation;
+          },
+        );
         unit.visitChildren(enumVisitor);
         return enumVisitor.enumNode?.offset ?? -1;
       },

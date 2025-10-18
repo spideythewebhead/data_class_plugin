@@ -35,13 +35,30 @@ data_class:
       default: true
 ''');
 
-        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(
+          file,
+        );
 
-        expect(options.dataClass.optionsConfig['copy_with']?.defaultValue, equals(false));
-        expect(options.dataClass.optionsConfig['hash_and_equals']?.defaultValue, equals(false));
-        expect(options.dataClass.optionsConfig['to_string']?.defaultValue, equals(false));
-        expect(options.dataClass.optionsConfig['from_json']?.defaultValue, equals(true));
-        expect(options.dataClass.optionsConfig['to_json']?.defaultValue, equals(true));
+        expect(
+          options.dataClass.optionsConfig['copy_with']?.defaultValue,
+          equals(false),
+        );
+        expect(
+          options.dataClass.optionsConfig['hash_and_equals']?.defaultValue,
+          equals(false),
+        );
+        expect(
+          options.dataClass.optionsConfig['to_string']?.defaultValue,
+          equals(false),
+        );
+        expect(
+          options.dataClass.optionsConfig['from_json']?.defaultValue,
+          equals(true),
+        );
+        expect(
+          options.dataClass.optionsConfig['to_json']?.defaultValue,
+          equals(true),
+        );
       });
 
       test('enabled/disabled', () async {
@@ -78,7 +95,9 @@ data_class:
         - $disabledPath
 ''');
 
-        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(
+          file,
+        );
 
         for (final String option in <String>[
           'copy_with',

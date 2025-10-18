@@ -5,6 +5,8 @@ enum Enumeration {
 
   /// Creates an instance of [Enumeration] from [json]
   factory Enumeration.fromJson(String json) {
-    return Enumeration.values.firstWhere((Enumeration value) => value.name == json);
+    return Enumeration.values.firstWhere(
+      (Enumeration value) => value.name == json,
+    );
   }
 }

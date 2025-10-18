@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -38,17 +38,17 @@ class EnumToJsonAssistContributor extends AssistContributorMixin
 
   Future<void> _generateToJson() async {
     final EnumDeclaration? enumNode = findEnumDeclaration();
-    if (enumNode == null || enumNode.declaredElement == null) {
+    if (enumNode == null || enumNode.declaredFragment?.element == null) {
       return;
     }
 
-    final EnumElement enumElement = enumNode.declaredElement!;
-    if (enumElement.hasEnumAnnotation) {
+    final EnumElement2 enumElement = enumNode.declaredFragment!.element;
+    if (enumElement.metadata2.hasEnumAnnotation) {
       return;
     }
 
     final SourceRange? toJsonSourceRange = enumNode.members.toJsonSourceRange;
-    final List<FieldElement> finalFieldsElements = enumElement.jsonSupportedFields;
+    final List<FieldElement2> finalFieldsElements = enumElement.jsonSupportedFields;
 
     if (finalFieldsElements.length > 1) {
       return;
@@ -59,41 +59,42 @@ class EnumToJsonAssistContributor extends AssistContributorMixin
     }
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
-    await changeBuilder.addDartFileEdit(
-      targetFilePath,
-      (DartFileEditBuilder fileEditBuilder) {
-        void writerToJson(DartEditBuilder builder) {
-          writeToJson(
-            enumElement: enumElement,
-            fieldElement: finalFieldsElements.firstOrNull,
-            builder: builder,
-          );
-        }
+    await changeBuilder.addDartFileEdit(targetFilePath, (
+      DartFileEditBuilder fileEditBuilder,
+    ) {
+      void writerToJson(DartEditBuilder builder) {
+        writeToJson(
+          enumElement: enumElement,
+          fieldElement: finalFieldsElements.firstOrNull,
+          libraryImports: enumNode.declaredFragment!.libraryFragment.libraryImports2,
+          builder: builder,
+        );
+      }
 
-        if (toJsonSourceRange != null) {
-          fileEditBuilder.addReplacement(toJsonSourceRange, writerToJson);
-        } else {
-          fileEditBuilder.addInsertion(
-            enumNode.rightBracket.offset,
-            writerToJson,
-          );
-        }
+      if (toJsonSourceRange != null) {
+        fileEditBuilder.addReplacement(toJsonSourceRange, writerToJson);
+      } else {
+        fileEditBuilder.addInsertion(
+          enumNode.rightBracket.offset,
+          writerToJson,
+        );
+      }
 
-        fileEditBuilder.format(SourceRange(enumNode.offset, enumNode.length));
-      },
-    );
+      fileEditBuilder.format(SourceRange(enumNode.offset, enumNode.length));
+    });
 
     addAssist(AvailableAssists.toJson, changeBuilder);
   }
 
   static void writeToJson({
-    required final EnumElement enumElement,
-    required final FieldElement? fieldElement,
+    required final EnumElement2 enumElement,
+    required final FieldElement2? fieldElement,
+    required final List<LibraryImport> libraryImports,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Converts [${enumElement.name}] to a json value');
+      ..writeln('/// Converts [${enumElement.name3}] to a json value');
 
     if (fieldElement == null) {
       builder.writeln('String toJson() => name;');
@@ -101,6 +102,7 @@ class EnumToJsonAssistContributor extends AssistContributorMixin
     }
 
     builder.writeln(
-        '${fieldElement.type.typeStringValue(enclosingImports: enumElement.library.libraryImports)} toJson() => ${fieldElement.name};');
+      '${fieldElement.type.typeStringValue(enclosingImports: libraryImports)} toJson() => ${fieldElement.name3};',
+    );
   }
 }

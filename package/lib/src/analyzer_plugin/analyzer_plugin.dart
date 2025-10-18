@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:analyzer/dart/analysis/analysis_context.dart' as analyzer;
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/file_system/file_system.dart' as analyzer;
@@ -11,10 +13,26 @@ import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
 
+/// A tcp socket that allows to write for debugging purposes
+Socket? debugTcpSocket;
+
 class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, WorkaroundDartAssistsMixin {
-  DcpAnalyzerPlugin(
-    final analyzer.ResourceProvider resourceProvider,
-  ) : super(resourceProvider: resourceProvider);
+  DcpAnalyzerPlugin(final analyzer.ResourceProvider resourceProvider)
+    : super(resourceProvider: resourceProvider) {
+    // a simple way to receive logs from a tcp socket
+    // 1. start a tcp server, example nc -lk 9000 (or whatever port)
+    // 1. uncomment this code, set your port
+    // 1. restart dart analysis server
+    // 1. expect to receive "DcpAnalyzerPlugin client"
+    Socket.connect('127.0.0.1', 9000)
+        .then((Socket socket) {
+          debugTcpSocket = socket;
+          socket.writeln('DcpAnalyzerPlugin client');
+        })
+        .catchError((Object error, StackTrace stackTrace) {
+          stderr.addError(error, stackTrace);
+        });
+  }
 
   @override
   List<String> get fileGlobsToAnalyze => const <String>['*.dart'];
@@ -37,17 +55,23 @@ class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, WorkaroundDartAs
 
   @override
   List<AssistContributor> getAssistContributors(String path) {
-    return <AssistContributor>[
-      // Class contributors
-      ShorthandConstructorAssistContributor(path),
-      DataClassAssistContributor(path),
+    try {
+      return <AssistContributor>[
+        // Class contributors
+        ShorthandConstructorAssistContributor(path),
+        DataClassAssistContributor(path),
 
-      // Enum contributors
-      EnumAnnotationAssistContributor(path),
-      EnumConstructorAssistContributor(path),
-      EnumFromJsonAssistContributor(path),
-      EnumToJsonAssistContributor(path),
-    ];
+        // Enum contributors
+        EnumAnnotationAssistContributor(path),
+        EnumConstructorAssistContributor(path),
+        EnumFromJsonAssistContributor(path),
+        EnumToJsonAssistContributor(path),
+      ];
+    } catch (error, stackTrace) {
+      debugTcpSocket?.writeln(error.toString());
+      debugTcpSocket?.writeln(stackTrace.toString());
+    }
+    return <AssistContributor>[];
   }
 
   // @override
@@ -66,9 +90,16 @@ class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, WorkaroundDartAs
 // TODO(): Remove once [DartAssistsMixin] can be used
 abstract mixin class WorkaroundDartAssistsMixin implements AssistsMixin {
   @override
-  Future<AssistRequest> getAssistRequest(EditGetAssistsParams parameters) async {
+  Future<AssistRequest> getAssistRequest(
+    EditGetAssistsParams parameters,
+  ) async {
     final String path = parameters.file;
     final ResolvedUnitResult result = await getResolvedUnitResult(path);
-    return DartAssistRequestImpl(resourceProvider, parameters.offset, parameters.length, result);
+    return DartAssistRequestImpl(
+      resourceProvider,
+      parameters.offset,
+      parameters.length,
+      result,
+    );
   }
 }

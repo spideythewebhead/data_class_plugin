@@ -11,13 +11,13 @@ class ConstructorGenerator implements Generator {
     final bool shouldAnnotateFieldsWithOverride = true,
     final String? superConstructorName,
     required final bool generateUnmodifiableCollections,
-  })  : _codeWriter = codeWriter,
-        _constructor = constructor,
-        _fields = fields,
-        _generatedClassName = generatedClassName,
-        _shouldAnnotateFieldsWithOverride = shouldAnnotateFieldsWithOverride,
-        _superConstructorName = superConstructorName,
-        _generateUnmodifiableCollections = generateUnmodifiableCollections;
+  }) : _codeWriter = codeWriter,
+       _constructor = constructor,
+       _fields = fields,
+       _generatedClassName = generatedClassName,
+       _shouldAnnotateFieldsWithOverride = shouldAnnotateFieldsWithOverride,
+       _superConstructorName = superConstructorName,
+       _generateUnmodifiableCollections = generateUnmodifiableCollections;
 
   final CodeWriter _codeWriter;
   final ConstructorDeclaration? _constructor;
@@ -34,18 +34,22 @@ class ConstructorGenerator implements Generator {
     _codeWriter.write(_constructor?.constKeyword?.lexeme ?? '');
     _codeWriter.write(' $_generatedClassName(');
 
-    final List<DeclarationInfo> positionalFields =
-        _fields.where((DeclarationInfo element) => element.isPositional).toList(growable: false);
+    final List<DeclarationInfo> positionalFields = _fields
+        .where((DeclarationInfo element) => element.isPositional)
+        .toList(growable: false);
 
-    final List<DeclarationInfo> namedFields =
-        _fields.where((DeclarationInfo element) => element.isNamed).toList(growable: false);
+    final List<DeclarationInfo> namedFields = _fields
+        .where((DeclarationInfo element) => element.isNamed)
+        .toList(growable: false);
 
     for (final DeclarationInfo field in positionalFields) {
       final TachyonDartType dartType = field.type.customDartType;
 
       if (_generateUnmodifiableCollections && dartType.isCollection) {
         _codeWriter.write('${dartType.fullTypeName} ${field.name},');
-        unmodifiableCollectionsDeclarations.add('_${field.name} = ${field.name}');
+        unmodifiableCollectionsDeclarations.add(
+          '_${field.name} = ${field.name}',
+        );
       } else {
         _codeWriter.write('this.${field.name},');
       }
@@ -54,22 +58,24 @@ class ConstructorGenerator implements Generator {
     if (namedFields.isNotEmpty) {
       _codeWriter.write('{');
       for (final DeclarationInfo field in namedFields) {
-        final Annotation? defaultValueAnnotation = field.metadata
-            .firstWhereOrNull((Annotation annotation) => annotation.isDefaultValueAnnotation);
+        final Annotation? defaultValueAnnotation = field.metadata.firstWhereOrNull(
+          (Annotation annotation) => annotation.isDefaultValueAnnotation,
+        );
         final TachyonDartType dartType = field.type.customDartType;
 
         Expression? defaultValueExpression;
         late String defaultValuePrefix;
 
         if (defaultValueAnnotation != null) {
-          final AnnotationValueExtractor annotationValueExtractor =
-              AnnotationValueExtractor(defaultValueAnnotation);
+          final AnnotationValueExtractor annotationValueExtractor = AnnotationValueExtractor(
+            defaultValueAnnotation,
+          );
           defaultValueExpression = annotationValueExtractor.getPositionedArgument(0);
         }
         defaultValuePrefix =
             (defaultValueExpression is TypedLiteral || defaultValueExpression is MethodInvocation)
-                ? 'const'
-                : '';
+            ? 'const'
+            : '';
 
         if (field.isRequired) {
           _codeWriter.write('required ');
@@ -84,11 +90,15 @@ class ConstructorGenerator implements Generator {
         _codeWriter.write(field.name);
 
         if (defaultValueExpression != null) {
-          _codeWriter.write(' = $defaultValuePrefix ${defaultValueExpression.toSource()}');
+          _codeWriter.write(
+            ' = $defaultValuePrefix ${defaultValueExpression.toSource()}',
+          );
         }
 
         if (dartType.isCollection && _generateUnmodifiableCollections) {
-          unmodifiableCollectionsDeclarations.add('_${field.name} = ${field.name}');
+          unmodifiableCollectionsDeclarations.add(
+            '_${field.name} = ${field.name}',
+          );
         }
 
         _codeWriter.write(',');
@@ -118,11 +128,17 @@ class ConstructorGenerator implements Generator {
           ..write('${dartType.fullTypeName} get ${field.name} => ');
 
         if (dartType.isNullable) {
-          final String notNullableType =
-              dartType.fullTypeName.substring(0, dartType.fullTypeName.length - 1);
-          _codeWriter.write('_${field.name} ?? $notNullableType.unmodifiable(_${field.name}!);');
+          final String notNullableType = dartType.fullTypeName.substring(
+            0,
+            dartType.fullTypeName.length - 1,
+          );
+          _codeWriter.write(
+            '_${field.name} ?? $notNullableType.unmodifiable(_${field.name}!);',
+          );
         } else {
-          _codeWriter.writeln('${dartType.fullTypeName}.unmodifiable(_${field.name});');
+          _codeWriter.writeln(
+            '${dartType.fullTypeName}.unmodifiable(_${field.name});',
+          );
         }
 
         _codeWriter

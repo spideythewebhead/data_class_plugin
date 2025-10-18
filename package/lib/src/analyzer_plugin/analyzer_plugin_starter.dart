@@ -5,7 +5,7 @@ import 'package:analyzer_plugin/starter.dart';
 import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin.dart';
 
 void start(Iterable<String> args, SendPort sendPort) {
-  ServerPluginStarter(DcpAnalyzerPlugin(
-    PhysicalResourceProvider.INSTANCE,
-  )).start(sendPort);
+  ServerPluginStarter(
+    DcpAnalyzerPlugin(PhysicalResourceProvider.INSTANCE),
+  ).start(sendPort);
 }

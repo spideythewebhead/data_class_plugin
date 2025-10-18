@@ -5,10 +5,7 @@ abstract class User {
   User.ctor();
 
   /// Default constructor
-  factory User({
-    required int id,
-    required String username,
-  }) = _$UserImpl;
+  factory User({required int id, required String username}) = _$UserImpl;
 
   int get id;
 

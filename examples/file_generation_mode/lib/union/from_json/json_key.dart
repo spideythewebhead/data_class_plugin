@@ -48,9 +48,9 @@ void main() {
       <String, dynamic>{
         'id': '2',
         'title': 'Post2',
-      }
+      },
     ],
-    'author-name': 'authorName'
+    'author-name': 'authorName',
   });
 
   prettyPrint('GetPostsResponse with code "ok"', getPostsResponse);

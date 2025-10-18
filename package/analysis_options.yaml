@@ -3,6 +3,7 @@ include: package:lints/recommended.yaml
 analyzer:
   exclude:
     - test/**/test_files/**
+    - test/**/*.bootstrap.*.dart
   plugins:
     - data_class_plugin
 
@@ -15,3 +16,7 @@ linter:
     - prefer_const_declarations
     - prefer_single_quotes
     - unawaited_futures
+
+formatter:
+  page_width: 100
+  trailing_commas: preserve

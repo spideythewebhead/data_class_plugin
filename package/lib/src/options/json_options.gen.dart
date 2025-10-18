@@ -10,8 +10,8 @@ class _$JsonOptionsImpl extends JsonOptions {
     this.keyNameConvention,
     Map<String, List<String>> nameConventionGlobs = const <String, List<String>>{},
     this.toJson = const ToJsonOptions(),
-  })  : _nameConventionGlobs = nameConventionGlobs,
-        super.ctor();
+  }) : _nameConventionGlobs = nameConventionGlobs,
+       super.ctor();
 
   @override
   final String? keyNameConvention;
@@ -36,8 +36,9 @@ class _$JsonOptionsImpl extends JsonOptions {
                   for (final dynamic i1 in (e0.value as List<dynamic>)) i1 as String,
                 ],
             },
-      toJson:
-          json['to_json'] == null ? const ToJsonOptions() : ToJsonOptions.fromJson(json['to_json']),
+      toJson: json['to_json'] == null
+          ? const ToJsonOptions()
+          : ToJsonOptions.fromJson(json['to_json']),
     );
   }
 
@@ -48,8 +49,8 @@ class _$JsonOptionsImpl extends JsonOptions {
 class _$ToJsonOptionsImpl extends ToJsonOptions {
   const _$ToJsonOptionsImpl({
     Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
-  })  : _optionsConfig = optionsConfig,
-        super.ctor();
+  }) : _optionsConfig = optionsConfig,
+       super.ctor();
 
   @override
   Map<String, OptionConfig> get optionsConfig =>

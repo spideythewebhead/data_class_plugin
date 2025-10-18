@@ -10,9 +10,7 @@ import 'package:data_class_plugin/data_class_plugin.dart';
 class AsyncResult<T> {
   const AsyncResult._();
 
-  const factory AsyncResult.data({
-    required T data,
-  }) = AsyncResultData<T>;
+  const factory AsyncResult.data({required T data}) = AsyncResultData<T>;
 
   const factory AsyncResult.loading() = AsyncResultLoading<T>;
 
@@ -62,10 +60,7 @@ class AsyncResult<T> {
 }
 
 class AsyncResultError<T> extends AsyncResult<T> {
-  const AsyncResultError({
-    required this.error,
-    this.stackTrace,
-  }) : super._();
+  const AsyncResultError({required this.error, this.stackTrace}) : super._();
 
   final Object error;
   final StackTrace? stackTrace;
@@ -84,11 +79,7 @@ class AsyncResultError<T> extends AsyncResult<T> {
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      error,
-      stackTrace,
-    ]);
+    return Object.hashAll(<Object?>[runtimeType, error, stackTrace]);
   }
 
   /// Compares [this] with [other] on identity, class type, and properties
@@ -122,9 +113,7 @@ class AsyncResultLoading<T> extends AsyncResult<T> {
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-    ]);
+    return Object.hashAll(<Object?>[runtimeType]);
   }
 
   /// Compares [this] with [other] on identity, class type, and properties
@@ -147,28 +136,19 @@ class AsyncResultLoading<T> extends AsyncResult<T> {
 }
 
 class AsyncResultData<T> extends AsyncResult<T> {
-  const AsyncResultData({
-    required this.data,
-  }) : super._();
+  const AsyncResultData({required this.data}) : super._();
 
   final T data;
 
   /// Creates a new instance of [AsyncResultData] with optional new values
-  AsyncResultData<T> copyWith({
-    final T? data,
-  }) {
-    return AsyncResultData<T>(
-      data: data ?? this.data,
-    );
+  AsyncResultData<T> copyWith({final T? data}) {
+    return AsyncResultData<T>(data: data ?? this.data);
   }
 
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      data,
-    ]);
+    return Object.hashAll(<Object?>[runtimeType, data]);
   }
 
   /// Compares [this] with [other] on identity, class type, and properties

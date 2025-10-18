@@ -24,10 +24,6 @@ class _DurationJsonConverter implements JsonConverter<Duration, String> {
     }
     microseconds = (double.parse(parts[parts.length - 1]) * 1000000).round();
 
-    return Duration(
-      hours: hours,
-      minutes: minutes,
-      microseconds: microseconds,
-    );
+    return Duration(hours: hours, minutes: minutes, microseconds: microseconds);
   }
 }

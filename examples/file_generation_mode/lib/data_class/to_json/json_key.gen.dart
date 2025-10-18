@@ -152,11 +152,13 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
     final String? username,
     final bool? isVerified,
   }) {
-    return _chain(_$UserImpl(
-      id: id ?? _value.id,
-      username: username ?? _value.username,
-      isVerified: isVerified ?? _value.isVerified,
-    ));
+    return _chain(
+      _$UserImpl(
+        id: id ?? _value.id,
+        username: username ?? _value.username,
+        isVerified: isVerified ?? _value.isVerified,
+      ),
+    );
   }
 }
 

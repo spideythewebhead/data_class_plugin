@@ -10,9 +10,9 @@ class _$OptionConfigImpl extends OptionConfig {
     this.defaultValue,
     List<String> enabled = const <String>[],
     List<String> disabled = const <String>[],
-  })  : _enabled = enabled,
-        _disabled = disabled,
-        super.ctor();
+  }) : _enabled = enabled,
+       _disabled = disabled,
+       super.ctor();
 
   @override
   final bool? defaultValue;

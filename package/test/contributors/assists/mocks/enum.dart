@@ -1,7 +1,1 @@
-enum Category {
-  science,
-  finance,
-  sports,
-  music,
-  movies;
-}
+enum Category { science, finance, sports, music, movies }

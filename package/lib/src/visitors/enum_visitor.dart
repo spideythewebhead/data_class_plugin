@@ -4,9 +4,7 @@ import 'package:analyzer/dart/ast/visitor.dart';
 typedef EnumDeclarationNodeMatcher = bool Function(EnumDeclaration node);
 
 class EnumAstVisitor extends RecursiveAstVisitor<void> {
-  EnumAstVisitor({
-    required this.matcher,
-  });
+  EnumAstVisitor({required this.matcher});
 
   static EnumDeclarationNodeMatcher offsetMatcher(int offset) {
     return (EnumDeclaration node) {

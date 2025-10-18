@@ -31,11 +31,7 @@ enum AnnotationType {
     'Provide default for a Data Class field or Union factory parameter.',
   );
 
-  const AnnotationType(
-    this.name,
-    this.url,
-    this.description,
-  );
+  const AnnotationType(this.name, this.url, this.description);
 
   /// Annotation Name
   final String name;
@@ -49,10 +45,7 @@ enum AnnotationType {
 
 /// Interface for annotation arguments
 abstract class AnnotationArg {
-  const AnnotationArg({
-    required this.name,
-    required this.defaultValue,
-  });
+  const AnnotationArg({required this.name, required this.defaultValue});
 
   final String name;
   final bool defaultValue;
@@ -107,10 +100,7 @@ class DataClassAnnotationArg extends AnnotationArg {
 
 /// Arguments for the [Enum] annotation
 class EnumAnnotationArg extends AnnotationArg {
-  const EnumAnnotationArg._({
-    required super.name,
-    required super.defaultValue,
-  });
+  const EnumAnnotationArg._({required super.name, required super.defaultValue});
 
   static const EnumAnnotationArg $toString = EnumAnnotationArg._(
     name: 'toString',

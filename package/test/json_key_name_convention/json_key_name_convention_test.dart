@@ -15,10 +15,7 @@ void main() {
   group('Json Key Name Convention', () {
     for (final JsonKeyNameConvention convention in JsonKeyNameConvention.values) {
       test(convention.name, () {
-        expect(
-          convention.transform(key),
-          equals(expectedValues[convention]),
-        );
+        expect(convention.transform(key), equals(expectedValues[convention]));
 
         expect(
           convention.transform(notEligibleKey) != expectedValues[convention],

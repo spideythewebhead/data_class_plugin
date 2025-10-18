@@ -33,7 +33,9 @@ class WebSocketPluginServer implements PluginCommunicationChannel {
 
   void _handleClientAdded(WebSocket socket) {
     if (_currentClient != null) {
-      logger.warning('ignoring connection attempt because an active client already exists');
+      logger.warning(
+        'ignoring connection attempt because an active client already exists',
+      );
       socket.close();
     } else {
       logger.writeln('client connected');
@@ -64,7 +66,9 @@ class WebSocketPluginServer implements PluginCommunicationChannel {
     stream.firstWhere((WebSocket? socket) => socket != null).then((_) {
       _currentClient!.listen((dynamic data) {
         // logger.writeln('I: $data');
-        onRequest(Request.fromJson(jsonEncode(data as String) as Map<String, dynamic>));
+        onRequest(
+          Request.fromJson(jsonEncode(data as String) as Map<String, dynamic>),
+        );
       });
     });
     stream.firstWhere((WebSocket? socket) => socket == null).then((_) => onDone!());

@@ -2,30 +2,21 @@ import 'package:data_class_plugin/src/deep_equality.dart';
 import 'package:test/test.dart';
 
 class _NoEqualsOverride {
-  _NoEqualsOverride({
-    required this.x,
-    required this.y,
-  });
+  _NoEqualsOverride({required this.x, required this.y});
 
   final double x;
   final double y;
 }
 
 class _EqualsOverride {
-  _EqualsOverride({
-    required this.x,
-    required this.y,
-  });
+  _EqualsOverride({required this.x, required this.y});
 
   final double x;
   final double y;
 
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[
-      x,
-      y,
-    ]);
+    return Object.hashAll(<Object?>[x, y]);
   }
 
   @override
@@ -95,17 +86,11 @@ void main() {
     group('maps -', () {
       test('have different length', () {
         expect(
-          deepEquality(
-            <String, int>{'a': 1},
-            <String, int>{'a': 1, 'b': 2},
-          ),
+          deepEquality(<String, int>{'a': 1}, <String, int>{'a': 1, 'b': 2}),
           equals(false),
         );
         expect(
-          deepEquality(
-            <String, int>{'a': 1, 'b': 2},
-            <String, int>{'a': 1},
-          ),
+          deepEquality(<String, int>{'a': 1, 'b': 2}, <String, int>{'a': 1}),
           equals(false),
         );
       });

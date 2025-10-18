@@ -41,7 +41,9 @@ extension InOutFilesList on List<InOutFilesPair> {
     final OffsetProvider? offsetProvider,
   }) {
     final AnalysisContextCollection analysis = AnalysisContextCollection(
-      includedPaths: map((InOutFilesPair e) => e.input.path).toList(growable: false),
+      includedPaths: map(
+        (InOutFilesPair e) => e.input.path,
+      ).toList(growable: false),
       resourceProvider: PhysicalResourceProvider.INSTANCE,
     );
 
@@ -60,17 +62,16 @@ extension InOutFilesList on List<InOutFilesPair> {
         expect(collector.assists, hasLength(1));
 
         // Read the content of the 'out_.dart' file
-        final String expected = io.File(outPath).readAsStringSync().normalizeWhitespaces();
+        final String expected = io.File(
+          outPath,
+        ).readAsStringSync().normalizeWhitespaces();
 
         // Get the code generated from contributor's assists
         final String actual = collector.hasMultipleReplacements
-            ? collector.assists.getGeneratedCode().dartFormat()
-            : collector.firstReplacement.dartFormat();
+            ? collector.assists.getGeneratedCode()
+            : collector.firstReplacement;
 
-        expect(
-          actual,
-          equals(expected),
-        );
+        expect(actual, equals(expected));
       });
     }
   }
@@ -81,10 +82,11 @@ extension on List<PrioritizedSourceChange> {
     final List<String> replacements = <String>[];
     for (final PrioritizedSourceChange assist in this) {
       for (final SourceFileEdit edit in assist.change.edits) {
-        for (final SourceEdit e in edit.edits
-          // keep the order of the change based of the offset
-          // same offset must keep the order of appearance
-          ..sort((SourceEdit a, SourceEdit b) => a.offset - b.offset)) {
+        for (final SourceEdit e
+            in edit.edits
+              // keep the order of the change based of the offset
+              // same offset must keep the order of appearance
+              ..sort((SourceEdit a, SourceEdit b) => a.offset - b.offset)) {
           replacements.add(e.replacement);
         }
       }

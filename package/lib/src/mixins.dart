@@ -38,5 +38,7 @@ mixin RelativeFilePathMixin on AssistContributor {
   String get relativeFilePath =>
       // relative file path from the root of the project folder
       // adding one to length to include path separator
-      targetFilePath.substring(1 + session.analysisContext.contextRoot.root.path.length);
+      targetFilePath.substring(
+        1 + session.analysisContext.contextRoot.root.path.length,
+      );
 }

@@ -15,12 +15,15 @@ JsonKeyNameConvention getJsonKeyNameConvention({
   nameConvention ??= pluginOptions.json.nameConventionGlobs.entries
       .firstWhereOrNull((MapEntry<String, List<String>> e) {
         return null !=
-            e.value.firstWhereOrNull((String glob) => Glob(glob).matches(targetFileRelativePath));
+            e.value.firstWhereOrNull(
+              (String glob) => Glob(glob).matches(targetFileRelativePath),
+            );
       })
       ?.key
       .snakeCaseToCamelCase();
 
-  nameConvention ??= pluginOptions.json.keyNameConvention?.snakeCaseToCamelCase() ??
+  nameConvention ??=
+      pluginOptions.json.keyNameConvention?.snakeCaseToCamelCase() ??
       JsonKeyNameConvention.camelCase.name;
 
   return JsonKeyNameConvention.fromJson(nameConvention);

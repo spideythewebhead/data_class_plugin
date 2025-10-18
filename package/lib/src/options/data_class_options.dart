@@ -9,9 +9,8 @@ abstract class DataClassOptions {
   const DataClassOptions.ctor();
 
   /// Default constructor
-  const factory DataClassOptions({
-    Map<String, OptionConfig> optionsConfig,
-  }) = _$DataClassOptionsImpl;
+  const factory DataClassOptions({Map<String, OptionConfig> optionsConfig}) =
+      _$DataClassOptionsImpl;
 
   /// Creates an instance of [DataClassOptions] from [json]
   factory DataClassOptions.fromJson(Map<dynamic, dynamic> json) = _$DataClassOptionsImpl.fromJson;

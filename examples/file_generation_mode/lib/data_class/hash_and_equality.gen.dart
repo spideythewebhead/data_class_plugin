@@ -167,12 +167,14 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
     final Object? email = const Object(),
     final bool? isVerified,
   }) {
-    return _chain(_$UserImpl(
-      id: id ?? _value.id,
-      username: username ?? _value.username,
-      email: identical(email, const Object()) ? _value.email : (email as String?),
-      isVerified: isVerified ?? _value.isVerified,
-    ));
+    return _chain(
+      _$UserImpl(
+        id: id ?? _value.id,
+        username: username ?? _value.username,
+        email: identical(email, const Object()) ? _value.email : (email as String?),
+        isVerified: isVerified ?? _value.isVerified,
+      ),
+    );
   }
 }
 
@@ -183,8 +185,8 @@ extension $UserExtension on User {
 class _$CartImpl extends Cart {
   _$CartImpl({
     required List<Product> products,
-  })  : _products = products,
-        super.ctor();
+  }) : _products = products,
+       super.ctor();
 
   @override
   List<Product> get products => List<Product>.unmodifiable(_products);
@@ -271,9 +273,11 @@ class _CartCopyWithProxyChainImpl<$Result> implements $CartCopyWithProxyChain<$R
   $Result call({
     final List<Product>? products,
   }) {
-    return _chain(_$CartImpl(
-      products: products ?? _value.products,
-    ));
+    return _chain(
+      _$CartImpl(
+        products: products ?? _value.products,
+      ),
+    );
   }
 }
 
@@ -364,8 +368,9 @@ class _ProductCopyWithProxyImpl implements _ProductCopyWithProxy {
 
 sealed class $ProductCopyWithProxyChain<$Result> {
   factory $ProductCopyWithProxyChain(
-          final Product value, final $Result Function(Product update) chain) =
-      _ProductCopyWithProxyChainImpl<$Result>;
+    final Product value,
+    final $Result Function(Product update) chain,
+  ) = _ProductCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
 
@@ -397,10 +402,12 @@ class _ProductCopyWithProxyChainImpl<$Result> implements $ProductCopyWithProxyCh
     final int? id,
     final double? price,
   }) {
-    return _chain(_$ProductImpl(
-      id: id ?? _value.id,
-      price: price ?? _value.price,
-    ));
+    return _chain(
+      _$ProductImpl(
+        id: id ?? _value.id,
+        price: price ?? _value.price,
+      ),
+    );
   }
 }
 

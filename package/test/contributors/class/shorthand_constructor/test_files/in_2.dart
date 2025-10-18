@@ -15,12 +15,6 @@ class FromJsonTest {
   final Enumeration dMap;
 }
 
-enum Enumeration {
-  value1,
-  value2,
-  value3,
-  value4,
-  value5;
-}
+enum Enumeration { value1, value2, value3, value4, value5 }
 
 // Should create a constructor that includes the default json converters

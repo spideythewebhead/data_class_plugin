@@ -96,8 +96,9 @@ class _LogRecordCopyWithProxyImpl implements _LogRecordCopyWithProxy {
 
 sealed class $LogRecordCopyWithProxyChain<$Result> {
   factory $LogRecordCopyWithProxyChain(
-          final LogRecord value, final $Result Function(LogRecord update) chain) =
-      _LogRecordCopyWithProxyChainImpl<$Result>;
+    final LogRecord value,
+    final $Result Function(LogRecord update) chain,
+  ) = _LogRecordCopyWithProxyChainImpl<$Result>;
 
   $Result text(String newValue);
 
@@ -129,10 +130,12 @@ class _LogRecordCopyWithProxyChainImpl<$Result> implements $LogRecordCopyWithPro
     final String? text,
     final DateTime? datetime,
   }) {
-    return _chain(_$LogRecordImpl(
-      text: text ?? _value.text,
-      datetime: datetime ?? _value.datetime,
-    ));
+    return _chain(
+      _$LogRecordImpl(
+        text: text ?? _value.text,
+        datetime: datetime ?? _value.datetime,
+      ),
+    );
   }
 }
 

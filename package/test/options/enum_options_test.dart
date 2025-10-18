@@ -29,11 +29,22 @@ enum:
       default: true
 ''');
 
-        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(
+          file,
+        );
 
-        expect(options.$enum.optionsConfig['to_string']?.defaultValue, equals(true));
-        expect(options.$enum.optionsConfig['from_json']?.defaultValue, equals(true));
-        expect(options.$enum.optionsConfig['to_json']?.defaultValue, equals(true));
+        expect(
+          options.$enum.optionsConfig['to_string']?.defaultValue,
+          equals(true),
+        );
+        expect(
+          options.$enum.optionsConfig['from_json']?.defaultValue,
+          equals(true),
+        );
+        expect(
+          options.$enum.optionsConfig['to_json']?.defaultValue,
+          equals(true),
+        );
       });
 
       test('enabled/disabled', () async {
@@ -60,26 +71,22 @@ enum:
         - $disabledPath
 ''');
 
-        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(file);
+        final DataClassPluginOptions options = DataClassPluginOptions.fromFile(
+          file,
+        );
 
         for (final String option in <String>[
           'to_string',
           'to_json',
           'from_json',
         ]) {
-          expect(
-            options.$enum.optionsConfig[option]?.enabled,
-            hasLength(1),
-          );
+          expect(options.$enum.optionsConfig[option]?.enabled, hasLength(1));
           expect(
             options.$enum.optionsConfig[option]?.enabled.first,
             equals(enabledPath),
           );
 
-          expect(
-            options.$enum.optionsConfig[option]?.disabled,
-            hasLength(1),
-          );
+          expect(options.$enum.optionsConfig[option]?.disabled, hasLength(1));
           expect(
             options.$enum.optionsConfig[option]?.disabled.first,
             equals(disabledPath),
