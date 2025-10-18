@@ -1,11 +1,12 @@
 import 'package:data_class_plugin/src/json_key_name_convention.dart';
 import 'package:meta/meta_meta.dart';
 
-typedef FromJsonConverter<T> = T Function(
-  dynamic value,
-  Map<dynamic, dynamic> json,
-  String keyName,
-);
+typedef FromJsonConverter<T> =
+    T Function(
+      dynamic value,
+      Map<dynamic, dynamic> json,
+      String keyName,
+    );
 typedef ToJsonConverter<T> = Object? Function(T value);
 
 /// Adding the [JsonKey] annotation to a field makes it customizable

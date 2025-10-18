@@ -15,11 +15,13 @@ import 'package:path/path.dart' as path;
 import 'package:tachyon/tachyon.dart';
 
 class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
-  DataClassPluginOptions _getPluginOptionWithDefaultFallback(String projectDirPath) {
+  DataClassPluginOptions _getPluginOptionWithDefaultFallback(
+    String projectDirPath,
+  ) {
     try {
-      return DataClassPluginOptions.fromFile(getDataClassPluginOptionsFile(
-        projectDirPath,
-      ));
+      return DataClassPluginOptions.fromFile(
+        getDataClassPluginOptionsFile(projectDirPath),
+      );
     } catch (_) {
       return const DataClassPluginOptions();
     }
@@ -32,11 +34,13 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
     Logger logger,
   ) async {
     final CodeWriter codeWriter = CodeWriter.stringBuffer();
-    final ClassCollectorAstVisitor classCollectorVisitor =
-        ClassCollectorAstVisitor(matcher: (ClassDeclaration node) {
-      return node.metadata
-          .any((Annotation meta) => meta.isDataClassAnnotation || meta.isUnionAnnotation);
-    });
+    final ClassCollectorAstVisitor classCollectorVisitor = ClassCollectorAstVisitor(
+      matcher: (ClassDeclaration node) {
+        return node.metadata.any(
+          (Annotation meta) => meta.isDataClassAnnotation || meta.isUnionAnnotation,
+        );
+      },
+    );
     buildInfo.compilationUnit.visitChildren(classCollectorVisitor);
 
     final List<ClassDeclaration> dataClasses = classCollectorVisitor.matchedNodes
@@ -46,8 +50,9 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
         .where((ClassDeclaration classDecl) => classDecl.hasUnionAnnotation)
         .toList(growable: false);
 
-    final DataClassPluginOptions pluginOptions =
-        _getPluginOptionWithDefaultFallback(buildInfo.projectDirectoryPath);
+    final DataClassPluginOptions pluginOptions = _getPluginOptionWithDefaultFallback(
+      buildInfo.projectDirectoryPath,
+    );
 
     final JsonKeyNameConventionGetter jsonKeyNameConventionGetter = utils.getJsonKeyNameConvention(
       targetFileRelativePath: path.relative(buildInfo.targetFilePath),
@@ -62,8 +67,10 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       compilationUnit: buildInfo.compilationUnit,
       classDeclarations: dataClasses,
       targetFilePath: buildInfo.targetFilePath,
-      targetFileRelativePath:
-          path.relative(buildInfo.targetFilePath, from: buildInfo.projectDirectoryPath),
+      targetFileRelativePath: path.relative(
+        buildInfo.targetFilePath,
+        from: buildInfo.projectDirectoryPath,
+      ),
       jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
       logger: logger,
     );
@@ -76,8 +83,10 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       compilationUnit: buildInfo.compilationUnit,
       classDeclarations: unionClasses,
       targetFilePath: buildInfo.targetFilePath,
-      targetFileRelativePath:
-          path.relative(buildInfo.targetFilePath, from: buildInfo.projectDirectoryPath),
+      targetFileRelativePath: path.relative(
+        buildInfo.targetFilePath,
+        from: buildInfo.projectDirectoryPath,
+      ),
       jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
       logger: logger,
     );
@@ -102,22 +111,24 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       final String classTypeParametersWithoutConstraints = <String>[
         for (final TypeParameter typeParam
             in (classDeclaration.typeParameters?.typeParameters ?? const <TypeParameter>[]))
-          typeParam.name.lexeme
+          typeParam.name.lexeme,
       ].join(', ').wrapWithAngleBracketsIfNotEmpty();
       final String classTypeParametersSource = classDeclaration.typeParameters?.toSource() ?? '';
       final String generatedClassName = '_\$${className}Impl';
 
       final ConstructorDeclaration? defaultFactoryConstructor =
           classDeclaration.members.firstWhereOrNull((ClassMember member) {
-        return member is ConstructorDeclaration &&
-            member.factoryKeyword != null &&
-            member.name == null;
-      }) as ConstructorDeclaration?;
+                return member is ConstructorDeclaration &&
+                    member.factoryKeyword != null &&
+                    member.name == null;
+              })
+              as ConstructorDeclaration?;
 
       final String? superConstructorName =
           (classDeclaration.members.firstWhereOrNull((ClassMember member) {
-        return member is ConstructorDeclaration && member.parameters.parameters.isEmpty;
-      }) as ConstructorDeclaration?)
+                    return member is ConstructorDeclaration && member.parameters.parameters.isEmpty;
+                  })
+                  as ConstructorDeclaration?)
               ?.name
               ?.lexeme;
 
@@ -136,31 +147,40 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
               metadata: methodDecl.metadata,
               isPositional: false,
               isNamed: true,
-              isRequired: defaultFactoryConstructor?.parameters.parameters
-                      .firstWhereOrNull((FormalParameter parameter) =>
-                          parameter.name?.lexeme == methodDecl.name.lexeme)
+              isRequired:
+                  defaultFactoryConstructor?.parameters.parameters
+                      .firstWhereOrNull(
+                        (FormalParameter parameter) =>
+                            parameter.name?.lexeme == methodDecl.name.lexeme,
+                      )
                       ?.isRequired ??
                   false,
             );
           })
           .toList(growable: false);
 
-      final AnnotationValueExtractor dataClassAnnotationValueExtractor =
-          AnnotationValueExtractor(classDeclaration.dataClassAnnotation);
+      final AnnotationValueExtractor dataClassAnnotationValueExtractor = AnnotationValueExtractor(
+        classDeclaration.dataClassAnnotation,
+      );
 
       final bool generateUnmodifiableCollections =
-          dataClassAnnotationValueExtractor.getBool('unmodifiableCollections') ??
-              pluginOptions.dataClass.effectiveUnmodifiableCollections(targetFileRelativePath);
+          dataClassAnnotationValueExtractor.getBool(
+            'unmodifiableCollections',
+          ) ??
+          pluginOptions.dataClass.effectiveUnmodifiableCollections(
+            targetFileRelativePath,
+          );
 
       codeWriter.writeln(
-          'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersWithoutConstraints {');
+        'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersWithoutConstraints {',
+      );
 
       ConstructorGenerator(
         codeWriter: codeWriter,
         constructor: defaultFactoryConstructor,
         fields: fields,
         generatedClassName: generatedClassName,
-        superConstructorName: superConstructorName,
+        superConstructorName: superConstructorName == 'new' ? '' : superConstructorName,
         generateUnmodifiableCollections: generateUnmodifiableCollections,
       ).execute();
 
@@ -185,12 +205,16 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
           classDeclarationFinder: declarationFinder.findClassOrEnum,
           logger: logger,
-          dropNullValues: pluginOptions.json.toJson.effectiveDropNullValues(targetFileRelativePath),
+          dropNullValues: pluginOptions.json.toJson.effectiveDropNullValues(
+            targetFileRelativePath,
+          ),
         ).execute();
       }
 
       if (dataClassAnnotationValueExtractor.getBool('hashAndEquals') ??
-          pluginOptions.dataClass.effectiveHashAndEquals(targetFileRelativePath)) {
+          pluginOptions.dataClass.effectiveHashAndEquals(
+            targetFileRelativePath,
+          )) {
         EqualsGenerator(
           codeWriter: codeWriter,
           className: className,
@@ -217,7 +241,9 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       codeWriter
         ..writeln('')
         ..writeln('@override')
-        ..writeln('Type get runtimeType => $className$classTypeParametersWithoutConstraints;');
+        ..writeln(
+          'Type get runtimeType => $className$classTypeParametersWithoutConstraints;',
+        );
 
       codeWriter.writeln('}');
 
@@ -228,26 +254,35 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       if (classDeclaration.extendsClause?.superclass != null) {
         final String superClassName = classDeclaration.extendsClause!.superclass.name2.lexeme;
         final FinderDeclarationMatch<NamedCompilationUnitMember>? superClassMatch =
-            await declarationFinder.findClassOrEnum(superClassName);
+            await declarationFinder.findClassOrEnum(
+              superClassName,
+            );
         final NamedCompilationUnitMember? superClassDeclaration = superClassMatch?.node;
 
         if (superClassDeclaration is ClassDeclaration &&
             superClassDeclaration.hasDataClassAnnotation) {
           final AnnotationValueExtractor annotationValueExtractor = AnnotationValueExtractor(
-              superClassDeclaration.metadata.getAnnotation(AnnotationType.dataClass));
+            superClassDeclaration.metadata.getAnnotation(
+              AnnotationType.dataClass,
+            ),
+          );
 
           if (annotationValueExtractor.getBool('copyWith') == true ||
-              pluginOptions.dataClass.effectiveCopyWith(superClassMatch!.filePath)) {
+              pluginOptions.dataClass.effectiveCopyWith(
+                superClassMatch!.filePath,
+              )) {
             supportsCopyWith = true;
           }
         }
 
         if (supportsCopyWith != null) {
           logger.warning(
-              '~ Overriden copyWith configuration for class <$className> based on super class <$superClassName>');
+            '~ Overriden copyWith configuration for class <$className> based on super class <$superClassName>',
+          );
         }
       }
-      supportsCopyWith ??= dataClassAnnotationValueExtractor.getBool('copyWith') ??
+      supportsCopyWith ??=
+          dataClassAnnotationValueExtractor.getBool('copyWith') ??
           pluginOptions.dataClass.effectiveCopyWith(targetFileRelativePath);
 
       if (supportsCopyWith) {
@@ -265,9 +300,11 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
 
         codeWriter
           ..writeln(
-              'extension \$${className}Extension$classTypeParametersSource on $className$classTypeParametersWithoutConstraints {')
+            'extension \$${className}Extension$classTypeParametersSource on $className$classTypeParametersWithoutConstraints {',
+          )
           ..writeln(
-              '_${className}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _${className}CopyWithProxyImpl$classTypeParametersWithoutConstraints(this);')
+            '_${className}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _${className}CopyWithProxyImpl$classTypeParametersWithoutConstraints(this);',
+          )
           ..writeln('}');
       }
     }
@@ -287,16 +324,16 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
   }) async {
     for (final ClassDeclaration classDeclaration in classDeclarations) {
       final String className = classDeclaration.name.lexeme;
-      final List<ConstructorDeclaration> factoriesWithRedirectedConstructors =
-          classDeclaration.members
-              .where((ClassMember element) {
-                return element is ConstructorDeclaration &&
-                    element.factoryKeyword != null &&
-                    element.name != null &&
-                    element.redirectedConstructor != null;
-              })
-              .toList(growable: false)
-              .cast<ConstructorDeclaration>();
+      final List<ConstructorDeclaration> factoriesWithRedirectedConstructors = classDeclaration
+          .members
+          .where((ClassMember element) {
+            return element is ConstructorDeclaration &&
+                element.factoryKeyword != null &&
+                element.name != null &&
+                element.redirectedConstructor != null;
+          })
+          .toList(growable: false)
+          .cast<ConstructorDeclaration>();
 
       if (factoriesWithRedirectedConstructors.isEmpty) {
         continue;
@@ -305,11 +342,12 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
       final String classTypeParametersWithoutConstraints = <String>[
         for (final TypeParameter typeParam
             in (classDeclaration.typeParameters?.typeParameters ?? const <TypeParameter>[]))
-          typeParam.name.lexeme
+          typeParam.name.lexeme,
       ].join(', ').wrapWithAngleBracketsIfNotEmpty();
       final String classTypeParametersSource = classDeclaration.typeParameters?.toSource() ?? '';
-      final AnnotationValueExtractor unionAnnotationValueExtractor =
-          AnnotationValueExtractor(classDeclaration.unionAnnotation);
+      final AnnotationValueExtractor unionAnnotationValueExtractor = AnnotationValueExtractor(
+        classDeclaration.unionAnnotation,
+      );
 
       if (unionAnnotationValueExtractor.getBool('when') ??
           pluginOptions.union.effectiveWhen(targetFileRelativePath)) {
@@ -344,7 +382,9 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           buildInfo: buildInfo,
         );
 
-        logger.warning('~ Provided empty "unionJsonKey" for class "$className" @ $issueLocation');
+        logger.warning(
+          '~ Provided empty "unionJsonKey" for class "$className" @ $issueLocation',
+        );
       }
 
       for (final ConstructorDeclaration ctor in factoriesWithRedirectedConstructors) {
@@ -370,15 +410,18 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
                 isNamed: parameter.isNamed,
                 isRequired: parameter.isRequired,
                 isPositional: parameter.isPositional,
-              )
+              ),
         ];
 
         final bool generateUnmodifiableCollections =
             unionAnnotationValueExtractor.getBool('unmodifiableCollections') ??
-                pluginOptions.union.effectiveUnmodifiableCollections(targetFileRelativePath);
+            pluginOptions.union.effectiveUnmodifiableCollections(
+              targetFileRelativePath,
+            );
 
         codeWriter.writeln(
-            'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersWithoutConstraints {');
+          'class $generatedClassName$classTypeParametersSource extends $className$classTypeParametersWithoutConstraints {',
+        );
 
         ConstructorGenerator(
           codeWriter: codeWriter,
@@ -390,21 +433,24 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           generateUnmodifiableCollections: generateUnmodifiableCollections,
         ).execute();
 
-        final String? unionJsonKey = unionAnnotationValueExtractor.getString('unionJsonKey');
+        final String? unionJsonKey = unionAnnotationValueExtractor.getString(
+          'unionJsonKey',
+        );
         if (unionJsonKey != null) {
-          final bool isFieldAlreadyDeclared =
-              fields.any((DeclarationInfo field) => field.name == unionJsonKey);
+          final bool isFieldAlreadyDeclared = fields.any(
+            (DeclarationInfo field) => field.name == unionJsonKey,
+          );
           if (!isFieldAlreadyDeclared) {
-            final String? unionJsonKeyValue = AnnotationValueExtractor(ctor.metadata
-                    .getAllAnnotationsByType(AnnotationType.unionJsonKeyValue)
-                    .firstOrNull)
-                .getPositionedArgument(0)
-                ?.toSource();
+            final String? unionJsonKeyValue = AnnotationValueExtractor(
+              ctor.metadata.getAllAnnotationsByType(AnnotationType.unionJsonKeyValue).firstOrNull,
+            ).getPositionedArgument(0)?.toSource();
 
             codeWriter
               ..write('final String $unionJsonKey = ')
-              ..write(unionJsonKeyValue ??
-                  "'${jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme)}'")
+              ..write(
+                unionJsonKeyValue ??
+                    "'${jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme)}'",
+              )
               ..writeln(';')
               ..writeln();
           }
@@ -429,16 +475,21 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
             codeWriter: codeWriter,
             fields: fields,
             jsonKeyNameConventionGetter: jsonKeyNameConventionGetter,
-            toJsonUnionKey: unionAnnotationValueExtractor.getString('unionJsonKey'),
+            toJsonUnionKey: unionAnnotationValueExtractor.getString(
+              'unionJsonKey',
+            ),
             classDeclarationFinder: declarationFinder.findClassOrEnum,
             logger: logger,
-            dropNullValues:
-                pluginOptions.json.toJson.effectiveDropNullValues(targetFileRelativePath),
+            dropNullValues: pluginOptions.json.toJson.effectiveDropNullValues(
+              targetFileRelativePath,
+            ),
           ).execute();
         }
 
         if (unionAnnotationValueExtractor.getBool('hashAndEquals') ??
-            pluginOptions.union.effectiveHashAndEquals(targetFileRelativePath)) {
+            pluginOptions.union.effectiveHashAndEquals(
+              targetFileRelativePath,
+            )) {
           HashGenerator(
             codeWriter: codeWriter,
             fields: fields,
@@ -480,9 +531,11 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
 
           codeWriter
             ..writeln(
-                'extension \$${generatedClassName}Extension$classTypeParametersSource on $generatedClassName$classTypeParametersWithoutConstraints {')
+              'extension \$${generatedClassName}Extension$classTypeParametersSource on $generatedClassName$classTypeParametersWithoutConstraints {',
+            )
             ..writeln(
-                '_${generatedClassName}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _${generatedClassName}CopyWithProxyImpl$classTypeParametersWithoutConstraints(this);')
+              '_${generatedClassName}CopyWithProxy$classTypeParametersWithoutConstraints get copyWith => _${generatedClassName}CopyWithProxyImpl$classTypeParametersWithoutConstraints(this);',
+            )
             ..writeln('}');
         }
       }
@@ -505,7 +558,10 @@ String _buildIssueFileAndLineString({
       : null;
   final String relativePath = path.relative(
     buildInfo.targetFilePath,
-    from: path.join(buildInfo.projectDirectoryPath, '..') /* preserve project folder name */,
+    from: path.join(
+      buildInfo.projectDirectoryPath,
+      '..',
+    ) /* preserve project folder name */,
   );
 
   return switch (cl) {

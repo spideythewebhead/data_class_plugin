@@ -88,8 +88,9 @@ class _RectangleCopyWithProxyImpl implements _RectangleCopyWithProxy {
 
 sealed class $RectangleCopyWithProxyChain<$Result> {
   factory $RectangleCopyWithProxyChain(
-          final Rectangle value, final $Result Function(Rectangle update) chain) =
-      _RectangleCopyWithProxyChainImpl<$Result>;
+    final Rectangle value,
+    final $Result Function(Rectangle update) chain,
+  ) = _RectangleCopyWithProxyChainImpl<$Result>;
 
   $Result width(double newValue);
 
@@ -121,10 +122,12 @@ class _RectangleCopyWithProxyChainImpl<$Result> implements $RectangleCopyWithPro
     final double? width,
     final double? height,
   }) {
-    return _chain(_$RectangleImpl(
-      width: width ?? _value.width,
-      height: height ?? _value.height,
-    ));
+    return _chain(
+      _$RectangleImpl(
+        width: width ?? _value.width,
+        height: height ?? _value.height,
+      ),
+    );
   }
 }
 
@@ -247,10 +250,12 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
     final int? id,
     final String? username,
   }) {
-    return _chain(_$UserImpl(
-      id: id ?? _value.id,
-      username: username ?? _value.username,
-    ));
+    return _chain(
+      _$UserImpl(
+        id: id ?? _value.id,
+        username: username ?? _value.username,
+      ),
+    );
   }
 }
 
@@ -372,8 +377,9 @@ class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
 
 sealed class $SuperUserCopyWithProxyChain<$Result> {
   factory $SuperUserCopyWithProxyChain(
-          final SuperUser value, final $Result Function(SuperUser update) chain) =
-      _SuperUserCopyWithProxyChainImpl<$Result>;
+    final SuperUser value,
+    final $Result Function(SuperUser update) chain,
+  ) = _SuperUserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
 
@@ -421,12 +427,14 @@ class _SuperUserCopyWithProxyChainImpl<$Result> implements $SuperUserCopyWithPro
     final String? nickname,
     final bool? isEnabled,
   }) {
-    return _chain(_$SuperUserImpl(
-      id: id ?? _value.id,
-      username: username ?? _value.username,
-      nickname: nickname ?? _value.nickname,
-      isEnabled: isEnabled ?? _value.isEnabled,
-    ));
+    return _chain(
+      _$SuperUserImpl(
+        id: id ?? _value.id,
+        username: username ?? _value.username,
+        nickname: nickname ?? _value.nickname,
+        isEnabled: isEnabled ?? _value.isEnabled,
+      ),
+    );
   }
 }
 

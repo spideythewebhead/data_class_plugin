@@ -55,9 +55,9 @@ class AssistCollectorTest extends AssistCollector {
 }
 
 DataClassPluginOptions getPluginOptions() {
-  return DataClassPluginOptions.fromFile(io.File(
-    path.join('test', 'data_class_plugin_options.yaml'),
-  ));
+  return DataClassPluginOptions.fromFile(
+    io.File(path.join('test', 'data_class_plugin_options.yaml')),
+  );
 }
 
 const List<Type> availableContributors = <Type>[
@@ -105,8 +105,32 @@ Future<void> testContributorAssists({
     });
 
     // Verify that all required contributors return assists
-    test('should have assists from ${shouldHaveContributors.length} contributors', () async {
-      for (final Type contributor in shouldHaveContributors) {
+    test(
+      'should have assists from ${shouldHaveContributors.length} contributors',
+      () async {
+        for (final Type contributor in shouldHaveContributors) {
+          final AssistCollectorTest collector = AssistCollectorTest();
+          final DartAssistRequestTest request = DartAssistRequestTest(
+            offset: offsetProvider?.call(compilationUnit!) ?? compilationUnit!.beginToken.offset,
+            length: resolvedUnitResult!.content.length,
+            resourceProvider: PhysicalResourceProvider.INSTANCE,
+            result: resolvedUnitResult!,
+          );
+
+          await contributors
+              .where((AssistContributor c) => c.runtimeType == contributor)
+              .first
+              .computeAssists(request, collector);
+
+          expect(collector.assists, hasLength(1));
+        }
+      },
+    );
+
+    // Verify that none of the other available contributors return any assists
+    test(
+      'should not have assists from ${availableContributors.where((Type t) => !shouldHaveContributors.contains(t)).length} contributors',
+      () async {
         final AssistCollectorTest collector = AssistCollectorTest();
         final DartAssistRequestTest request = DartAssistRequestTest(
           offset: offsetProvider?.call(compilationUnit!) ?? compilationUnit!.beginToken.offset,
@@ -116,32 +140,14 @@ Future<void> testContributorAssists({
         );
 
         await contributors
-            .where((AssistContributor c) => c.runtimeType == contributor)
+            .where(
+              (AssistContributor c) => !shouldHaveContributors.contains(c.runtimeType),
+            )
             .first
             .computeAssists(request, collector);
 
-        expect(collector.assists, hasLength(1));
-      }
-    });
-
-    // Verify that none of the other available contributors return any assists
-    test(
-        'should not have assists from ${availableContributors.where((Type t) => !shouldHaveContributors.contains(t)).length} contributors',
-        () async {
-      final AssistCollectorTest collector = AssistCollectorTest();
-      final DartAssistRequestTest request = DartAssistRequestTest(
-        offset: offsetProvider?.call(compilationUnit!) ?? compilationUnit!.beginToken.offset,
-        length: resolvedUnitResult!.content.length,
-        resourceProvider: PhysicalResourceProvider.INSTANCE,
-        result: resolvedUnitResult!,
-      );
-
-      await contributors
-          .where((AssistContributor c) => !shouldHaveContributors.contains(c.runtimeType))
-          .first
-          .computeAssists(request, collector);
-
-      expect(collector.assists, hasLength(0));
-    });
+        expect(collector.assists, hasLength(0));
+      },
+    );
   });
 }

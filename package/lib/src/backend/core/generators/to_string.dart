@@ -7,9 +7,9 @@ class ToStringGenerator implements Generator {
     required final CodeWriter codeWriter,
     required final List<DeclarationInfo> fields,
     required final String className,
-  })  : _codeWriter = codeWriter,
-        _className = className,
-        _fields = fields;
+  }) : _codeWriter = codeWriter,
+       _className = className,
+       _fields = fields;
 
   final CodeWriter _codeWriter;
   final String _className;

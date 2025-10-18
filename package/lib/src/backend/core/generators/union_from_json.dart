@@ -14,14 +14,14 @@ class UnionFromJsonGenerator implements Generator {
     required final AnnotationValueExtractor unionAnnotationValueExtractor,
     required final Logger logger,
     required JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
-  })  : _codeWriter = codeWriter,
-        _className = className,
-        _classTypeParametersSource = classTypeParametersSource,
-        _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
-        _factoriesWithRedirectedConstructors = factoriesWithRedirectedConstructors,
-        _unionAnnotationValueExtractor = unionAnnotationValueExtractor,
-        _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
-        _logger = logger;
+  }) : _codeWriter = codeWriter,
+       _className = className,
+       _classTypeParametersSource = classTypeParametersSource,
+       _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
+       _factoriesWithRedirectedConstructors = factoriesWithRedirectedConstructors,
+       _unionAnnotationValueExtractor = unionAnnotationValueExtractor,
+       _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
+       _logger = logger;
 
   final CodeWriter _codeWriter;
   final String _className;
@@ -34,15 +34,19 @@ class UnionFromJsonGenerator implements Generator {
 
   @override
   void execute() {
-    final String? unionJsonKey = _unionAnnotationValueExtractor.getString('unionJsonKey');
+    final String? unionJsonKey = _unionAnnotationValueExtractor.getString(
+      'unionJsonKey',
+    );
 
-    final String? unionFallbackJsonValue =
-        _unionAnnotationValueExtractor.getString('unionFallbackJsonValue');
+    final String? unionFallbackJsonValue = _unionAnnotationValueExtractor.getString(
+      'unionFallbackJsonValue',
+    );
     String? defaultFallbackConstructor;
 
     _codeWriter
       ..writeln(
-          '$_className$_classTypeParametersWithoutConstraints _\$${_className}FromJson$_classTypeParametersSource(Map<dynamic, dynamic> json) {')
+        '$_className$_classTypeParametersWithoutConstraints _\$${_className}FromJson$_classTypeParametersSource(Map<dynamic, dynamic> json) {',
+      )
       ..writeln("switch (json['$unionJsonKey']) {");
 
     for (final ConstructorDeclaration ctor in _factoriesWithRedirectedConstructors) {
@@ -53,11 +57,13 @@ class UnionFromJsonGenerator implements Generator {
         continue;
       }
 
-      final List<Annotation> unionJsonKeyValueAnnotations =
-          ctor.metadata.getAllAnnotationsByType(AnnotationType.unionJsonKeyValue);
+      final List<Annotation> unionJsonKeyValueAnnotations = ctor.metadata.getAllAnnotationsByType(
+        AnnotationType.unionJsonKeyValue,
+      );
       for (final Annotation annotation in unionJsonKeyValueAnnotations) {
-        final String? jsonKeyValue =
-            AnnotationValueExtractor(annotation).getPositionedArgument(0)?.toSource();
+        final String? jsonKeyValue = AnnotationValueExtractor(
+          annotation,
+        ).getPositionedArgument(0)?.toSource();
         if (jsonKeyValue == null) {
           continue;
         }
@@ -65,23 +71,28 @@ class UnionFromJsonGenerator implements Generator {
       }
 
       if (unionJsonKeyValueAnnotations.isEmpty) {
-        _codeWriter
-            .writeln("case '${_jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme)}':");
+        _codeWriter.writeln(
+          "case '${_jsonKeyNameConventionGetter(null).transform(ctor.name!.lexeme)}':",
+        );
       }
 
       _codeWriter.writeln(
-          'return ${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersWithoutConstraints.fromJson(json);');
+        'return ${ctor.redirectedConstructor!.beginToken.lexeme}$_classTypeParametersWithoutConstraints.fromJson(json);',
+      );
     }
 
     if (unionFallbackJsonValue != null && defaultFallbackConstructor == null) {
       _logger.warning(
-          '"unionFallbackJsonValue: $unionFallbackJsonValue" is not declared as UnionJsonKeyValue');
+        '"unionFallbackJsonValue: $unionFallbackJsonValue" is not declared as UnionJsonKeyValue',
+      );
     }
 
     _codeWriter.writeln('default:');
 
     if (defaultFallbackConstructor == null) {
-      _codeWriter.writeln("throw UnimplementedError('No JSON key value matched');");
+      _codeWriter.writeln(
+        "throw UnimplementedError('No JSON key value matched');",
+      );
     } else {
       _codeWriter.writeln('return $defaultFallbackConstructor.fromJson(json);');
     }

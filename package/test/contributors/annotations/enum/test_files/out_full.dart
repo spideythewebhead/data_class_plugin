@@ -1,8 +1,4 @@
-@Enum(
-  toJson: true,
-  fromJson: true,
-  $toString: true,
-)
+@Enum(toJson: true, fromJson: true, $toString: true)
 enum Category {
   science(1),
   finance(2),

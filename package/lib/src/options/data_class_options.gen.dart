@@ -8,8 +8,8 @@ part of 'data_class_options.dart';
 class _$DataClassOptionsImpl extends DataClassOptions {
   const _$DataClassOptionsImpl({
     Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
-  })  : _optionsConfig = optionsConfig,
-        super.ctor();
+  }) : _optionsConfig = optionsConfig,
+       super.ctor();
 
   @override
   Map<String, OptionConfig> get optionsConfig =>

@@ -34,3 +34,6 @@ build/
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
+
+# FVM Version Cache
+.fvm/

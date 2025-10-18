@@ -7,14 +7,18 @@ import 'package:test/test.dart';
 void main() {
   group('DataClassPluginOptions', () {
     test('returns DataClassPluginOptions from file', () async {
-      final File optionsFile = File(join(
-        Directory.current.path,
-        'test',
-        'options',
-        'mock_data_class_plugin_options.yaml',
-      ));
+      final File optionsFile = File(
+        join(
+          Directory.current.path,
+          'test',
+          'options',
+          'mock_data_class_plugin_options.yaml',
+        ),
+      );
 
-      final DataClassPluginOptions options = DataClassPluginOptions.fromFile(optionsFile);
+      final DataClassPluginOptions options = DataClassPluginOptions.fromFile(
+        optionsFile,
+      );
 
       expect(options, isNotNull);
       expect(options.dataClass, isNotNull);

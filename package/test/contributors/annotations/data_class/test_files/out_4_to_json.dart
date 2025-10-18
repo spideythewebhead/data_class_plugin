@@ -1,16 +1,11 @@
 part 'in_4_to_json.gen.dart';
 
-@DataClass(
-  toJson: true,
-)
+@DataClass(toJson: true)
 abstract class User {
   User.ctor();
 
   /// Default constructor
-  factory User({
-    required int id,
-    required String username,
-  }) = _$UserImpl;
+  factory User({required int id, required String username}) = _$UserImpl;
 
   int get id;
 

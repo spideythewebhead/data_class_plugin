@@ -37,9 +37,7 @@ abstract class ToJsonOptions {
   factory ToJsonOptions.fromJson(Map<dynamic, dynamic> json) = _$ToJsonOptionsImpl.fromJson;
 
   /// Default constructor
-  const factory ToJsonOptions({
-    Map<String, OptionConfig> optionsConfig,
-  }) = _$ToJsonOptionsImpl;
+  const factory ToJsonOptions({Map<String, OptionConfig> optionsConfig}) = _$ToJsonOptionsImpl;
 
   @DefaultValue(<String, OptionConfig>{})
   Map<String, OptionConfig> get optionsConfig;

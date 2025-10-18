@@ -1,3 +1,6 @@
 {
   "dart.lineLength": 100,
+  "dart.flutterSdkPath": ".fvm/versions/3.35.5",
+  "dart.enableSdkFormatter": true,
+  "dart.testAdditionalArgs": ["--compiler", "vm:source"]
 }

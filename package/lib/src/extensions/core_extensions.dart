@@ -32,9 +32,9 @@ extension IterableX<T> on Iterable<T> {
 extension FolderX on Folder {
   Future<DataClassPluginOptions> getPluginOptions() async {
     try {
-      return DataClassPluginOptions.fromFile((io.File(
-        utils.getDataClassPluginOptionsPath(path),
-      )));
+      return DataClassPluginOptions.fromFile(
+        io.File(utils.getDataClassPluginOptionsPath(path)),
+      );
     } catch (_) {
       return const DataClassPluginOptions();
     }

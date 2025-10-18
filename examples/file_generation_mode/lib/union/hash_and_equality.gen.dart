@@ -69,8 +69,8 @@ class AsyncResultData extends AsyncResult {
 class AsyncResultListData extends AsyncResult {
   AsyncResultListData(
     List<int> data,
-  )   : _data = data,
-        super._();
+  ) : _data = data,
+      super._();
 
   List<int> get data => List<int>.unmodifiable(_data);
   final List<int> _data;

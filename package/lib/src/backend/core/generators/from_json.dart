@@ -13,13 +13,13 @@ class FromJsonGenerator implements Generator {
     required final JsonKeyNameConventionGetter jsonKeyNameConventionGetter,
     required final ClassOrEnumDeclarationFinder classDeclarationFinder,
     required final Logger logger,
-  })  : _codeWriter = codeWriter,
-        _fields = fields,
-        _generatedClassName = generatedClassName,
-        _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
-        _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
-        _classOrEnumDeclarationFinder = classDeclarationFinder,
-        _logger = logger;
+  }) : _codeWriter = codeWriter,
+       _fields = fields,
+       _generatedClassName = generatedClassName,
+       _classTypeParametersWithoutConstraints = classTypeParametersWithoutConstraints,
+       _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
+       _classOrEnumDeclarationFinder = classDeclarationFinder,
+       _logger = logger;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
@@ -34,8 +34,12 @@ class FromJsonGenerator implements Generator {
   @override
   Future<void> execute() async {
     _codeWriter
-      ..writeln('factory $_generatedClassName.fromJson(Map<dynamic, dynamic> json) {')
-      ..writeln('return $_generatedClassName$_classTypeParametersWithoutConstraints(');
+      ..writeln(
+        'factory $_generatedClassName.fromJson(Map<dynamic, dynamic> json) {',
+      )
+      ..writeln(
+        'return $_generatedClassName$_classTypeParametersWithoutConstraints(',
+      );
 
     for (final DeclarationInfo field in _fields) {
       AnnotationValueExtractor? annotationValueExtractor;
@@ -50,7 +54,9 @@ class FromJsonGenerator implements Generator {
 
         final String className = annotation.name.name;
         final NamedCompilationUnitMember? node = await _classOrEnumDeclarationFinder(className)
-            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+            .then(
+              (FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node,
+            );
 
         // handle JsonConverter interface implementer
         if (node is ClassDeclaration) {
@@ -69,13 +75,15 @@ class FromJsonGenerator implements Generator {
         continue;
       }
 
-      final JsonKeyNameConvention jsonKeyNameConvention =
-          _jsonKeyNameConventionGetter(annotationValueExtractor.getEnumValue('nameConvention'));
+      final JsonKeyNameConvention jsonKeyNameConvention = _jsonKeyNameConventionGetter(
+        annotationValueExtractor.getEnumValue('nameConvention'),
+      );
 
       final String fieldName = field.name;
       final TachyonDartType dartType = field.type?.customDartType ?? TachyonDartType.dynamic;
 
-      _currentJsonFieldName = annotationValueExtractor.getString('name') ??
+      _currentJsonFieldName =
+          annotationValueExtractor.getString('name') ??
           jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
 
       if (field.isNamed) {
@@ -83,20 +91,28 @@ class FromJsonGenerator implements Generator {
       }
 
       if (customJsonConverter != null) {
-        _codeWriter.writeln('const $customJsonConverter()'
-            ".fromJson(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),");
+        _codeWriter.writeln(
+          'const $customJsonConverter()'
+          ".fromJson(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),",
+        );
         continue;
       }
 
-      final String? customFunction = annotationValueExtractor.getFunction('fromJson');
+      final String? customFunction = annotationValueExtractor.getFunction(
+        'fromJson',
+      );
       if (customFunction != null) {
         _codeWriter.writeln(
-            "$customFunction(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),");
+          "$customFunction(json['$_currentJsonFieldName'], json, '$_currentJsonFieldName'),",
+        );
         continue;
       }
 
-      final AnnotationValueExtractor defaultValueExtractor = AnnotationValueExtractor(field.metadata
-          .firstWhereOrNull((Annotation annotation) => annotation.isDefaultValueAnnotation));
+      final AnnotationValueExtractor defaultValueExtractor = AnnotationValueExtractor(
+        field.metadata.firstWhereOrNull(
+          (Annotation annotation) => annotation.isDefaultValueAnnotation,
+        ),
+      );
 
       await _parse(
         dartType: dartType,
@@ -116,9 +132,12 @@ class FromJsonGenerator implements Generator {
     required final String variableName,
     Expression? defaultValue,
   }) {
-    final String optionalConst =
-        (defaultValue is TypedLiteral || defaultValue is MethodInvocation) ? 'const' : '';
-    _codeWriter.write('$variableName == null ? $optionalConst $defaultValue : ');
+    final String optionalConst = (defaultValue is TypedLiteral || defaultValue is MethodInvocation)
+        ? 'const'
+        : '';
+    _codeWriter.write(
+      '$variableName == null ? $optionalConst $defaultValue : ',
+    );
   }
 
   Future<void> _parse({
@@ -187,7 +206,9 @@ class FromJsonGenerator implements Generator {
 
     if (dartType.isDouble) {
       if (defaultValue != null) {
-        _codeWriter.write('($parentVariableName as num?)?.toDouble() ?? $defaultValue');
+        _codeWriter.write(
+          '($parentVariableName as num?)?.toDouble() ?? $defaultValue',
+        );
         return;
       }
       if (dartType.isNullable) {
@@ -200,7 +221,9 @@ class FromJsonGenerator implements Generator {
 
     if (dartType.isInt) {
       if (defaultValue != null) {
-        _codeWriter.write('($parentVariableName as num?)?.toInt() ?? $defaultValue');
+        _codeWriter.write(
+          '($parentVariableName as num?)?.toInt() ?? $defaultValue',
+        );
         return;
       }
       if (dartType.isNullable) {
@@ -223,27 +246,38 @@ class FromJsonGenerator implements Generator {
     }
 
     final NamedCompilationUnitMember? typeDeclarationNode =
-        await _classOrEnumDeclarationFinder(dartType.name)
-            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+        await _classOrEnumDeclarationFinder(dartType.name).then(
+          (FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node,
+        );
 
     if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasFactory('fromJson') ||
         typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasFactory('fromJson')) {
-      _codeWriter.write('${dartType.fullTypeName}.fromJson($parentVariableName)');
+      _codeWriter.write(
+        '${dartType.fullTypeName}.fromJson($parentVariableName)',
+      );
       return;
     }
 
-    _logger.warning('~ No "fromJson" factory found for type "${dartType.fullTypeName}"');
+    _logger.warning(
+      '~ No "fromJson" factory found for type "${dartType.fullTypeName}"',
+    );
 
     if (dartType.isNullable) {
-      final String typeWithoutNullability =
-          dartType.fullTypeName.substring(0, dartType.fullTypeName.length - 1);
-      _codeWriter.write('jsonConverterRegistrant.find($typeWithoutNullability)'
-          ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as $typeWithoutNullability");
+      final String typeWithoutNullability = dartType.fullTypeName.substring(
+        0,
+        dartType.fullTypeName.length - 1,
+      );
+      _codeWriter.write(
+        'jsonConverterRegistrant.find($typeWithoutNullability)'
+        ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as $typeWithoutNullability",
+      );
       return;
     }
 
-    _codeWriter.write('jsonConverterRegistrant.find(${dartType.fullTypeName})'
-        ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as ${dartType.fullTypeName}");
+    _codeWriter.write(
+      'jsonConverterRegistrant.find(${dartType.fullTypeName})'
+      ".fromJson($parentVariableName, json, '$_currentJsonFieldName') as ${dartType.fullTypeName}",
+    );
   }
 
   Future<void> _parseList({
@@ -255,8 +289,9 @@ class FromJsonGenerator implements Generator {
     _codeWriter.write('<$fullType>[');
 
     final String loopVariableName = 'i$depthIndex';
-    _codeWriter
-        .writeln('for (final dynamic $loopVariableName in ($parentVariableName as List<dynamic>))');
+    _codeWriter.writeln(
+      'for (final dynamic $loopVariableName in ($parentVariableName as List<dynamic>))',
+    );
 
     await _parse(
       dartType: dartType.typeArguments[0],
@@ -277,21 +312,26 @@ class FromJsonGenerator implements Generator {
 
     if (!keyType.isString) {
       if (keyType.isNullable) {
-        _logger.error('Key can not be nullable. Given "${keyType.fullTypeName}".');
+        _logger.error(
+          'Key can not be nullable. Given "${keyType.fullTypeName}".',
+        );
         return;
       }
 
       final NamedCompilationUnitMember? typeDeclarationNode =
-          await _classOrEnumDeclarationFinder(keyType.name)
-              .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+          await _classOrEnumDeclarationFinder(keyType.name).then(
+            (FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node,
+          );
 
       if (typeDeclarationNode is! EnumDeclaration) {
         _logger.error(
-            'Map key type can only be "String" or an enum. Given "${keyType.fullTypeName}".');
+          'Map key type can only be "String" or an enum. Given "${keyType.fullTypeName}".',
+        );
         return;
       } else if (!typeDeclarationNode.hasFactory('fromJson')) {
         _logger.error(
-            'Enum with name "${keyType.fullTypeName}" does not provide a "fromJson" constructor.');
+          'Enum with name "${keyType.fullTypeName}" does not provide a "fromJson" constructor.',
+        );
         return;
       }
 
@@ -303,7 +343,8 @@ class FromJsonGenerator implements Generator {
 
     final String loopVariableName = 'e$depthIndex';
     _codeWriter.writeln(
-        'for (final MapEntry<dynamic, dynamic> $loopVariableName in ($parentVariableName as Map<dynamic, dynamic>).entries)');
+      'for (final MapEntry<dynamic, dynamic> $loopVariableName in ($parentVariableName as Map<dynamic, dynamic>).entries)',
+    );
 
     if (keyFromJsonSuffix != null) {
       _codeWriter

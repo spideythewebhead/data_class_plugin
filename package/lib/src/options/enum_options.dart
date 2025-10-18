@@ -9,9 +9,7 @@ abstract class EnumOptions {
   const EnumOptions.ctor();
 
   /// Default constructor
-  const factory EnumOptions({
-    Map<String, OptionConfig> optionsConfig,
-  }) = _$EnumOptionsImpl;
+  const factory EnumOptions({Map<String, OptionConfig> optionsConfig}) = _$EnumOptionsImpl;
 
   /// Creates an instance of [EnumOptions] from [json]
   factory EnumOptions.fromJson(Map<dynamic, dynamic> json) = _$EnumOptionsImpl.fromJson;

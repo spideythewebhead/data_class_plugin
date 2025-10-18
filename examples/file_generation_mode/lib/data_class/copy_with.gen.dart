@@ -167,12 +167,14 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
     final Object? email = const Object(),
     final bool? isVerified,
   }) {
-    return _chain(_$UserImpl(
-      id: id ?? _value.id,
-      username: username ?? _value.username,
-      email: identical(email, const Object()) ? _value.email : (email as String?),
-      isVerified: isVerified ?? _value.isVerified,
-    ));
+    return _chain(
+      _$UserImpl(
+        id: id ?? _value.id,
+        username: username ?? _value.username,
+        email: identical(email, const Object()) ? _value.email : (email as String?),
+        isVerified: isVerified ?? _value.isVerified,
+      ),
+    );
   }
 }
 
@@ -261,8 +263,9 @@ class _CompanyCopyWithProxyImpl implements _CompanyCopyWithProxy {
 
 sealed class $CompanyCopyWithProxyChain<$Result> {
   factory $CompanyCopyWithProxyChain(
-          final Company value, final $Result Function(Company update) chain) =
-      _CompanyCopyWithProxyChainImpl<$Result>;
+    final Company value,
+    final $Result Function(Company update) chain,
+  ) = _CompanyCopyWithProxyChainImpl<$Result>;
 
   $Result id(String newValue);
 
@@ -294,10 +297,12 @@ class _CompanyCopyWithProxyChainImpl<$Result> implements $CompanyCopyWithProxyCh
     final String? id,
     final User? ceo,
   }) {
-    return _chain(_$CompanyImpl(
-      id: id ?? _value.id,
-      ceo: ceo ?? _value.ceo,
-    ));
+    return _chain(
+      _$CompanyImpl(
+        id: id ?? _value.id,
+        ceo: ceo ?? _value.ceo,
+      ),
+    );
   }
 }
 

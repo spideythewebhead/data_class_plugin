@@ -58,8 +58,8 @@ void main() {
       <String, dynamic>{
         'id': '2',
         'title': 'Post2',
-      }
-    ]
+      },
+    ],
   });
 
   prettyPrint('GetPostsResponse with code "ok"', getPostsResponse);

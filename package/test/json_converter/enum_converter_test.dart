@@ -3,11 +3,7 @@ import 'dart:convert';
 import 'package:data_class_plugin/data_class_plugin.dart';
 import 'package:test/test.dart';
 
-enum Colors {
-  red,
-  green,
-  blue;
-}
+enum Colors { red, green, blue }
 
 class ColorsConverter implements JsonConverter<Colors, String> {
   const ColorsConverter();
@@ -30,9 +26,7 @@ class ColorsConverter implements JsonConverter<Colors, String> {
 )
 class _TestModel {
   /// Shorthand constructor
-  _TestModel({
-    required this.colors,
-  });
+  _TestModel({required this.colors});
 
   final Colors colors;
 
@@ -75,10 +69,7 @@ void main() {
     setUp(() => jsonConverterRegistrant.unregister(const ColorsConverter()));
 
     test('toJson - throws Exception if not registered', () {
-      expect(
-        () => model.toJson(),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => model.toJson(), throwsA(isA<Exception>()));
     });
 
     test('fromJson - throws Exception if not registered', () {

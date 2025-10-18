@@ -1,10 +1,6 @@
 class Model {
   /// Shorthand constructor
-  Model({
-    required this.a,
-    required this.b,
-    required this.c,
-  });
+  Model({required this.a, required this.b, required this.c});
 
   final TestClass a;
   final List<TestClass> b;

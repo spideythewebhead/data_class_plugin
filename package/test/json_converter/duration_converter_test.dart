@@ -12,17 +12,16 @@ import 'package:test/test.dart';
 )
 class _TestModel {
   /// Shorthand constructor
-  _TestModel({
-    required this.duration,
-  });
+  _TestModel({required this.duration});
 
   final Duration duration;
 
   /// Creates an instance of [_TestModel] from [json]
   factory _TestModel.fromJson(Map<dynamic, dynamic> json) {
     return _TestModel(
-      duration: jsonConverterRegistrant.find(Duration).fromJson(json['duration'], json, 'duration')
-          as Duration,
+      duration:
+          jsonConverterRegistrant.find(Duration).fromJson(json['duration'], json, 'duration')
+              as Duration,
     );
   }
 

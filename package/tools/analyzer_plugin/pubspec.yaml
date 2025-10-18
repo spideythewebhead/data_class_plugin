@@ -10,3 +10,7 @@ environment:
 
 dependencies:
   data_class_plugin: ^1.6.0-dev.0
+
+  # uncomment for development
+  # data_class_plugin:
+  # path: path/to/data_class_plugin/package

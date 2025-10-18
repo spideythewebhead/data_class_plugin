@@ -125,10 +125,12 @@ class _PostCopyWithProxyChainImpl<$Result> implements $PostCopyWithProxyChain<$R
     final String? id,
     final String? title,
   }) {
-    return _chain(_$PostImpl(
-      id: id ?? _value.id,
-      title: title ?? _value.title,
-    ));
+    return _chain(
+      _$PostImpl(
+        id: id ?? _value.id,
+        title: title ?? _value.title,
+      ),
+    );
   }
 }
 
@@ -204,8 +206,8 @@ class GetPostsResponseError extends GetPostsResponse {
 class GetPostsResponseOk extends GetPostsResponse {
   GetPostsResponseOk(
     List<Post> posts,
-  )   : _posts = posts,
-        super._();
+  ) : _posts = posts,
+      super._();
 
   List<Post> get posts => List<Post>.unmodifiable(_posts);
   final List<Post> _posts;

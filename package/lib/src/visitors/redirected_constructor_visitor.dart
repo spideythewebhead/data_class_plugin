@@ -4,9 +4,7 @@ import 'package:analyzer/dart/ast/visitor.dart';
 
 class RedirectedConstructorsVisitor extends RecursiveAstVisitor<void> {
   /// Shorthand constructor
-  RedirectedConstructorsVisitor({
-    required this.result,
-  });
+  RedirectedConstructorsVisitor({required this.result});
 
   final Map<String, RedirectedConstructor> result;
 
@@ -19,9 +17,11 @@ class RedirectedConstructorsVisitor extends RecursiveAstVisitor<void> {
     final String redirectedCtorName = node.redirectedConstructor!.beginToken.lexeme;
 
     final StringBuffer typeBuffer = StringBuffer();
-    for (Token? token = node.redirectedConstructor!.beginToken.next;
-        token != null && token.type != TokenType.SEMICOLON;
-        token = token.next) {
+    for (
+      Token? token = node.redirectedConstructor!.beginToken.next;
+      token != null && token.type != TokenType.SEMICOLON;
+      token = token.next
+    ) {
       typeBuffer.write(token.lexeme);
     }
 
@@ -34,10 +34,7 @@ class RedirectedConstructorsVisitor extends RecursiveAstVisitor<void> {
 
 class RedirectedConstructor {
   /// Shorthand constructor
-  RedirectedConstructor({
-    required this.name,
-    required this.typeArgument,
-  });
+  RedirectedConstructor({required this.name, required this.typeArgument});
 
   final String name;
   final String typeArgument;

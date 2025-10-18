@@ -12,9 +12,7 @@ abstract class DcpException implements Exception {
 
   const factory DcpException.dartToolFolderNotFound() = DcpExceptionDartToolFolderNotFound;
 
-  factory DcpException.packageNotFound({
-    required String packageName,
-  }) = DcpExceptionPackageNotFound;
+  factory DcpException.packageNotFound({required String packageName}) = DcpExceptionPackageNotFound;
 
   const factory DcpException.missingDataClassPluginImport({
     required String relativeFilePath,

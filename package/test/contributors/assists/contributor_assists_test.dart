@@ -23,10 +23,15 @@ final String testFilesPath = join(
 final String enumPath = join(testFilesPath, 'enum.dart');
 final String enumAnnotationPath = join(testFilesPath, 'enum_annotation.dart');
 final String unionAnnotationPath = join(testFilesPath, 'union_annotation.dart');
-final String dataClassAnnotationPath = join(testFilesPath, 'data_class_annotation.dart');
+final String dataClassAnnotationPath = join(
+  testFilesPath,
+  'data_class_annotation.dart',
+);
 
 void main() async {
-  final DcpAnalyzerPlugin plugin = DcpAnalyzerPlugin(PhysicalResourceProvider.INSTANCE);
+  final DcpAnalyzerPlugin plugin = DcpAnalyzerPlugin(
+    PhysicalResourceProvider.INSTANCE,
+  );
 
   final AnalysisContextCollection analysis = AnalysisContextCollection(
     includedPaths: <String>[
@@ -54,14 +59,15 @@ void main() async {
     assistGroupName: 'Enum annotation',
     plugin: plugin,
     analysis: analysis,
-    shouldHaveContributors: <Type>[
-      EnumAnnotationAssistContributor,
-    ],
+    shouldHaveContributors: <Type>[EnumAnnotationAssistContributor],
     filepath: enumAnnotationPath,
     offsetProvider: (CompilationUnit unit) {
       final EnumAstVisitor enumVisitor = EnumAstVisitor(
-          matcher: (EnumDeclaration node) =>
-              node.declaredElement?.hasEnumAnnotation ?? node.hasEnumAnnotation);
+        matcher: (EnumDeclaration node) {
+          return node.declaredFragment?.element.metadata2.hasEnumAnnotation ??
+              node.hasEnumAnnotation;
+        },
+      );
       unit.visitChildren(enumVisitor);
       return enumVisitor.enumNode?.offset ?? -1;
     },
@@ -71,14 +77,15 @@ void main() async {
     assistGroupName: 'Data Class annotation',
     plugin: plugin,
     analysis: analysis,
-    shouldHaveContributors: <Type>[
-      DataClassAssistContributor,
-    ],
+    shouldHaveContributors: <Type>[DataClassAssistContributor],
     filepath: dataClassAnnotationPath,
     offsetProvider: (CompilationUnit unit) {
       final ClassAstVisitor classVisitor = ClassAstVisitor(
-          matcher: (ClassDeclaration node) =>
-              node.declaredElement?.hasDataClassAnnotation ?? node.hasDataClassAnnotation);
+        matcher: (ClassDeclaration node) {
+          return node.declaredFragment?.element.metadata2.hasDataClassAnnotation ??
+              node.hasDataClassAnnotation;
+        },
+      );
       unit.visitChildren(classVisitor);
       return classVisitor.classNode?.offset ?? -1;
     },
@@ -88,14 +95,15 @@ void main() async {
     assistGroupName: 'Union annotation',
     plugin: plugin,
     analysis: analysis,
-    shouldHaveContributors: <Type>[
-      DataClassAssistContributor,
-    ],
+    shouldHaveContributors: <Type>[DataClassAssistContributor],
     filepath: unionAnnotationPath,
     offsetProvider: (CompilationUnit unit) {
       final ClassAstVisitor classVisitor = ClassAstVisitor(
-          matcher: (ClassDeclaration node) =>
-              node.declaredElement?.hasUnionAnnotation ?? node.hasUnionAnnotation);
+        matcher: (ClassDeclaration node) {
+          return node.declaredFragment?.element.metadata2.hasUnionAnnotation ??
+              node.hasUnionAnnotation;
+        },
+      );
       unit.visitChildren(classVisitor);
       return classVisitor.classNode?.offset ?? -1;
     },

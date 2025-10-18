@@ -5,7 +5,11 @@ class UserJsonConverter implements JsonConverter<User, Map<String, dynamic>> {
   const UserJsonConverter();
 
   @override
-  User fromJson(Map<String, dynamic> value, Map<dynamic, dynamic> json, String keyName) {
+  User fromJson(
+    Map<String, dynamic> value,
+    Map<dynamic, dynamic> json,
+    String keyName,
+  ) {
     return User(
       id: value['id'] as String,
       username: value['username'] as String,
@@ -14,41 +18,23 @@ class UserJsonConverter implements JsonConverter<User, Map<String, dynamic>> {
 
   @override
   Map<String, dynamic> toJson(User user) {
-    return <String, dynamic>{
-      'id': user.id,
-      'username': user.username,
-    };
+    return <String, dynamic>{'id': user.id, 'username': user.username};
   }
 }
 
 void main() {
   jsonConverterRegistrant.register(const UserJsonConverter());
 
-  const User user1 = User(
-    id: 'test_user_1',
-    username: 'MockUser1',
-  );
-  const User user2 = User(
-    id: 'test_user_2',
-    username: 'MockUser2',
-  );
+  const User user1 = User(id: 'test_user_1', username: 'MockUser1');
+  const User user2 = User(id: 'test_user_2', username: 'MockUser2');
 
-  final UserResponse response = UserResponse(users: <User>[
-    user1,
-    user2,
-  ]);
+  final UserResponse response = UserResponse(users: <User>[user1, user2]);
 
   final Map<String, dynamic> json = <String, dynamic>{
     'users': <Map<String, dynamic>>[
-      <String, dynamic>{
-        'id': 'test_user_1',
-        'username': 'MockUser1',
-      },
-      <String, dynamic>{
-        'id': 'test_user_2',
-        'username': 'MockUser2',
-      },
-    ]
+      <String, dynamic>{'id': 'test_user_1', 'username': 'MockUser1'},
+      <String, dynamic>{'id': 'test_user_2', 'username': 'MockUser2'},
+    ],
   };
 
   test('fromJson', () {
@@ -60,17 +46,10 @@ void main() {
   });
 }
 
-@DataClass(
-  fromJson: true,
-  toJson: true,
-  copyWith: false,
-  $toString: false,
-)
+@DataClass(fromJson: true, toJson: true, copyWith: false, $toString: false)
 class UserResponse {
   /// Shorthand constructor
-  UserResponse({
-    required this.users,
-  });
+  UserResponse({required this.users});
 
   final List<User> users;
 
@@ -96,10 +75,7 @@ class UserResponse {
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      users,
-    ]);
+    return Object.hashAll(<Object?>[runtimeType, users]);
   }
 
   /// Compares [this] with [other] on identity, class type, and properties
@@ -110,16 +86,10 @@ class UserResponse {
   }
 }
 
-@DataClass(
-  copyWith: false,
-  $toString: false,
-)
+@DataClass(copyWith: false, $toString: false)
 class User {
   /// Shorthand constructor
-  const User({
-    required this.id,
-    required this.username,
-  });
+  const User({required this.id, required this.username});
 
   final String id;
   final String username;
@@ -127,11 +97,7 @@ class User {
   /// Returns a hash code based on [this] properties
   @override
   int get hashCode {
-    return Object.hashAll(<Object?>[
-      runtimeType,
-      id,
-      username,
-    ]);
+    return Object.hashAll(<Object?>[runtimeType, id, username]);
   }
 
   /// Compares [this] with [other] on identity, class type, and properties

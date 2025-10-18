@@ -8,8 +8,8 @@ part of 'enum_options.dart';
 class _$EnumOptionsImpl extends EnumOptions {
   const _$EnumOptionsImpl({
     Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
-  })  : _optionsConfig = optionsConfig,
-        super.ctor();
+  }) : _optionsConfig = optionsConfig,
+       super.ctor();
 
   @override
   Map<String, OptionConfig> get optionsConfig =>

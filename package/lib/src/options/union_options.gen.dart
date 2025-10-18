@@ -8,8 +8,8 @@ part of 'union_options.dart';
 class _$UnionOptionsImpl extends UnionOptions {
   const _$UnionOptionsImpl({
     Map<String, OptionConfig> optionsConfig = const <String, OptionConfig>{},
-  })  : _optionsConfig = optionsConfig,
-        super.ctor();
+  }) : _optionsConfig = optionsConfig,
+       super.ctor();
 
   @override
   Map<String, OptionConfig> get optionsConfig =>

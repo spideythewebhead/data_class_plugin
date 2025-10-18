@@ -13,13 +13,13 @@ class ToJsonGenerator implements Generator {
     required final bool dropNullValues,
     final String? toJsonUnionKey,
     required final Logger logger,
-  })  : _codeWriter = codeWriter,
-        _fields = fields,
-        _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
-        _classDeclarationFinder = classDeclarationFinder,
-        _dropNullValues = dropNullValues,
-        _toJsonUnionKey = toJsonUnionKey,
-        _logger = logger;
+  }) : _codeWriter = codeWriter,
+       _fields = fields,
+       _jsonKeyNameConventionGetter = jsonKeyNameConventionGetter,
+       _classDeclarationFinder = classDeclarationFinder,
+       _dropNullValues = dropNullValues,
+       _toJsonUnionKey = toJsonUnionKey,
+       _logger = logger;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
@@ -39,7 +39,9 @@ class ToJsonGenerator implements Generator {
 
     if (_toJsonUnionKey != null &&
         _toJsonUnionKey.trim().isNotEmpty &&
-        !_fields.any((DeclarationInfo field) => field.name == _toJsonUnionKey)) {
+        !_fields.any(
+          (DeclarationInfo field) => field.name == _toJsonUnionKey,
+        )) {
       _codeWriter
         ..write("'$_toJsonUnionKey': ")
         ..write('$_toJsonUnionKey,');
@@ -57,8 +59,9 @@ class ToJsonGenerator implements Generator {
         }
 
         final String className = annotation.name.name;
-        final NamedCompilationUnitMember? node = await _classDeclarationFinder(className)
-            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+        final NamedCompilationUnitMember? node = await _classDeclarationFinder(className).then(
+          (FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node,
+        );
 
         // handle JsonConverter interface implementer
         if (node is ClassDeclaration) {
@@ -77,11 +80,13 @@ class ToJsonGenerator implements Generator {
         continue;
       }
 
-      final JsonKeyNameConvention jsonKeyNameConvention =
-          _jsonKeyNameConventionGetter(annotationValueExtractor.getEnumValue('nameConvention'));
+      final JsonKeyNameConvention jsonKeyNameConvention = _jsonKeyNameConventionGetter(
+        annotationValueExtractor.getEnumValue('nameConvention'),
+      );
 
       final String fieldName = field.name;
-      final String jsonFieldName = annotationValueExtractor.getString('name') ??
+      final String jsonFieldName =
+          annotationValueExtractor.getString('name') ??
           jsonKeyNameConvention.transform(fieldName.escapeDollarSign());
       final TachyonDartType dartType = field.type?.customDartType ?? TachyonDartType.dynamic;
 
@@ -92,11 +97,15 @@ class ToJsonGenerator implements Generator {
       _codeWriter.write("'$jsonFieldName': ");
 
       if (customJsonConverter != null) {
-        _codeWriter.writeln('''const $customJsonConverter().toJson($fieldName),''');
+        _codeWriter.writeln(
+          '''const $customJsonConverter().toJson($fieldName),''',
+        );
         continue;
       }
 
-      final String? customFunction = annotationValueExtractor.getFunction('toJson');
+      final String? customFunction = annotationValueExtractor.getFunction(
+        'toJson',
+      );
       if (customFunction != null) {
         _codeWriter.writeln('$customFunction($fieldName),');
         continue;
@@ -116,9 +125,7 @@ class ToJsonGenerator implements Generator {
       ..writeln();
   }
 
-  void _writeNullableParsingPrefix({
-    required final String parentVariableName,
-  }) {
+  void _writeNullableParsingPrefix({required final String parentVariableName}) {
     if (_dropNullValues) {
       return;
     }
@@ -173,14 +180,16 @@ class ToJsonGenerator implements Generator {
         _writeNullableParsingPrefix(parentVariableName: parentVariableName);
       }
 
-      _codeWriter
-          .writeln('jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),');
+      _codeWriter.writeln(
+        'jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),',
+      );
       return;
     }
 
     final NamedCompilationUnitMember? typeDeclarationNode =
-        await _classDeclarationFinder(dartType.name)
-            .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+        await _classDeclarationFinder(dartType.name).then(
+          (FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node,
+        );
 
     if (typeDeclarationNode is ClassDeclaration && typeDeclarationNode.hasMethod('toJson') ||
         typeDeclarationNode is EnumDeclaration && typeDeclarationNode.hasMethod('toJson')) {
@@ -199,11 +208,14 @@ class ToJsonGenerator implements Generator {
       _writeNullableParsingPrefix(parentVariableName: parentVariableName);
     }
 
-    _codeWriter
-        .writeln('jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),');
+    _codeWriter.writeln(
+      'jsonConverterRegistrant.find(${dartType.name}).toJson($parentVariableName),',
+    );
   }
 
-  bool _shouldSkipEncodingForCollection(final TachyonDartType originalDartType) {
+  bool _shouldSkipEncodingForCollection(
+    final TachyonDartType originalDartType,
+  ) {
     TachyonDartType dartType = originalDartType;
     while (true) {
       if (dartType.isList) {
@@ -229,18 +241,18 @@ class ToJsonGenerator implements Generator {
     }
 
     if (dartType.isNullable) {
-      _writeNullableParsingPrefix(
-        parentVariableName: parentVariableName,
-      );
+      _writeNullableParsingPrefix(parentVariableName: parentVariableName);
     }
 
     _codeWriter.write('<dynamic>[');
 
     final String loopVariableName = 'i$depthIndex';
-    _codeWriter.writeln('for (final '
-        '${dartType.typeArguments[0].fullTypeName} '
-        '$loopVariableName in $parentVariableName'
-        '${requiresBangOperator ? '!' : ''})');
+    _codeWriter.writeln(
+      'for (final '
+      '${dartType.typeArguments[0].fullTypeName} '
+      '$loopVariableName in $parentVariableName'
+      '${requiresBangOperator ? '!' : ''})',
+    );
 
     await _encode(
       dartType: dartType.typeArguments[0],
@@ -262,42 +274,52 @@ class ToJsonGenerator implements Generator {
 
     if (!keyType.isString) {
       if (keyType.isNullable) {
-        _logger.error('Key can not be nullable. Given "${keyType.fullTypeName}".');
+        _logger.error(
+          'Key can not be nullable. Given "${keyType.fullTypeName}".',
+        );
         return;
       }
 
       final NamedCompilationUnitMember? typeDeclarationNode =
-          await _classDeclarationFinder(keyType.name)
-              .then((FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node);
+          await _classDeclarationFinder(keyType.name).then(
+            (FinderDeclarationMatch<NamedCompilationUnitMember>? match) => match?.node,
+          );
 
       if (typeDeclarationNode is! EnumDeclaration) {
         _logger.error(
-            'Map key type can only be "String" or an enum. Given "${keyType.fullTypeName}".');
+          'Map key type can only be "String" or an enum. Given "${keyType.fullTypeName}".',
+        );
         return;
       }
 
       for (final ClassMember member in typeDeclarationNode.members) {
         if (member case MethodDeclaration method
             when method.name.lexeme == 'toJson' &&
-                TachyonDartType.fromTypeAnnotation(method.returnType).isString) {
+                TachyonDartType.fromTypeAnnotation(
+                  method.returnType,
+                ).isString) {
           keyToStringSuffix = '.toJson()';
           break;
         }
       }
 
       if (keyToStringSuffix == null) {
-        final ClassMember? firstFinalStringField =
-            typeDeclarationNode.members.firstWhereOrNull((ClassMember member) {
+        final ClassMember? firstFinalStringField = typeDeclarationNode.members.firstWhereOrNull((
+          ClassMember member,
+        ) {
           return member is FieldDeclaration &&
               member.fields.isFinal &&
-              TachyonDartType.fromTypeAnnotation(member.fields.type).isString;
+              TachyonDartType.fromTypeAnnotation(
+                member.fields.type,
+              ).isString;
         });
 
         if (firstFinalStringField is FieldDeclaration) {
           keyToStringSuffix = '.${firstFinalStringField.fields.variables[0].name.lexeme}';
         } else {
           _logger.warning(
-              'Is recommended to provide a "toJson" method instead of using the default "name" field for enums.');
+            'Is recommended to provide a "toJson" method instead of using the default "name" field for enums.',
+          );
           keyToStringSuffix = '.name';
         }
       }
@@ -306,20 +328,20 @@ class ToJsonGenerator implements Generator {
     keyToStringSuffix ??= '';
 
     if (dartType.isNullable) {
-      _writeNullableParsingPrefix(
-        parentVariableName: parentVariableName,
-      );
+      _writeNullableParsingPrefix(parentVariableName: parentVariableName);
     }
 
     _codeWriter.write('<String, dynamic>{');
 
     final String loopVariableName = 'e$depthIndex';
     _codeWriter
-      ..writeln('for (final '
-          'MapEntry<${keyType.fullTypeName}, ${dartType.typeArguments[1].fullTypeName}> '
-          '$loopVariableName in $parentVariableName'
-          '${requiresBangOperator ? '!' : ''}'
-          '.entries)')
+      ..writeln(
+        'for (final '
+        'MapEntry<${keyType.fullTypeName}, ${dartType.typeArguments[1].fullTypeName}> '
+        '$loopVariableName in $parentVariableName'
+        '${requiresBangOperator ? '!' : ''}'
+        '.entries)',
+      )
       ..write('$loopVariableName.key$keyToStringSuffix: ');
 
     await _encode(

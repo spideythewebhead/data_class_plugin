@@ -19,8 +19,8 @@ sealed class AsyncResult {
 
 void main(List<String> args) {
   final AsyncResult asyncError = AsyncResult.error(Exception());
-  final AsyncResult asyncErrorCopyWithStackTrace =
-      (asyncError as AsyncResultError).copyWith.stackTrace(StackTrace.current);
+  final AsyncResult asyncErrorCopyWithStackTrace = (asyncError as AsyncResultError).copyWith
+      .stackTrace(StackTrace.current);
 
   prettyPrint('async error without stacktrace', asyncError);
   prettyPrint('async error copyWith stacktrace', asyncErrorCopyWithStackTrace);

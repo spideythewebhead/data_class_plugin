@@ -176,12 +176,14 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
     final Object? email = const Object(),
     final bool? isVerified,
   }) {
-    return _chain(_$UserImpl(
-      id: id ?? _value.id,
-      username: username ?? _value.username,
-      email: identical(email, const Object()) ? _value.email : (email as String?),
-      isVerified: isVerified ?? _value.isVerified,
-    ));
+    return _chain(
+      _$UserImpl(
+        id: id ?? _value.id,
+        username: username ?? _value.username,
+        email: identical(email, const Object()) ? _value.email : (email as String?),
+        isVerified: isVerified ?? _value.isVerified,
+      ),
+    );
   }
 }
 
@@ -192,8 +194,8 @@ extension $UserExtension on User {
 class _$GetUsersResultImpl extends GetUsersResult {
   _$GetUsersResultImpl({
     required List<User> users,
-  })  : _users = users,
-        super.ctor();
+  }) : _users = users,
+       super.ctor();
 
   @override
   List<User> get users => List<User>.unmodifiable(_users);
@@ -266,8 +268,9 @@ class _GetUsersResultCopyWithProxyImpl implements _GetUsersResultCopyWithProxy {
 
 sealed class $GetUsersResultCopyWithProxyChain<$Result> {
   factory $GetUsersResultCopyWithProxyChain(
-          final GetUsersResult value, final $Result Function(GetUsersResult update) chain) =
-      _GetUsersResultCopyWithProxyChainImpl<$Result>;
+    final GetUsersResult value,
+    final $Result Function(GetUsersResult update) chain,
+  ) = _GetUsersResultCopyWithProxyChainImpl<$Result>;
 
   $Result users(List<User> newValue);
 
@@ -292,9 +295,11 @@ class _GetUsersResultCopyWithProxyChainImpl<$Result>
   $Result call({
     final List<User>? users,
   }) {
-    return _chain(_$GetUsersResultImpl(
-      users: users ?? _value.users,
-    ));
+    return _chain(
+      _$GetUsersResultImpl(
+        users: users ?? _value.users,
+      ),
+    );
   }
 }
 

@@ -2,10 +2,9 @@ part of 'utils.dart';
 
 /// Returns a list of input/output files found in the 'test_files' folder.
 List<InOutFilesPair> getTestFiles(String directoryPath) {
-  final List<io.File> files = io.Directory(path.join(directoryPath, 'test_files'))
-      .listSync()
-      .whereType<io.File>()
-      .toList(growable: false);
+  final List<io.File> files = io.Directory(
+    path.join(directoryPath, 'test_files'),
+  ).listSync().whereType<io.File>().toList(growable: false);
 
   final List<InOutFilesPair> pairs = <InOutFilesPair>[];
 

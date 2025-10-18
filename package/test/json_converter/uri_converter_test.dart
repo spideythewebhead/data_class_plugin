@@ -12,9 +12,7 @@ import 'package:test/test.dart';
 )
 class _TestModel {
   /// Shorthand constructor
-  _TestModel({
-    required this.uri,
-  });
+  _TestModel({required this.uri});
 
   final Uri uri;
 

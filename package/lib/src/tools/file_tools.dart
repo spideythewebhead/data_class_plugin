@@ -8,10 +8,7 @@ class FileTools {
 
   // ----------------------------------------------------------------------------------------------
 
-  static void createFile(
-    final String path, {
-    final bool recursive = false,
-  }) {
+  static void createFile(final String path, {final bool recursive = false}) {
     final File file = File(path);
     if (!file.existsSync()) {
       file.createSync(recursive: recursive);
@@ -29,10 +26,7 @@ class FileTools {
     }
   }
 
-  static void deleteFile(
-    final String path, {
-    final bool recursive = false,
-  }) {
+  static void deleteFile(final String path, {final bool recursive = false}) {
     final File file = File(path);
     if (!file.existsSync()) {
       file.deleteSync(recursive: recursive);

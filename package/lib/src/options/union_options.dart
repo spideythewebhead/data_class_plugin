@@ -9,9 +9,7 @@ abstract class UnionOptions {
   const UnionOptions.ctor();
 
   /// Default constructor
-  const factory UnionOptions({
-    Map<String, OptionConfig> optionsConfig,
-  }) = _$UnionOptionsImpl;
+  const factory UnionOptions({Map<String, OptionConfig> optionsConfig}) = _$UnionOptionsImpl;
 
   /// Creates an instance of [UnionOptions] from [json]
   factory UnionOptions.fromJson(Map<dynamic, dynamic> json) = _$UnionOptionsImpl.fromJson;
