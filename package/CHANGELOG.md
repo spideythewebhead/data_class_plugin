@@ -1,3 +1,7 @@
+## 1.6.0-dev.1
+
+- Update all dependencies [(issue #411)](https://github.com/spideythewebhead/data_class_plugin/issues/411)
+
 ## 1.6.0-dev.0
 
 - Update tachyon to version 0.4.0-dev.0

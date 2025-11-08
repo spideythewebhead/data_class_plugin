@@ -6,10 +6,10 @@ homepage: https://github.com/spideythewebhead/dart_data_class_plugin
 repository: https://github.com/spideythewebhead/dart_data_class_plugin
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
+  sdk: ">=3.9.2 <4.0.0"
 
 dependencies:
-  data_class_plugin: ^1.6.0-dev.0
+  data_class_plugin: ^1.6.0-dev.1
 
   # uncomment for development
   # data_class_plugin:
