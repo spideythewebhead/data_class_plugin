@@ -165,7 +165,6 @@ class ShorthandConstructorAssistContributor extends AssistContributorMixin
           ..write('super.${param.name3} ')
           ..write(param.hasDefaultValue ? '= ${param.defaultValueCode}' : '')
           ..writeln(',');
-        continue;
       }
     }
 

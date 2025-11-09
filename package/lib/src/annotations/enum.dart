@@ -4,9 +4,9 @@ import 'package:meta/meta_meta.dart';
 ///
 /// Available methods are
 ///
-/// [$toString] Implements toString method
+/// [$toString] Implements toString method (Removed until next version)
 ///
-/// If no value is provided (default), then true is assumed
+/// If no value is provided (default), then false is assumed
 ///
 /// ```dart
 /// String toString()
@@ -31,13 +31,13 @@ import 'package:meta/meta_meta.dart';
 class Enum {
   /// Shorthand constructor
   const Enum({
-    this.$toString,
+    // this.$toString,
     this.fromJson,
     this.toJson,
   });
 
-  /// If no value is provided (default), then true is assumed
-  final bool? $toString;
+  /// If no value is provided (default), then false is assumed
+  // final bool? $toString;
 
   /// If no value is provided (default), then false is assumed
   final bool? fromJson;
