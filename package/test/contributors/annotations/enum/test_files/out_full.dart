@@ -1,4 +1,4 @@
-@Enum(toJson: true, fromJson: true, $toString: true)
+@Enum(toJson: true, fromJson: true)
 enum Category {
   science(1),
   finance(2),
@@ -10,22 +10,11 @@ enum Category {
 
   final int id;
 
-  /// Returns a string with the properties of [Category]
-  @override
-  String toString() {
-    String value = 'Category{<optimized out>}';
-    assert(() {
-      value = 'Category@<$hexIdentity>{id: $id}';
-      return true;
-    }());
-    return value;
-  }
-
-  /// Converts [Category] to a json value
-  int toJson() => id;
-
   /// Creates an instance of [Category] from [json]
   factory Category.fromJson(int json) {
     return Category.values.firstWhere((Category e) => e.id == json);
   }
+
+  /// Converts [Category] to a json value
+  int toJson() => id;
 }

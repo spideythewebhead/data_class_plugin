@@ -152,9 +152,7 @@ extension InterfaceElementX on InterfaceElement2 {
   List<FieldElement2> get dataClassFinalFields {
     return <FieldElement2>[
       for (final FieldElement2 field in fields2)
-        if (field.isFinal /* && field.isPublic - crashes / freezes and blocks execution */ &&
-            !field.hasInitializer)
-          field,
+        if (field.isFinal && field.isPublic && !field.hasInitializer) field,
     ];
   }
 
@@ -168,8 +166,10 @@ extension InterfaceElementX on InterfaceElement2 {
     ClassElement2? superClassClassElement = supertype!.element3 as ClassElement2;
     while (superClassClassElement != null) {
       fields.addAll(superClassClassElement.dataClassFinalFields);
-      if (superClassClassElement.supertype?.element3 case ClassElement2 classElement) {
+      if (superClassClassElement.supertype?.element3 case ClassElement2? classElement) {
         superClassClassElement = classElement;
+      } else {
+        superClassClassElement = null;
       }
     }
 
@@ -179,9 +179,7 @@ extension InterfaceElementX on InterfaceElement2 {
   List<FieldElement2> get jsonSupportedFields {
     return <FieldElement2>[
       for (final FieldElement2 field in fields2)
-        if (field.isFinal /* && field.isPublic - crashes / freezes and blocks execution */ &&
-            field.type.isJsonSupported)
-          field,
+        if (field.isFinal && field.isPublic && field.type.isJsonSupported) field,
     ];
   }
 }

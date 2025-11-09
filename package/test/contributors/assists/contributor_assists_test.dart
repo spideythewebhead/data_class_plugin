@@ -35,24 +35,11 @@ void main() async {
 
   final AnalysisContextCollection analysis = AnalysisContextCollection(
     includedPaths: <String>[
-      enumPath,
       enumAnnotationPath,
       unionAnnotationPath,
       dataClassAnnotationPath,
     ],
     resourceProvider: PhysicalResourceProvider.INSTANCE,
-  );
-
-  await testContributorAssists(
-    assistGroupName: 'Enum',
-    plugin: plugin,
-    analysis: analysis,
-    shouldHaveContributors: <Type>[
-      EnumConstructorAssistContributor,
-      EnumToJsonAssistContributor,
-      EnumFromJsonAssistContributor,
-    ],
-    filepath: enumPath,
   );
 
   await testContributorAssists(

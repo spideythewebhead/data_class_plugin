@@ -24,14 +24,14 @@ class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, WorkaroundDartAs
     // 1. uncomment this code, set your port
     // 1. restart dart analysis server
     // 1. expect to receive "DcpAnalyzerPlugin client"
-    Socket.connect('127.0.0.1', 9000)
-        .then((Socket socket) {
-          debugTcpSocket = socket;
-          socket.writeln('DcpAnalyzerPlugin client');
-        })
-        .catchError((Object error, StackTrace stackTrace) {
-          stderr.addError(error, stackTrace);
-        });
+    // Socket.connect('127.0.0.1', 9000)
+    //     .then((Socket socket) {
+    //       debugTcpSocket = socket;
+    //       socket.writeln('DcpAnalyzerPlugin client');
+    //     })
+    //     .catchError((Object error, StackTrace stackTrace) {
+    //       stderr.addError(error, stackTrace);
+    //     });
   }
 
   @override
@@ -58,14 +58,10 @@ class DcpAnalyzerPlugin extends ServerPlugin with AssistsMixin, WorkaroundDartAs
     try {
       return <AssistContributor>[
         // Class contributors
-        ShorthandConstructorAssistContributor(path),
         DataClassAssistContributor(path),
 
         // Enum contributors
         EnumAnnotationAssistContributor(path),
-        EnumConstructorAssistContributor(path),
-        EnumFromJsonAssistContributor(path),
-        EnumToJsonAssistContributor(path),
       ];
     } catch (error, stackTrace) {
       debugTcpSocket?.writeln(error.toString());

@@ -30,3 +30,26 @@ class EnumAstVisitor extends RecursiveAstVisitor<void> {
     node.visitChildren(this);
   }
 }
+
+/// An AST Visitor that collects all the [EnumDeclaration] nodes matched by [matcher]
+class EnumsCollectorAstVisitor extends GeneralizingAstVisitor<void> {
+  EnumsCollectorAstVisitor({
+    required this.matcher,
+  });
+
+  final EnumDeclarationNodeMatcher matcher;
+
+  final List<EnumDeclaration> _matchesNodes = <EnumDeclaration>[];
+
+  /// Provides all the matched [EnumDeclaration] nodes after calling [AstNode.visitChildren]
+  List<EnumDeclaration> get matchedNodes => List<EnumDeclaration>.unmodifiable(_matchesNodes);
+
+  @override
+  void visitEnumDeclaration(EnumDeclaration node) {
+    if (matcher(node)) {
+      _matchesNodes.add(node);
+      return;
+    }
+    node.visitChildren(this);
+  }
+}

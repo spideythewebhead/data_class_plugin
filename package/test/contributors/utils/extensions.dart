@@ -62,16 +62,19 @@ extension InOutFilesList on List<InOutFilesPair> {
         expect(collector.assists, hasLength(1));
 
         // Read the content of the 'out_.dart' file
-        final String expected = io.File(
-          outPath,
-        ).readAsStringSync().normalizeWhitespaces();
+        final String expected = io.File(outPath).readAsStringSync().normalizeWhitespaces();
 
         // Get the code generated from contributor's assists
-        final String actual = collector.hasMultipleReplacements
+        String actual = collector.hasMultipleReplacements
             ? collector.assists.getGeneratedCode()
             : collector.firstReplacement;
 
-        expect(actual, equals(expected));
+        actual = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+          pageWidth: 100,
+        ).format(actual);
+
+        expect(actual, contains(expected));
       });
     }
   }

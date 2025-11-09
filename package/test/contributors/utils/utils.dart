@@ -9,6 +9,7 @@ import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:analyzer_plugin/protocol/protocol_common.dart';
 import 'package:analyzer_plugin/protocol/protocol_generated.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:data_class_plugin/src/analyzer_plugin/analyzer_plugin.dart';
 import 'package:data_class_plugin/src/contributors/class/class_contributors.dart';
 import 'package:data_class_plugin/src/contributors/enum/enum_contributors.dart';
@@ -61,12 +62,8 @@ DataClassPluginOptions getPluginOptions() {
 }
 
 const List<Type> availableContributors = <Type>[
-  ShorthandConstructorAssistContributor,
   DataClassAssistContributor,
   EnumAnnotationAssistContributor,
-  EnumConstructorAssistContributor,
-  EnumToJsonAssistContributor,
-  EnumFromJsonAssistContributor,
 ];
 
 Future<void> testContributorAssists({
@@ -98,9 +95,9 @@ Future<void> testContributorAssists({
               .unit;
     });
 
-    test('should have 6/${availableContributors.length} contributors', () {
+    test('should have 2/${availableContributors.length} contributors', () {
       expect(contributors, isNotEmpty);
-      expect(contributors.length, 6);
+      expect(contributors.length, 2);
       expect(contributors.length == availableContributors.length, true);
     });
 
