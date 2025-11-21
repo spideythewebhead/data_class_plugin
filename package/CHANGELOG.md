@@ -1,4 +1,13 @@
-## 1.6.0-dev.1
+## 1.6.0-dev.2
+
+- Generic fixes after upgrade [(issue #413)](https://github.com/spideythewebhead/data_class_plugin/issues/413)
+
+## Breaking changes
+
+- Remove "Create shorthand constructor" assist
+- Removed individual enum assists. Now you have to use `@Enum()` annotation
+
+## 1.6.0-dev.1 (Removed from pub.dev)
 
 - Update all dependencies [(issue #411)](https://github.com/spideythewebhead/data_class_plugin/issues/411)
 
