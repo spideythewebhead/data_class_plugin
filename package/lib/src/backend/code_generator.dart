@@ -229,7 +229,7 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
         ).execute();
       }
 
-      if (dataClassAnnotationValueExtractor.getBool('toString') ??
+      if (dataClassAnnotationValueExtractor.getBool('\$toString') ??
           pluginOptions.dataClass.effectiveToString(targetFileRelativePath)) {
         ToStringGenerator(
           codeWriter: codeWriter,
