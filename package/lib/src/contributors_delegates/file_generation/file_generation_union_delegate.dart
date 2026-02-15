@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
@@ -33,9 +33,9 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
       DartFileEditBuilder fileEditBuilder,
     ) {
       for (final ClassDeclaration classNode in classNodes) {
-        final ClassElement2 classElement = classNode.declaredFragment!.element;
+        final ClassElement classElement = classNode.declaredFragment!.element;
 
-        final ElementAnnotation? unionElementAnnotation = classElement.metadata2.unionAnnotation;
+        final ElementAnnotation? unionElementAnnotation = classElement.metadata.unionAnnotation;
         if (unionElementAnnotation == null) {
           throw DcpException.missingDataClassPluginImport(
             relativeFilePath: relativeFilePath,
@@ -140,23 +140,23 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
   }
 
   void _createDefaultConstructor({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
     required final String constructorName,
   }) {
-    final ConstructorElement2? defaultConstructor = classElement.defaultConstructor;
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
     final bool isConst = defaultConstructor?.isConst ?? true;
     builder
       ..writeln()
       ..writeln(
-        '${isConst ? 'const' : ''} ${classElement.name3}.$constructorName();',
+        '${isConst ? 'const' : ''} ${classElement.name}.$constructorName();',
       )
       ..writeln();
   }
 
   void _generateFromJsonFunction({
     required final ClassDeclaration classNode,
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final SourceRange? sourceRange,
     required final DartFileEditBuilder fileEditBuilder,
   }) {
@@ -181,7 +181,7 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
 
   void _generateToJsonFunction({
     required final ClassDeclaration classNode,
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final SourceRange? sourceRange,
     required final DartFileEditBuilder fileEditBuilder,
   }) {
@@ -200,12 +200,12 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
   }
 
   void _writeFromJsonFunction({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
-    final String className = classElement.name3!;
-    final String optionalTypeParameters = classElement.typeParameters2
-        .map((TypeParameterElement2 parameter) => parameter.name3)
+    final String className = classElement.name!;
+    final String optionalTypeParameters = classElement.typeParameters
+        .map((TypeParameterElement parameter) => parameter.name)
         .nonNulls
         .join(', ')
         .wrapWithAngleBracketsIfNotEmpty();
@@ -218,7 +218,7 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
   }
 
   void _writeToJsonFunction({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
     final bool shouldAnnotateWithOverride =
@@ -227,11 +227,11 @@ class FileGenerationUnionDelegate extends ClassGenerationDelegate {
           ...classElement.allSupertypes,
         ].any((InterfaceType element) {
           return element //
-              .methods2
-              .any((MethodElement2 element) => element.name3 == 'toJson');
+              .methods
+              .any((MethodElement element) => element.name == 'toJson');
         });
 
-    builder.writeln('/// Converts [${classElement.name3}] to [Map] json');
+    builder.writeln('/// Converts [${classElement.name}] to [Map] json');
 
     if (shouldAnnotateWithOverride) {
       builder.writeln('@override');

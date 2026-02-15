@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -42,13 +42,13 @@ class EnumFromJsonAssistContributor extends AssistContributorMixin
       return;
     }
 
-    final EnumElement2 enumElement = enumNode.declaredFragment!.element;
-    if (enumElement.metadata2.hasEnumAnnotation) {
+    final EnumElement enumElement = enumNode.declaredFragment!.element;
+    if (enumElement.metadata.hasEnumAnnotation) {
       return;
     }
 
     final SourceRange? fromJsonSourceRange = enumNode.members.fromJsonSourceRange;
-    final List<FieldElement2> finalFieldsElements = enumElement.jsonSupportedFields;
+    final List<FieldElement> finalFieldsElements = enumElement.jsonSupportedFields;
 
     if (finalFieldsElements.length > 1) {
       return;
@@ -67,7 +67,7 @@ class EnumFromJsonAssistContributor extends AssistContributorMixin
           enumElement: enumElement,
           fieldElement: finalFieldsElements.firstOrNull,
           builder: builder,
-          libraryImports: enumNode.declaredFragment!.libraryFragment.libraryImports2,
+          libraryImports: enumNode.declaredFragment!.libraryFragment.libraryImports,
         );
       }
 
@@ -87,12 +87,12 @@ class EnumFromJsonAssistContributor extends AssistContributorMixin
   }
 
   static void writeFromJson({
-    required final EnumElement2 enumElement,
-    required final FieldElement2? fieldElement,
+    required final EnumElement enumElement,
+    required final FieldElement? fieldElement,
     required final DartEditBuilder builder,
     required final List<LibraryImport> libraryImports,
   }) {
-    final String enumName = enumElement.name3!;
+    final String enumName = enumElement.name!;
 
     builder
       ..writeln()
@@ -113,7 +113,7 @@ class EnumFromJsonAssistContributor extends AssistContributorMixin
         'factory $enumName.fromJson(${fieldElement.type.typeStringValue(enclosingImports: libraryImports)} json) {',
       )
       ..writeln('return $enumName.values.firstWhere')
-      ..writeln('(($enumName e) => e.${fieldElement.name3} == json);')
+      ..writeln('(($enumName e) => e.${fieldElement.name} == json);')
       ..writeln('}');
   }
 }

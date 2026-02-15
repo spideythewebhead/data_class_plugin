@@ -37,3 +37,6 @@ build/
 
 # FVM Version Cache
 .fvm/
+
+# Compiled tachyon
+ctachyon

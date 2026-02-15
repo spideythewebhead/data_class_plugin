@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
@@ -28,10 +28,10 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
       DartFileEditBuilder fileEditBuilder,
     ) {
       for (final ClassDeclaration classNode in classNodes) {
-        final ClassElement2 classElement = classNode.declaredFragment!.element;
+        final ClassElement classElement = classNode.declaredFragment!.element;
 
         final ElementAnnotation? dataClassElementAnnotation =
-            classElement.metadata2.dataClassAnnotation;
+            classElement.metadata.dataClassAnnotation;
         if (dataClassElementAnnotation == null) {
           throw DcpException.missingDataClassPluginImport(
             relativeFilePath: relativeFilePath,
@@ -46,11 +46,11 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
         final SourceRange? fromJsonSourceRange = classNode.members.fromJsonSourceRange;
         final SourceRange? toJsonSourceRange = classNode.members.toJsonSourceRange;
 
-        final List<FieldElement2> fields = classElement.fields2
-            .where((FieldElement2 field) {
-              final GetterElement? getter = field.getter2;
+        final List<FieldElement> fields = classElement.fields
+            .where((FieldElement field) {
+              final GetterElement? getter = field.getter;
               return getter != null &&
-                  getter.name3 != 'hashCode' &&
+                  getter.name != 'hashCode' &&
                   // getter.isGetter &&
                   getter.isAbstract;
             })
@@ -71,26 +71,26 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
             .toList(growable: false);
 
         final Set<String> classFieldsNames = <String>{
-          for (final FieldElement2 field in fields) field.name3!,
+          for (final FieldElement field in fields) field.name!,
         };
 
-        final List<FieldElement2> superClassFields;
+        final List<FieldElement> superClassFields;
 
-        if (classElement.supertype?.element3 is ClassElement2 &&
-            (classElement.supertype?.element3.metadata2.hasDataClassAnnotation ?? false)) {
-          final ClassElement2 superClass = classElement.supertype?.element3 as ClassElement2;
-          superClassFields = superClass.fields2
-              .where((FieldElement2 field) {
-                final GetterElement? getter = field.getter2;
+        if (classElement.supertype?.element is ClassElement &&
+            (classElement.supertype?.element.metadata.hasDataClassAnnotation ?? false)) {
+          final ClassElement superClass = classElement.supertype?.element as ClassElement;
+          superClassFields = superClass.fields
+              .where((FieldElement field) {
+                final GetterElement? getter = field.getter;
                 return getter != null &&
-                    getter.name3 != 'hashCode' &&
+                    getter.name != 'hashCode' &&
                     // getter.isGetter &&
                     getter.isAbstract &&
-                    !classFieldsNames.contains(field.name3);
+                    !classFieldsNames.contains(field.name);
               })
               .toList(growable: false);
         } else {
-          superClassFields = const <FieldElement2>[];
+          superClassFields = const <FieldElement>[];
         }
 
         if (!classElement.isAbstract) {
@@ -204,10 +204,10 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
   }
 
   void _writeSuperClassFields({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final SourceRange? constructorSourceRange,
     required final DartFileEditBuilder fileEditBuilder,
-    required final List<FieldElement2> superClassFields,
+    required final List<FieldElement> superClassFields,
     required final ClassDeclaration classNode,
   }) {
     final int offset;
@@ -221,8 +221,8 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     fileEditBuilder.addInsertion(offset, (DartEditBuilder builder) {
       builder.writeln();
 
-      for (final FieldElement2 field in superClassFields) {
-        final Metadata getterMetadata = field.getter2!.metadata2;
+      for (final FieldElement field in superClassFields) {
+        final Metadata getterMetadata = field.getter!.metadata;
 
         builder.writeln('@override');
 
@@ -236,7 +236,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
 
         builder
           ..writeln(
-            '${field.type.typeStringValue(enclosingImports: compilationUnit.declaredFragment!.libraryImports2)} get ${field.name3};',
+            '${field.type.typeStringValue(enclosingImports: compilationUnit.declaredFragment!.libraryImports)} get ${field.name};',
           )
           ..writeln();
       }
@@ -244,27 +244,27 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
   }
 
   void _createDefaultConstructor({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
     required final String constructorName,
   }) {
-    final ConstructorElement2? defaultConstructor = classElement.defaultConstructor;
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
     final bool isConst = defaultConstructor?.isConst ?? true;
     builder
       ..writeln()
       ..writeln(
-        '${isConst ? 'const' : ''} ${classElement.name3}.$constructorName()',
+        '${isConst ? 'const' : ''} ${classElement.name}.$constructorName()',
       );
 
     if (classElement.supertype != null) {
-      final ConstructorElement2? emptyCtor = classElement.supertype?.constructors2.firstWhereOrNull(
-        (ConstructorElement2 ctor) => !ctor.isFactory && ctor.formalParameters.isEmpty,
+      final ConstructorElement? emptyCtor = classElement.supertype?.constructors.firstWhereOrNull(
+        (ConstructorElement ctor) => !ctor.isFactory && ctor.formalParameters.isEmpty,
       );
 
-      if (emptyCtor case ConstructorElement2(
-        :final String? name3,
-      ) when name3 != null && name3.isNotEmpty && name3 != 'new') {
-        builder.write(': super.${emptyCtor.name3}()');
+      if (emptyCtor case ConstructorElement(
+        :final String? name,
+      ) when name != null && name.isNotEmpty && name != 'new') {
+        builder.write(': super.$name()');
       }
     }
 
@@ -328,15 +328,15 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
   }
 
   void _createFactoryConstructor({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
-    required final List<FieldElement2> fields,
-    required final List<FieldElement2> superClassFields,
+    required final List<FieldElement> fields,
+    required final List<FieldElement> superClassFields,
     required final List<FieldDeclaration> finalFieldsDeclarations,
   }) {
-    final ConstructorElement2? defaultConstructor = classElement.defaultConstructor;
-    final String optionalTypeParameters = classElement.typeParameters2
-        .map((TypeParameterElement2 parameter) => parameter.name3)
+    final ConstructorElement? defaultConstructor = classElement.defaultConstructor;
+    final String optionalTypeParameters = classElement.typeParameters
+        .map((TypeParameterElement parameter) => parameter.name)
         .nonNulls
         .join(', ')
         .wrapWithAngleBracketsIfNotEmpty();
@@ -345,7 +345,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
     builder
       ..writeln()
       ..writeln('/// Default constructor')
-      ..writeln('${isConst ? 'const' : ''} factory ${classElement.name3}(');
+      ..writeln('${isConst ? 'const' : ''} factory ${classElement.name}(');
 
     final bool shouldAddBrace =
         fields.isNotEmpty || finalFieldsDeclarations.isNotEmpty || superClassFields.isNotEmpty;
@@ -366,37 +366,37 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
       }
     }
 
-    for (final FieldElement2 field in <FieldElement2>[
+    for (final FieldElement field in <FieldElement>[
       ...superClassFields,
       ...fields,
     ]) {
       if (!(field.type is DynamicType ||
           field.type.isNullable ||
-          field.getter2!.metadata2.hasDefaultValueAnnotation)) {
+          field.getter!.metadata.hasDefaultValueAnnotation)) {
         builder.write('required');
       }
 
       builder
         ..write(
-          ' ${field.type.typeStringValue(enclosingImports: compilationUnit.declaredFragment!.libraryImports2)}',
+          ' ${field.type.typeStringValue(enclosingImports: compilationUnit.declaredFragment!.libraryImports)}',
         )
-        ..writeln(' ${field.name3},');
+        ..writeln(' ${field.name},');
     }
 
     if (shouldAddBrace) {
       builder.write('}');
     }
 
-    builder.writeln(') = _\$${classElement.name3}Impl$optionalTypeParameters;');
+    builder.writeln(') = _\$${classElement.name}Impl$optionalTypeParameters;');
   }
 
   void _createFromJson({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
-    final String className = classElement.name3!;
-    final String optionalTypeParameters = classElement.typeParameters2
-        .map((TypeParameterElement2 parameter) => parameter.name3)
+    final String className = classElement.name!;
+    final String optionalTypeParameters = classElement.typeParameters
+        .map((TypeParameterElement parameter) => parameter.name)
         .nonNulls
         .join(', ')
         .wrapWithAngleBracketsIfNotEmpty();
@@ -409,7 +409,7 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
   }
 
   void _createToJson({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
   }) {
     final bool shouldAnnotateWithOverride =
@@ -418,11 +418,11 @@ class FileGenerationDataClassDelegate extends ClassGenerationDelegate {
           ...classElement.allSupertypes,
         ].any((InterfaceType element) {
           return element //
-              .methods2
-              .any((MethodElement2 element) => element.name3 == 'toJson');
+              .methods
+              .any((MethodElement element) => element.name == 'toJson');
         });
 
-    builder.writeln('/// Converts [${classElement.name3}] to a [Map] json');
+    builder.writeln('/// Converts [${classElement.name}] to a [Map] json');
 
     if (shouldAnnotateWithOverride) {
       builder.writeln('@override');

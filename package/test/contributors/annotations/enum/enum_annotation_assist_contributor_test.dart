@@ -28,7 +28,7 @@ void main() {
         // so we find the first class node, because of the import statement
         final EnumAstVisitor enumVisitor = EnumAstVisitor(
           matcher: (EnumDeclaration node) {
-            return node.declaredFragment?.element.metadata2.hasEnumAnnotation ??
+            return node.declaredFragment?.element.metadata.hasEnumAnnotation ??
                 node.hasEnumAnnotation;
           },
         );

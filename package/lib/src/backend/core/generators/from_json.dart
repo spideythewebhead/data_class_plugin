@@ -62,7 +62,7 @@ class FromJsonGenerator implements Generator {
         if (node is ClassDeclaration) {
           for (final NamedType interface
               in (node.implementsClause?.interfaces ?? const <NamedType>[])) {
-            if (interface.name2.lexeme == 'JsonConverter') {
+            if (interface.name.lexeme == 'JsonConverter') {
               customJsonConverter = className;
               break;
             }

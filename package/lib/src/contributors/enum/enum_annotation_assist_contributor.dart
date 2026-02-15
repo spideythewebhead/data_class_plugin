@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/analysis/session.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -59,17 +59,17 @@ class EnumAnnotationAssistContributor extends AssistContributorMixin
         .getPluginOptions();
 
     for (final EnumDeclaration enumDeclaration in enumDeclarations) {
-      final EnumElement2? enumElement = enumDeclaration.declaredFragment?.element;
+      final EnumElement? enumElement = enumDeclaration.declaredFragment?.element;
 
       if (enumElement == null ||
-          enumElement.metadata2.hasUnionAnnotation ||
-          enumElement.metadata2.hasDataClassAnnotation ||
-          !enumElement.metadata2.hasEnumAnnotation) {
+          enumElement.metadata.hasUnionAnnotation ||
+          enumElement.metadata.hasDataClassAnnotation ||
+          !enumElement.metadata.hasEnumAnnotation) {
         return;
       }
 
       final EnumInternal enumAnnotation = EnumInternal.fromDartObject(
-        enumElement.metadata2.enumAnnotation!.computeConstantValue(),
+        enumElement.metadata.enumAnnotation!.computeConstantValue(),
       );
 
       final SourceRange? constructorSourceRange =
@@ -119,7 +119,7 @@ class EnumAnnotationAssistContributor extends AssistContributorMixin
               enumElement: enumElement,
               builder: builder,
               fieldElement: enumElement.dataClassFinalFields.firstOrNull,
-              libraryImports: enumDeclaration.declaredFragment!.libraryFragment.libraryImports2,
+              libraryImports: enumDeclaration.declaredFragment!.libraryFragment.libraryImports,
             );
           }
 
@@ -140,7 +140,7 @@ class EnumAnnotationAssistContributor extends AssistContributorMixin
             EnumToJsonAssistContributor.writeToJson(
               enumElement: enumElement,
               fieldElement: enumElement.dataClassFinalFields.firstOrNull,
-              libraryImports: enumDeclaration.declaredFragment!.libraryFragment.libraryImports2,
+              libraryImports: enumDeclaration.declaredFragment!.libraryFragment.libraryImports,
               builder: builder,
             );
           }

@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/line_info.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/protocol/protocol_common.dart' as protocol;
@@ -30,10 +30,10 @@ extension ElementAnnotationX on ElementAnnotation {
   bool get isDefaultValueAnnotation => isPluginAnnotation(AnnotationType.defaultValue);
 
   bool isPluginAnnotation(AnnotationType type) {
-    if (element2 == null) {
+    if (element == null) {
       return toSource().startsWith('@${type.name}(');
     } else {
-      return element2?.displayName == type.name;
+      return element?.displayName == type.name;
     }
   }
 }
@@ -41,7 +41,7 @@ extension ElementAnnotationX on ElementAnnotation {
 extension MetadataX on Metadata {
   ElementAnnotation? getAnnotation(AnnotationType annotation) {
     return annotations.firstWhereOrNull(
-      (ElementAnnotation a) => a.element2?.displayName == annotation.name,
+      (ElementAnnotation a) => a.element?.displayName == annotation.name,
     );
   }
 

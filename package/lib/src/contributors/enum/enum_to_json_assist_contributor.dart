@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -42,13 +42,13 @@ class EnumToJsonAssistContributor extends AssistContributorMixin
       return;
     }
 
-    final EnumElement2 enumElement = enumNode.declaredFragment!.element;
-    if (enumElement.metadata2.hasEnumAnnotation) {
+    final EnumElement enumElement = enumNode.declaredFragment!.element;
+    if (enumElement.metadata.hasEnumAnnotation) {
       return;
     }
 
     final SourceRange? toJsonSourceRange = enumNode.members.toJsonSourceRange;
-    final List<FieldElement2> finalFieldsElements = enumElement.jsonSupportedFields;
+    final List<FieldElement> finalFieldsElements = enumElement.jsonSupportedFields;
 
     if (finalFieldsElements.length > 1) {
       return;
@@ -66,7 +66,7 @@ class EnumToJsonAssistContributor extends AssistContributorMixin
         writeToJson(
           enumElement: enumElement,
           fieldElement: finalFieldsElements.firstOrNull,
-          libraryImports: enumNode.declaredFragment!.libraryFragment.libraryImports2,
+          libraryImports: enumNode.declaredFragment!.libraryFragment.libraryImports,
           builder: builder,
         );
       }
@@ -87,14 +87,14 @@ class EnumToJsonAssistContributor extends AssistContributorMixin
   }
 
   static void writeToJson({
-    required final EnumElement2 enumElement,
-    required final FieldElement2? fieldElement,
+    required final EnumElement enumElement,
+    required final FieldElement? fieldElement,
     required final List<LibraryImport> libraryImports,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Converts [${enumElement.name3}] to a json value');
+      ..writeln('/// Converts [${enumElement.name}] to a json value');
 
     if (fieldElement == null) {
       builder.writeln('String toJson() => name;');
@@ -102,7 +102,7 @@ class EnumToJsonAssistContributor extends AssistContributorMixin
     }
 
     builder.writeln(
-      '${fieldElement.type.typeStringValue(enclosingImports: libraryImports)} toJson() => ${fieldElement.name3};',
+      '${fieldElement.type.typeStringValue(enclosingImports: libraryImports)} toJson() => ${fieldElement.name};',
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -44,15 +44,15 @@ class EnumConstructorAssistContributor extends AssistContributorMixin
       return;
     }
 
-    final EnumElement2 enumElement = enumNode.declaredFragment!.element;
-    if (enumElement.metadata2.hasEnumAnnotation) {
+    final EnumElement enumElement = enumNode.declaredFragment!.element;
+    if (enumElement.metadata.hasEnumAnnotation) {
       return;
     }
 
     final SourceRange? copyWithSourceRange = enumNode.members.defaultConstructorSourceRange;
-    final List<FieldElement2> finalFieldsElements = enumElement.fields2
+    final List<FieldElement> finalFieldsElements = enumElement.fields
         .where(
-          (FieldElement2 field) =>
+          (FieldElement field) =>
               field.isFinal /* && field.isPublic - crashes / freezes and blocks execution */ &&
               !field.hasInitializer,
         )
@@ -86,17 +86,17 @@ class EnumConstructorAssistContributor extends AssistContributorMixin
   }
 
   static void writeConstructor({
-    required final EnumElement2 enumElement,
-    required final List<FieldElement2> finalFieldsElements,
+    required final EnumElement enumElement,
+    required final List<FieldElement> finalFieldsElements,
     required final DartEditBuilder builder,
   }) {
     builder
       ..writeln()
-      ..writeln('/// Default constructor of [${enumElement.name3}]')
-      ..writeln('const ${enumElement.name3}(');
+      ..writeln('/// Default constructor of [${enumElement.name}]')
+      ..writeln('const ${enumElement.name}(');
 
-    for (final FieldElement2 field in finalFieldsElements) {
-      builder.write('this.${field.name3}');
+    for (final FieldElement field in finalFieldsElements) {
+      builder.write('this.${field.name}');
       if (finalFieldsElements.length > 1) {
         builder.writeln(',');
       }
