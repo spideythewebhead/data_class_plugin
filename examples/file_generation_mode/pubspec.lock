@@ -103,7 +103,7 @@ packages:
       path: "../../package"
       relative: true
     source: path
-    version: "1.6.0-dev.2"
+    version: "1.6.0"
   file:
     dependency: transitive
     description:

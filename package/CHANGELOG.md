@@ -1,3 +1,8 @@
+## 1.6.0
+
+- Update tachyon to 0.4.0 and lax analyzer version [(issue #418)](https://github.com/spideythewebhead/data_class_plugin/issues/418)
+- Fix an issue with `$toString` being ignored when used with `@DataClass` [(issue #417)](https://github.com/spideythewebhead/data_class_plugin/issues/417)
+
 ## 1.6.0-dev.2
 
 - Generic fixes after upgrade [(issue #413)](https://github.com/spideythewebhead/data_class_plugin/issues/413)
