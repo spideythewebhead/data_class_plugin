@@ -1,7 +1,7 @@
 import 'dart:core';
 
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/source/source_range.dart';
@@ -23,11 +23,11 @@ extension DartTypeX on DartType {
   }
 
   bool get isDateTime {
-    return element3?.name3 == 'DateTime';
+    return element?.name == 'DateTime';
   }
 
   bool get isUri {
-    return element3?.name3 == 'Uri';
+    return element?.name == 'Uri';
   }
 
   bool get isJsonSupported {
@@ -46,7 +46,7 @@ extension DartTypeX on DartType {
     void visit(DartType type) {
       if (type is InterfaceType && type.typeArguments.isNotEmpty) {
         buffer
-          ..write(type.element3.name3)
+          ..write(type.element.name)
           ..write('<');
 
         for (int i = 0; i < type.typeArguments.length; i += 1) {
@@ -65,15 +65,15 @@ extension DartTypeX on DartType {
         return;
       }
 
-      String qualifiedName = type.element3!.name3!;
+      String qualifiedName = type.element!.name!;
 
       // adds any potential prefixes on the class name
       // e.g
       // import 'user.dart' as u;
       // List<u.User>
       for (final LibraryImport import in enclosingImports) {
-        if (import.prefix2 != null && import.importedLibrary2?.id == type.element3!.library2?.id) {
-          qualifiedName = '${import.prefix2!.element.name3}.$qualifiedName';
+        if (import.prefix != null && import.importedLibrary?.id == type.element?.library?.id) {
+          qualifiedName = '${import.prefix!.element.name}.$qualifiedName';
           break;
         }
       }
@@ -89,17 +89,17 @@ extension DartTypeX on DartType {
   }
 }
 
-extension ExecutableElementX<T> on ExecutableElement2 {
+extension ExecutableElementX<T> on ExecutableElement {
   String fullyQualifiedName({required List<LibraryImport> enclosingImports}) {
-    String qualifiedName = name3!;
+    String qualifiedName = name!;
 
-    if ((enclosingElement2?.name3?.length ?? 0) > 0) {
-      qualifiedName = '${enclosingElement2!.name3}.$qualifiedName';
+    if ((enclosingElement?.name?.length ?? 0) > 0) {
+      qualifiedName = '${enclosingElement!.name}.$qualifiedName';
     }
 
     for (final LibraryImport import in enclosingImports) {
-      if (import.prefix2 != null && import.importedLibrary2?.id == library2.id) {
-        qualifiedName = '${import.prefix2!.element.name3}.$qualifiedName';
+      if (import.prefix != null && import.importedLibrary?.id == library.id) {
+        qualifiedName = '${import.prefix!.element.name}.$qualifiedName';
         break;
       }
     }
@@ -142,31 +142,31 @@ extension NodeListX on NodeList<ClassMember> {
       getSourceRangeForMethod(DataClassAnnotationArg.$toString.name);
 }
 
-extension InterfaceElementX on InterfaceElement2 {
-  ConstructorElement2? get defaultConstructor {
-    return constructors2.firstWhereOrNull(
-      (ConstructorElement2 ctor) => ctor.name3 == 'new',
+extension InterfaceElementX on InterfaceElement {
+  ConstructorElement? get defaultConstructor {
+    return constructors.firstWhereOrNull(
+      (ConstructorElement ctor) => ctor.name == 'new',
     );
   }
 
-  List<FieldElement2> get dataClassFinalFields {
-    return <FieldElement2>[
-      for (final FieldElement2 field in fields2)
+  List<FieldElement> get dataClassFinalFields {
+    return <FieldElement>[
+      for (final FieldElement field in fields)
         if (field.isFinal && field.isPublic && !field.hasInitializer) field,
     ];
   }
 
-  List<FieldElement2> get chainSuperClassDataClassFinalFields {
-    final List<FieldElement2> fields = <FieldElement2>[];
+  List<FieldElement> get chainSuperClassDataClassFinalFields {
+    final List<FieldElement> fields = <FieldElement>[];
 
-    if (supertype?.element3 is! ClassElement2) {
+    if (supertype?.element is! ClassElement) {
       return fields;
     }
 
-    ClassElement2? superClassClassElement = supertype!.element3 as ClassElement2;
+    ClassElement? superClassClassElement = supertype!.element as ClassElement;
     while (superClassClassElement != null) {
       fields.addAll(superClassClassElement.dataClassFinalFields);
-      if (superClassClassElement.supertype?.element3 case ClassElement2? classElement) {
+      if (superClassClassElement.supertype?.element case ClassElement? classElement) {
         superClassClassElement = classElement;
       } else {
         superClassClassElement = null;
@@ -176,15 +176,15 @@ extension InterfaceElementX on InterfaceElement2 {
     return fields;
   }
 
-  List<FieldElement2> get jsonSupportedFields {
-    return <FieldElement2>[
-      for (final FieldElement2 field in fields2)
+  List<FieldElement> get jsonSupportedFields {
+    return <FieldElement>[
+      for (final FieldElement field in fields)
         if (field.isFinal && field.isPublic && field.type.isJsonSupported) field,
     ];
   }
 }
 
-extension ConstructorElement2X on ConstructorElement2 {
+extension ConstructorElement2X on ConstructorElement {
   List<FormalParameterElement> get dataClassSuperFields {
     return <FormalParameterElement>[
       for (final FormalParameterElement param in formalParameters)
@@ -196,8 +196,8 @@ extension ConstructorElement2X on ConstructorElement2 {
 extension InterfaceTypeX on InterfaceType {
   bool hasMethod(String methodName) {
     return null !=
-        methods2.firstWhereOrNull(
-          (MethodElement2 member) => member.name3 == methodName,
+        methods.firstWhereOrNull(
+          (MethodElement member) => member.name == methodName,
         );
   }
 }

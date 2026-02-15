@@ -33,7 +33,7 @@ void main() async {
         // so we find the first class node, because of the import statement
         final ClassAstVisitor classVisitor = ClassAstVisitor(
           matcher: (ClassDeclaration node) {
-            return node.declaredFragment?.element.metadata2.hasDataClassAnnotation ??
+            return node.declaredFragment?.element.metadata.hasDataClassAnnotation ??
                 node.hasDataClassAnnotation;
           },
         );

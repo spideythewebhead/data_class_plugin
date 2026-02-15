@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer_plugin/utilities/assist/assist.dart';
 import 'package:analyzer_plugin/utilities/assist/assist_contributor_mixin.dart';
@@ -45,12 +45,12 @@ class ShorthandConstructorAssistContributor extends AssistContributorMixin
     if (classNode == null ||
         classNode.members.isEmpty ||
         classNode.declaredFragment == null ||
-        classNode.declaredFragment!.element.metadata2.hasDataClassAnnotation ||
-        classNode.declaredFragment!.element.metadata2.hasUnionAnnotation) {
+        classNode.declaredFragment!.element.metadata.hasDataClassAnnotation ||
+        classNode.declaredFragment!.element.metadata.hasUnionAnnotation) {
       return;
     }
 
-    final ClassElement2 classElement = classNode.declaredFragment!.element;
+    final ClassElement classElement = classNode.declaredFragment!.element;
     final SourceRange? constructorSourceRange = classNode.members.defaultConstructorSourceRange;
 
     final ChangeBuilder changeBuilder = ChangeBuilder(session: session);
@@ -84,16 +84,16 @@ class ShorthandConstructorAssistContributor extends AssistContributorMixin
   }
 
   static void writeConstructor({
-    required final ClassElement2 classElement,
+    required final ClassElement classElement,
     required final DartEditBuilder builder,
     required List<ClassMember> members,
   }) {
-    final ConstructorElement2? defaultConstructor = classElement.constructors2.firstWhereOrNull(
-      (ConstructorElement2 e) => e.isDefaultConstructor,
+    final ConstructorElement? defaultConstructor = classElement.constructors.firstWhereOrNull(
+      (ConstructorElement e) => e.isDefaultConstructor,
     );
     final bool isConst = defaultConstructor?.isConst ?? true;
 
-    final List<VariableElement2> fields = <VariableElement2>[
+    final List<VariableElement> fields = <VariableElement>[
       ...classElement.dataClassFinalFields,
       ...classElement.chainSuperClassDataClassFinalFields,
     ];
@@ -102,7 +102,7 @@ class ShorthandConstructorAssistContributor extends AssistContributorMixin
       builder
         ..writeln()
         ..writeln('/// Shorthand constructor')
-        ..writeln('${isConst ? 'const' : ''} ${classElement.name3}();');
+        ..writeln('${isConst ? 'const' : ''} ${classElement.name}();');
       return;
     }
 
@@ -119,16 +119,16 @@ class ShorthandConstructorAssistContributor extends AssistContributorMixin
     builder
       ..writeln()
       ..writeln('/// Shorthand constructor')
-      ..writeln('${isConst ? 'const' : ''} ${classElement.name3}({');
+      ..writeln('${isConst ? 'const' : ''} ${classElement.name}({');
 
     void writeConstructorFieldsWithPrefix(
       String prefix,
-      List<VariableElement2> fields,
+      List<VariableElement> fields,
     ) {
-      for (final VariableElement2 field in fields) {
+      for (final VariableElement field in fields) {
         final FormalParameterElement? existingParameter = defaultConstructor?.formalParameters
             .firstWhereOrNull((FormalParameterElement param) {
-              return param.isNamed && param.name3 == field.name3;
+              return param.isNamed && param.name == field.name;
             });
 
         String paramInitialization = '';
@@ -140,21 +140,21 @@ class ShorthandConstructorAssistContributor extends AssistContributorMixin
           builder.write('required ');
         }
 
-        builder.writeln('$prefix${field.name3} $paramInitialization,');
+        builder.writeln('$prefix${field.name} $paramInitialization,');
       }
     }
 
     final Set<String> superClassFinalFields = Set<String>.of(
       defaultConstructor?.dataClassSuperFields
-              .map((FormalParameterElement field) => field.name3 ?? '')
+              .map((FormalParameterElement field) => field.name ?? '')
               .toList(growable: false) ??
           const <String>[],
     );
 
-    writeConstructorFieldsWithPrefix('super.', <FieldElement2>[
+    writeConstructorFieldsWithPrefix('super.', <FieldElement>[
       // we need to exclude all the super fields that are already declared in the constructor
-      for (final FieldElement2 field in classElement.chainSuperClassDataClassFinalFields)
-        if (!superClassFinalFields.contains(field.name3)) field,
+      for (final FieldElement field in classElement.chainSuperClassDataClassFinalFields)
+        if (!superClassFinalFields.contains(field.name)) field,
     ]);
 
     if (defaultConstructor != null) {
@@ -162,7 +162,7 @@ class ShorthandConstructorAssistContributor extends AssistContributorMixin
       for (final FormalParameterElement param in defaultConstructor.dataClassSuperFields) {
         builder
           ..write(param.isRequired ? 'required ' : '')
-          ..write('super.${param.name3} ')
+          ..write('super.${param.name} ')
           ..write(param.hasDefaultValue ? '= ${param.defaultValueCode}' : '')
           ..writeln(',');
       }

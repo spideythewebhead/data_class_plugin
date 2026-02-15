@@ -51,7 +51,7 @@ void main() async {
     offsetProvider: (CompilationUnit unit) {
       final EnumAstVisitor enumVisitor = EnumAstVisitor(
         matcher: (EnumDeclaration node) {
-          return node.declaredFragment?.element.metadata2.hasEnumAnnotation ??
+          return node.declaredFragment?.element.metadata.hasEnumAnnotation ??
               node.hasEnumAnnotation;
         },
       );
@@ -69,7 +69,7 @@ void main() async {
     offsetProvider: (CompilationUnit unit) {
       final ClassAstVisitor classVisitor = ClassAstVisitor(
         matcher: (ClassDeclaration node) {
-          return node.declaredFragment?.element.metadata2.hasDataClassAnnotation ??
+          return node.declaredFragment?.element.metadata.hasDataClassAnnotation ??
               node.hasDataClassAnnotation;
         },
       );
@@ -87,7 +87,7 @@ void main() async {
     offsetProvider: (CompilationUnit unit) {
       final ClassAstVisitor classVisitor = ClassAstVisitor(
         matcher: (ClassDeclaration node) {
-          return node.declaredFragment?.element.metadata2.hasUnionAnnotation ??
+          return node.declaredFragment?.element.metadata.hasUnionAnnotation ??
               node.hasUnionAnnotation;
         },
       );
