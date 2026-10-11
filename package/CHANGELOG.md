@@ -1,3 +1,7 @@
+## 1.6.1
+
+- Fix an issue with missing type arguments when generating nested classes [(issue #425)](https://github.com/spideythewebhead/data_class_plugin/issues/425)
+
 ## 1.6.0
 
 - Update tachyon to 0.4.0 and lax analyzer version [(issue #418)](https://github.com/spideythewebhead/data_class_plugin/issues/418)

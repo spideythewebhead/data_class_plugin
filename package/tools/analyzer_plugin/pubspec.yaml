@@ -9,7 +9,7 @@ environment:
   sdk: ">=3.9.2 <4.0.0"
 
 dependencies:
-  data_class_plugin: ^1.6.0
+  data_class_plugin: ^1.6.1
 
   # uncomment for development
   # data_class_plugin:
