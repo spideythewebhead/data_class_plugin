@@ -76,10 +76,17 @@ class CopyWithGenerator implements Generator {
       }
 
       if (useCopyWithProxy) {
+        _codeWriter.write('\$${dartType.name}CopyWithProxyChain<');
+
+        final TachyonDartType fieldType = TachyonDartType.fromTypeAnnotation(field.type);
+        if (fieldType.typeArguments.isNotEmpty) {
+          _codeWriter
+            ..write(fieldType.typeArguments.map((TachyonDartType t) => t.fullTypeName).join(', '))
+            ..write(', ');
+        }
+
         _codeWriter
-          ..write(
-            '\$${dartType.name}CopyWithProxyChain<$_className$_classTypeParametersWithoutConstraints>',
-          )
+          ..write('$_className$_classTypeParametersWithoutConstraints>')
           ..write(dartType.isNullable ? '?' : '')
           ..writeln(' get $fieldName;')
           ..writeln();
@@ -160,17 +167,36 @@ class CopyWithGenerator implements Generator {
         _codeWriter
           ..writeln(_kVmPreferInline)
           ..writeln(_kOverride)
-          ..write(
-            '\$${dartType.name}CopyWithProxyChain<$_className$_classTypeParametersWithoutConstraints>',
-          )
+          ..write('\$${dartType.name}CopyWithProxyChain<');
+
+        final TachyonDartType fieldType = TachyonDartType.fromTypeAnnotation(field.type);
+        String? extraTypeArguments;
+        if (fieldType.typeArguments.isNotEmpty) {
+          extraTypeArguments = fieldType.typeArguments
+              .map((TachyonDartType t) => t.fullTypeName)
+              .join(', ');
+          _codeWriter
+            ..write(extraTypeArguments)
+            ..write(', ');
+        }
+
+        _codeWriter
+          ..write('$_className$_classTypeParametersWithoutConstraints>')
           ..write(dartType.isNullable ? '?' : '')
           ..write(' get $fieldName => ')
           ..write(
             dartType.isNullable ? '_value.$fieldName == null ? null : ' : '',
           )
-          ..writeln(
-            '\$${dartType.name}CopyWithProxyChain<$_className$_classTypeParametersWithoutConstraints>(_value.$fieldName',
-          )
+          ..writeln('\$${dartType.name}CopyWithProxyChain<');
+
+        if (extraTypeArguments != null) {
+          _codeWriter
+            ..write(extraTypeArguments)
+            ..write(',');
+        }
+
+        _codeWriter
+          ..write('$_className$_classTypeParametersWithoutConstraints>(_value.$fieldName')
           ..write(dartType.isNullable ? '!' : '')
           ..writeln(
             ', (${dartType.fullTypeName} update) => this($fieldName: update));',
