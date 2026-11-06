@@ -3,7 +3,11 @@ bool deepEquality(dynamic a, dynamic b) {
     return true;
   }
 
-  if (a is Iterable && b is Iterable) {
+  if (a is Set) {
+    return b is Set && _setEquality(a, b);
+  } else if (b is Set) {
+    return false;
+  } else if (a is Iterable && b is Iterable) {
     final Iterator<dynamic> it1 = a.iterator;
     final Iterator<dynamic> it2 = b.iterator;
 
@@ -30,4 +34,46 @@ bool deepEquality(dynamic a, dynamic b) {
   }
 
   return a == b;
+}
+
+int deepHash(final dynamic value) {
+  if (value is Set) {
+    return Object.hashAllUnordered(<Object?>[
+      for (final dynamic element in value) deepHash(element),
+    ]);
+  }
+
+  if (value is Map) {
+    return Object.hashAllUnordered(<Object?>[
+      for (final MapEntry<dynamic, dynamic> entry in value.entries)
+        Object.hash(deepHash(entry.key), deepHash(entry.value)),
+    ]);
+  }
+
+  if (value is Iterable) {
+    return Object.hashAll(<Object?>[
+      for (final dynamic element in value) deepHash(element),
+    ]);
+  }
+
+  return value.hashCode;
+}
+
+// sets are equal when they have the same elements, in any order.
+bool _setEquality(final Set<dynamic> a, final Set<dynamic> b) {
+  if (a.length != b.length) {
+    return false;
+  }
+
+  for (final dynamic element in a) {
+    if (!b.contains(element)) {
+      if (element is! Iterable) {
+        return false;
+      } else if (!b.any((final dynamic other) => deepEquality(element, other))) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }

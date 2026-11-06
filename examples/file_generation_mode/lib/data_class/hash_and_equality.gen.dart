@@ -202,6 +202,7 @@ class _$CartImpl extends Cart {
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
+      deepHash(products),
     ]);
   }
 

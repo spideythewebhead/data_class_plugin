@@ -237,6 +237,7 @@ class GetPostsResponseOk extends GetPostsResponse {
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
+      deepHash(posts),
       authorName,
     ]);
   }

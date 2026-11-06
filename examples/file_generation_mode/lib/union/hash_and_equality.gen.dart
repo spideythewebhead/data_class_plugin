@@ -79,6 +79,7 @@ class AsyncResultListData extends AsyncResult {
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
+      deepHash(data),
     ]);
   }
 
