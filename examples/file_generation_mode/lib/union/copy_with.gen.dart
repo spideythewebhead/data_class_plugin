@@ -71,8 +71,8 @@ abstract interface class _AsyncResultErrorCopyWithProxy {
   AsyncResultError stackTrace(StackTrace? newValue);
 
   AsyncResultError call({
-    final Object? error,
-    final StackTrace? stackTrace,
+    Object? error,
+    StackTrace? stackTrace,
   });
 }
 
@@ -92,8 +92,8 @@ class _AsyncResultErrorCopyWithProxyImpl implements _AsyncResultErrorCopyWithPro
   @pragma('vm:prefer-inline')
   @override
   AsyncResultError call({
-    final Object? error,
-    final Object? stackTrace = const Object(),
+    Object? error,
+    Object? stackTrace = const Object(),
   }) {
     return AsyncResultError(
       error ?? _value.error,
@@ -106,8 +106,8 @@ class _AsyncResultErrorCopyWithProxyImpl implements _AsyncResultErrorCopyWithPro
 
 sealed class $AsyncResultErrorCopyWithProxyChain<$Result> {
   factory $AsyncResultErrorCopyWithProxyChain(
-    final AsyncResultError value,
-    final $Result Function(AsyncResultError update) chain,
+    AsyncResultError value,
+    $Result Function(AsyncResultError update) chain,
   ) = _AsyncResultErrorCopyWithProxyChainImpl<$Result>;
 
   $Result error(Object newValue);
@@ -115,8 +115,8 @@ sealed class $AsyncResultErrorCopyWithProxyChain<$Result> {
   $Result stackTrace(StackTrace? newValue);
 
   $Result call({
-    final Object? error,
-    final StackTrace? stackTrace,
+    Object? error,
+    StackTrace? stackTrace,
   });
 }
 
@@ -138,8 +138,8 @@ class _AsyncResultErrorCopyWithProxyChainImpl<$Result>
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final Object? error,
-    final Object? stackTrace = const Object(),
+    Object? error,
+    Object? stackTrace = const Object(),
   }) {
     return _chain(
       AsyncResultError(

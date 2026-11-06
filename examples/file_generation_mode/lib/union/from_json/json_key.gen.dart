@@ -59,8 +59,8 @@ abstract interface class _PostCopyWithProxy {
   Post title(String newValue);
 
   Post call({
-    final String? id,
-    final String? title,
+    String? id,
+    String? title,
   });
 }
 
@@ -80,8 +80,8 @@ class _PostCopyWithProxyImpl implements _PostCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   Post call({
-    final String? id,
-    final String? title,
+    String? id,
+    String? title,
   }) {
     return _$PostImpl(
       id: id ?? _value.id,
@@ -91,7 +91,7 @@ class _PostCopyWithProxyImpl implements _PostCopyWithProxy {
 }
 
 sealed class $PostCopyWithProxyChain<$Result> {
-  factory $PostCopyWithProxyChain(final Post value, final $Result Function(Post update) chain) =
+  factory $PostCopyWithProxyChain(Post value, $Result Function(Post update) chain) =
       _PostCopyWithProxyChainImpl<$Result>;
 
   $Result id(String newValue);
@@ -99,8 +99,8 @@ sealed class $PostCopyWithProxyChain<$Result> {
   $Result title(String newValue);
 
   $Result call({
-    final String? id,
-    final String? title,
+    String? id,
+    String? title,
   });
 }
 
@@ -121,8 +121,8 @@ class _PostCopyWithProxyChainImpl<$Result> implements $PostCopyWithProxyChain<$R
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final String? id,
-    final String? title,
+    String? id,
+    String? title,
   }) {
     return _chain(
       _$PostImpl(
