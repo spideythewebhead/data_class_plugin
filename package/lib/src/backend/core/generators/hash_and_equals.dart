@@ -1,18 +1,16 @@
 import 'package:data_class_plugin/src/common/generator.dart';
+import 'package:data_class_plugin/src/extensions/annotation_extensions.dart';
 import 'package:tachyon/tachyon.dart';
 
 class HashGenerator implements Generator {
   HashGenerator({
     required final CodeWriter codeWriter,
     required final List<DeclarationInfo> fields,
-    required final bool skipCollections,
   }) : _codeWriter = codeWriter,
-       _fields = fields,
-       _skipCollections = skipCollections;
+       _fields = fields;
 
   final CodeWriter _codeWriter;
   final List<DeclarationInfo> _fields;
-  final bool _skipCollections;
 
   @override
   void execute() {
@@ -24,7 +22,15 @@ class HashGenerator implements Generator {
       ..writeln('runtimeType');
 
     for (final DeclarationInfo field in _fields) {
-      if (_skipCollections && field.type.customDartType.isCollection) {
+      if (_isSkipped(field)) {
+        continue;
+      }
+
+      // Collections are compared by content in the generated ==, so they must be
+      // hashed by content as well. Otherwise equal objects could get different
+      // hash codes.
+      if (field.type.customDartType.isCollection) {
+        _codeWriter.writeln(',deepHash(${field.name})');
         continue;
       }
       _codeWriter.writeln(',${field.name}');
@@ -64,14 +70,12 @@ class EqualsGenerator implements Generator {
       );
 
     for (final DeclarationInfo field in _fields) {
-      if (field.metadata.any(
-        (Annotation element) => element.name.name == 'SkipHash',
-      )) {
+      if (_isSkipped(field)) {
         continue;
       }
 
       final TachyonDartType dartType = field.type.customDartType;
-      if (dartType.isList || dartType.isMap) {
+      if (dartType.isCollection) {
         _codeWriter.write(
           ' && deepEquality(${field.name}, other.${field.name})',
         );
@@ -85,4 +89,9 @@ class EqualsGenerator implements Generator {
       ..writeln('}')
       ..writeln();
   }
+}
+
+/// Whether [field] is left out of the generated == and hashCode.
+bool _isSkipped(final DeclarationInfo field) {
+  return field.metadata.any((Annotation annotation) => annotation.isSkipHashAndEqualsAnnotation);
 }

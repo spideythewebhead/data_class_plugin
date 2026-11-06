@@ -225,7 +225,6 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
         HashGenerator(
           codeWriter: codeWriter,
           fields: fields,
-          skipCollections: generateUnmodifiableCollections,
         ).execute();
       }
 
@@ -493,7 +492,6 @@ class DataClassPluginGenerator extends TachyonPluginCodeGenerator {
           HashGenerator(
             codeWriter: codeWriter,
             fields: fields,
-            skipCollections: generateUnmodifiableCollections,
           ).execute();
 
           EqualsGenerator(

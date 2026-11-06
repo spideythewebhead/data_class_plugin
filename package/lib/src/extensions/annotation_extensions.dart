@@ -133,6 +133,7 @@ extension AnnotationX on Annotation {
   bool get isJsonKeyAnnotation => isPluginAnnotation(AnnotationType.jsonKey);
   bool get isUnionAnnotation => isPluginAnnotation(AnnotationType.union);
   bool get isDefaultValueAnnotation => isPluginAnnotation(AnnotationType.defaultValue);
+  bool get isSkipHashAndEqualsAnnotation => isPluginAnnotation(AnnotationType.skipHashAndEquals);
 
   bool isPluginAnnotation(AnnotationType type) {
     return name.name == type.name;

@@ -29,6 +29,11 @@ enum AnnotationType {
     'DefaultValue',
     'https://github.com/spideythewebhead/data_class_plugin',
     'Provide default for a Data Class field or Union factory parameter.',
+  ),
+  skipHashAndEquals(
+    'SkipHashAndEquals',
+    'https://github.com/spideythewebhead/data_class_plugin',
+    'Whether a field should be skipped from the generated == and hash functions.',
   );
 
   const AnnotationType(this.name, this.url, this.description);
