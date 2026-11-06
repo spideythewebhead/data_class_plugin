@@ -72,9 +72,9 @@ abstract interface class _UserCopyWithProxy {
   User isVerified(bool newValue);
 
   User call({
-    final int? id,
-    final String? username,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    bool? isVerified,
   });
 }
 
@@ -98,9 +98,9 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   User call({
-    final int? id,
-    final String? username,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    bool? isVerified,
   }) {
     return _$UserImpl(
       id: id ?? _value.id,
@@ -111,7 +111,7 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
 }
 
 sealed class $UserCopyWithProxyChain<$Result> {
-  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+  factory $UserCopyWithProxyChain(User value, $Result Function(User update) chain) =
       _UserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
@@ -121,9 +121,9 @@ sealed class $UserCopyWithProxyChain<$Result> {
   $Result isVerified(bool newValue);
 
   $Result call({
-    final int? id,
-    final String? username,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    bool? isVerified,
   });
 }
 
@@ -148,9 +148,9 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
-    final String? username,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    bool? isVerified,
   }) {
     return _chain(
       _$UserImpl(

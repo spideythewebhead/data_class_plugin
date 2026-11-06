@@ -82,10 +82,10 @@ abstract interface class _UserCopyWithProxy {
   User isVerified(bool newValue);
 
   User call({
-    final int? id,
-    final String? username,
-    final String? email,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    String? email,
+    bool? isVerified,
   });
 }
 
@@ -113,10 +113,10 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   User call({
-    final int? id,
-    final String? username,
-    final Object? email = const Object(),
-    final bool? isVerified,
+    int? id,
+    String? username,
+    Object? email = const Object(),
+    bool? isVerified,
   }) {
     return _$UserImpl(
       id: id ?? _value.id,
@@ -128,7 +128,7 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
 }
 
 sealed class $UserCopyWithProxyChain<$Result> {
-  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+  factory $UserCopyWithProxyChain(User value, $Result Function(User update) chain) =
       _UserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
@@ -140,10 +140,10 @@ sealed class $UserCopyWithProxyChain<$Result> {
   $Result isVerified(bool newValue);
 
   $Result call({
-    final int? id,
-    final String? username,
-    final String? email,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    String? email,
+    bool? isVerified,
   });
 }
 
@@ -172,10 +172,10 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
-    final String? username,
-    final Object? email = const Object(),
-    final bool? isVerified,
+    int? id,
+    String? username,
+    Object? email = const Object(),
+    bool? isVerified,
   }) {
     return _chain(
       _$UserImpl(
@@ -244,7 +244,7 @@ abstract interface class _GetUsersResultCopyWithProxy {
   GetUsersResult users(List<User> newValue);
 
   GetUsersResult call({
-    final List<User>? users,
+    List<User>? users,
   });
 }
 
@@ -260,7 +260,7 @@ class _GetUsersResultCopyWithProxyImpl implements _GetUsersResultCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   GetUsersResult call({
-    final List<User>? users,
+    List<User>? users,
   }) {
     return _$GetUsersResultImpl(
       users: users ?? _value.users,
@@ -270,14 +270,14 @@ class _GetUsersResultCopyWithProxyImpl implements _GetUsersResultCopyWithProxy {
 
 sealed class $GetUsersResultCopyWithProxyChain<$Result> {
   factory $GetUsersResultCopyWithProxyChain(
-    final GetUsersResult value,
-    final $Result Function(GetUsersResult update) chain,
+    GetUsersResult value,
+    $Result Function(GetUsersResult update) chain,
   ) = _GetUsersResultCopyWithProxyChainImpl<$Result>;
 
   $Result users(List<User> newValue);
 
   $Result call({
-    final List<User>? users,
+    List<User>? users,
   });
 }
 
@@ -295,7 +295,7 @@ class _GetUsersResultCopyWithProxyChainImpl<$Result>
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final List<User>? users,
+    List<User>? users,
   }) {
     return _chain(
       _$GetUsersResultImpl(
