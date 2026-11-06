@@ -55,8 +55,8 @@ abstract interface class _UserCopyWithProxy {
   User username(String newValue);
 
   User call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   });
 }
 
@@ -76,8 +76,8 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   User call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   }) {
     return _$UserImpl(
       id: id ?? _value.id,
@@ -87,7 +87,7 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
 }
 
 sealed class $UserCopyWithProxyChain<$Result> {
-  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+  factory $UserCopyWithProxyChain(User value, $Result Function(User update) chain) =
       _UserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
@@ -95,8 +95,8 @@ sealed class $UserCopyWithProxyChain<$Result> {
   $Result username(String newValue);
 
   $Result call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   });
 }
 
@@ -117,8 +117,8 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   }) {
     return _chain(
       _$UserImpl(
@@ -183,8 +183,8 @@ abstract interface class _SuperUserCopyWithProxy {
   SuperUser username(String newValue);
 
   SuperUser call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   });
 }
 
@@ -204,8 +204,8 @@ class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   SuperUser call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   }) {
     return _$SuperUserImpl(
       id: id ?? _value.id,
@@ -215,18 +215,16 @@ class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
 }
 
 sealed class $SuperUserCopyWithProxyChain<$Result> {
-  factory $SuperUserCopyWithProxyChain(
-    final SuperUser value,
-    final $Result Function(SuperUser update) chain,
-  ) = _SuperUserCopyWithProxyChainImpl<$Result>;
+  factory $SuperUserCopyWithProxyChain(SuperUser value, $Result Function(SuperUser update) chain) =
+      _SuperUserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
 
   $Result username(String newValue);
 
   $Result call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   });
 }
 
@@ -247,8 +245,8 @@ class _SuperUserCopyWithProxyChainImpl<$Result> implements $SuperUserCopyWithPro
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
-    final String? username,
+    int? id,
+    String? username,
   }) {
     return _chain(
       _$SuperUserImpl(

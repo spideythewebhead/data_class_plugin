@@ -72,10 +72,10 @@ abstract interface class _UserCopyWithProxy {
   User isVerified(bool newValue);
 
   User call({
-    final int? id,
-    final String? username,
-    final String? email,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    String? email,
+    bool? isVerified,
   });
 }
 
@@ -103,10 +103,10 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   User call({
-    final int? id,
-    final String? username,
-    final Object? email = const Object(),
-    final bool? isVerified,
+    int? id,
+    String? username,
+    Object? email = const Object(),
+    bool? isVerified,
   }) {
     return _$UserImpl(
       id: id ?? _value.id,
@@ -118,7 +118,7 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
 }
 
 sealed class $UserCopyWithProxyChain<$Result> {
-  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+  factory $UserCopyWithProxyChain(User value, $Result Function(User update) chain) =
       _UserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
@@ -130,10 +130,10 @@ sealed class $UserCopyWithProxyChain<$Result> {
   $Result isVerified(bool newValue);
 
   $Result call({
-    final int? id,
-    final String? username,
-    final String? email,
-    final bool? isVerified,
+    int? id,
+    String? username,
+    String? email,
+    bool? isVerified,
   });
 }
 
@@ -162,10 +162,10 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
-    final String? username,
-    final Object? email = const Object(),
-    final bool? isVerified,
+    int? id,
+    String? username,
+    Object? email = const Object(),
+    bool? isVerified,
   }) {
     return _chain(
       _$UserImpl(
@@ -224,7 +224,7 @@ abstract interface class _CartCopyWithProxy {
   Cart products(List<Product> newValue);
 
   Cart call({
-    final List<Product>? products,
+    List<Product>? products,
   });
 }
 
@@ -240,7 +240,7 @@ class _CartCopyWithProxyImpl implements _CartCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   Cart call({
-    final List<Product>? products,
+    List<Product>? products,
   }) {
     return _$CartImpl(
       products: products ?? _value.products,
@@ -249,13 +249,13 @@ class _CartCopyWithProxyImpl implements _CartCopyWithProxy {
 }
 
 sealed class $CartCopyWithProxyChain<$Result> {
-  factory $CartCopyWithProxyChain(final Cart value, final $Result Function(Cart update) chain) =
+  factory $CartCopyWithProxyChain(Cart value, $Result Function(Cart update) chain) =
       _CartCopyWithProxyChainImpl<$Result>;
 
   $Result products(List<Product> newValue);
 
   $Result call({
-    final List<Product>? products,
+    List<Product>? products,
   });
 }
 
@@ -272,7 +272,7 @@ class _CartCopyWithProxyChainImpl<$Result> implements $CartCopyWithProxyChain<$R
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final List<Product>? products,
+    List<Product>? products,
   }) {
     return _chain(
       _$CartImpl(
@@ -336,8 +336,8 @@ abstract interface class _ProductCopyWithProxy {
   Product price(double newValue);
 
   Product call({
-    final int? id,
-    final double? price,
+    int? id,
+    double? price,
   });
 }
 
@@ -357,8 +357,8 @@ class _ProductCopyWithProxyImpl implements _ProductCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   Product call({
-    final int? id,
-    final double? price,
+    int? id,
+    double? price,
   }) {
     return _$ProductImpl(
       id: id ?? _value.id,
@@ -368,18 +368,16 @@ class _ProductCopyWithProxyImpl implements _ProductCopyWithProxy {
 }
 
 sealed class $ProductCopyWithProxyChain<$Result> {
-  factory $ProductCopyWithProxyChain(
-    final Product value,
-    final $Result Function(Product update) chain,
-  ) = _ProductCopyWithProxyChainImpl<$Result>;
+  factory $ProductCopyWithProxyChain(Product value, $Result Function(Product update) chain) =
+      _ProductCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
 
   $Result price(double newValue);
 
   $Result call({
-    final int? id,
-    final double? price,
+    int? id,
+    double? price,
   });
 }
 
@@ -400,8 +398,8 @@ class _ProductCopyWithProxyChainImpl<$Result> implements $ProductCopyWithProxyCh
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
-    final double? price,
+    int? id,
+    double? price,
   }) {
     return _chain(
       _$ProductImpl(

@@ -110,7 +110,7 @@ class CopyWithGenerator implements Generator {
       for (final DeclarationInfo field in _fields) {
         final TachyonDartType dartType = field.type.customDartType;
         _codeWriter.write(
-          'final ${dartType.fullTypeName}${dartType.isNullable ? '' : '?'} ${field.name},',
+          '${dartType.fullTypeName}${dartType.isNullable ? '' : '?'} ${field.name},',
         );
       }
       _codeWriter.write('}');
@@ -228,9 +228,9 @@ class CopyWithGenerator implements Generator {
         final TachyonDartType dartType = field.type.customDartType;
 
         if (dartType.isNullable) {
-          _codeWriter.write('final Object? ${field.name} = const Object(),');
+          _codeWriter.write('Object? ${field.name} = const Object(),');
         } else {
-          _codeWriter.write('final ${dartType.fullTypeName}? ${field.name},');
+          _codeWriter.write('${dartType.fullTypeName}? ${field.name},');
         }
       }
       _codeWriter.write('}');
@@ -279,7 +279,7 @@ class CopyWithGenerator implements Generator {
 
     _codeWriter
       ..writeln(
-        'factory \$${_className}CopyWithProxyChain(final $_className$_classTypeParametersWithoutConstraints value, final \$Result Function($_className$_classTypeParametersWithoutConstraints update) chain) = _${_className}CopyWithProxyChainImpl$proxyChainGenericArgsWithoutConstraints;',
+        'factory \$${_className}CopyWithProxyChain($_className$_classTypeParametersWithoutConstraints value, \$Result Function($_className$_classTypeParametersWithoutConstraints update) chain) = _${_className}CopyWithProxyChainImpl$proxyChainGenericArgsWithoutConstraints;',
       )
       ..writeln();
 
@@ -302,7 +302,7 @@ class CopyWithGenerator implements Generator {
       for (final DeclarationInfo field in _fields) {
         final TachyonDartType dartType = field.type.customDartType;
         _codeWriter.write(
-          'final ${dartType.fullTypeName}${dartType.isNullable ? '' : '?'} ${field.name},',
+          '${dartType.fullTypeName}${dartType.isNullable ? '' : '?'} ${field.name},',
         );
       }
       _codeWriter.write('}');
@@ -361,9 +361,9 @@ class CopyWithGenerator implements Generator {
         final TachyonDartType dartType = field.type.customDartType;
 
         if (dartType.isNullable) {
-          _codeWriter.write('final Object? ${field.name} = const Object(),');
+          _codeWriter.write('Object? ${field.name} = const Object(),');
         } else {
-          _codeWriter.write('final ${dartType.fullTypeName}? ${field.name},');
+          _codeWriter.write('${dartType.fullTypeName}? ${field.name},');
         }
       }
       _codeWriter.write('}');

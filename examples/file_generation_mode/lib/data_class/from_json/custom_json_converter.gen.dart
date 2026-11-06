@@ -66,8 +66,8 @@ abstract interface class _LogRecordCopyWithProxy {
   LogRecord datetime(DateTime newValue);
 
   LogRecord call({
-    final String? text,
-    final DateTime? datetime,
+    String? text,
+    DateTime? datetime,
   });
 }
 
@@ -87,8 +87,8 @@ class _LogRecordCopyWithProxyImpl implements _LogRecordCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   LogRecord call({
-    final String? text,
-    final DateTime? datetime,
+    String? text,
+    DateTime? datetime,
   }) {
     return _$LogRecordImpl(
       text: text ?? _value.text,
@@ -98,18 +98,16 @@ class _LogRecordCopyWithProxyImpl implements _LogRecordCopyWithProxy {
 }
 
 sealed class $LogRecordCopyWithProxyChain<$Result> {
-  factory $LogRecordCopyWithProxyChain(
-    final LogRecord value,
-    final $Result Function(LogRecord update) chain,
-  ) = _LogRecordCopyWithProxyChainImpl<$Result>;
+  factory $LogRecordCopyWithProxyChain(LogRecord value, $Result Function(LogRecord update) chain) =
+      _LogRecordCopyWithProxyChainImpl<$Result>;
 
   $Result text(String newValue);
 
   $Result datetime(DateTime newValue);
 
   $Result call({
-    final String? text,
-    final DateTime? datetime,
+    String? text,
+    DateTime? datetime,
   });
 }
 
@@ -130,8 +128,8 @@ class _LogRecordCopyWithProxyChainImpl<$Result> implements $LogRecordCopyWithPro
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final String? text,
-    final DateTime? datetime,
+    String? text,
+    DateTime? datetime,
   }) {
     return _chain(
       _$LogRecordImpl(
