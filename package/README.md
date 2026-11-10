@@ -68,14 +68,28 @@ These `code actions` are similar to the ones provide by the language - e.g. `wra
 
    **Minimal analysis_options.yaml**
 
+   Dart 3.10 (Flutter 3.38) and later: register the plugin in the top-level `plugins` section.
+
    ```yaml
    include: package:lints/recommended.yaml
 
-   # You need to register the plugin under analyzer > plugins
+   # You need to register the plugin under plugins
+   plugins:
+     data_class_plugin: ^1.6.1
+   ```
+
+   Older SDKs: register the plugin under `analyzer > plugins`.
+
+   ```yaml
+   include: package:lints/recommended.yaml
+
    analyzer:
      plugins:
        - data_class_plugin
    ```
+
+   > The `plugins` list in `tachyon_config.yaml` is different. It registers the code generator for Tachyon,
+   > and it is not affected by this setting.
 
 1. Restart the analysis server
 
