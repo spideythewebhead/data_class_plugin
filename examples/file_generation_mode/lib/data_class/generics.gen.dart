@@ -45,7 +45,7 @@ abstract interface class _ValueWrapperCopyWithProxy<T> {
   ValueWrapper<T> value(T newValue);
 
   ValueWrapper<T> call({
-    final T? value,
+    T? value,
   });
 }
 
@@ -61,7 +61,7 @@ class _ValueWrapperCopyWithProxyImpl<T> implements _ValueWrapperCopyWithProxy<T>
   @pragma('vm:prefer-inline')
   @override
   ValueWrapper<T> call({
-    final T? value,
+    T? value,
   }) {
     return _$ValueWrapperImpl<T>(
       value: value ?? _value.value,
@@ -71,14 +71,14 @@ class _ValueWrapperCopyWithProxyImpl<T> implements _ValueWrapperCopyWithProxy<T>
 
 sealed class $ValueWrapperCopyWithProxyChain<T, $Result> {
   factory $ValueWrapperCopyWithProxyChain(
-    final ValueWrapper<T> value,
-    final $Result Function(ValueWrapper<T> update) chain,
+    ValueWrapper<T> value,
+    $Result Function(ValueWrapper<T> update) chain,
   ) = _ValueWrapperCopyWithProxyChainImpl<T, $Result>;
 
   $Result value(T newValue);
 
   $Result call({
-    final T? value,
+    T? value,
   });
 }
 
@@ -96,7 +96,7 @@ class _ValueWrapperCopyWithProxyChainImpl<T, $Result>
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final T? value,
+    T? value,
   }) {
     return _chain(
       _$ValueWrapperImpl<T>(
@@ -150,7 +150,7 @@ abstract interface class _UserCopyWithProxy {
   User id(int newValue);
 
   User call({
-    final int? id,
+    int? id,
   });
 }
 
@@ -166,7 +166,7 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   User call({
-    final int? id,
+    int? id,
   }) {
     return _$UserImpl(
       id: id ?? _value.id,
@@ -175,13 +175,13 @@ class _UserCopyWithProxyImpl implements _UserCopyWithProxy {
 }
 
 sealed class $UserCopyWithProxyChain<$Result> {
-  factory $UserCopyWithProxyChain(final User value, final $Result Function(User update) chain) =
+  factory $UserCopyWithProxyChain(User value, $Result Function(User update) chain) =
       _UserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
 
   $Result call({
-    final int? id,
+    int? id,
   });
 }
 
@@ -198,7 +198,7 @@ class _UserCopyWithProxyChainImpl<$Result> implements $UserCopyWithProxyChain<$R
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
+    int? id,
   }) {
     return _chain(
       _$UserImpl(
@@ -255,7 +255,7 @@ abstract interface class _ValueWrapperWithGenericsConstraintsCopyWithProxy<T ext
   ValueWrapperWithGenericsConstraints<T> value(T newValue);
 
   ValueWrapperWithGenericsConstraints<T> call({
-    final T? value,
+    T? value,
   });
 }
 
@@ -272,7 +272,7 @@ class _ValueWrapperWithGenericsConstraintsCopyWithProxyImpl<T extends User>
   @pragma('vm:prefer-inline')
   @override
   ValueWrapperWithGenericsConstraints<T> call({
-    final T? value,
+    T? value,
   }) {
     return _$ValueWrapperWithGenericsConstraintsImpl<T>(
       value: value ?? _value.value,
@@ -282,14 +282,14 @@ class _ValueWrapperWithGenericsConstraintsCopyWithProxyImpl<T extends User>
 
 sealed class $ValueWrapperWithGenericsConstraintsCopyWithProxyChain<T extends User, $Result> {
   factory $ValueWrapperWithGenericsConstraintsCopyWithProxyChain(
-    final ValueWrapperWithGenericsConstraints<T> value,
-    final $Result Function(ValueWrapperWithGenericsConstraints<T> update) chain,
+    ValueWrapperWithGenericsConstraints<T> value,
+    $Result Function(ValueWrapperWithGenericsConstraints<T> update) chain,
   ) = _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl<T, $Result>;
 
   $Result value(T newValue);
 
   $Result call({
-    final T? value,
+    T? value,
   });
 }
 
@@ -307,7 +307,7 @@ class _ValueWrapperWithGenericsConstraintsCopyWithProxyChainImpl<T extends User,
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final T? value,
+    T? value,
   }) {
     return _chain(
       _$ValueWrapperWithGenericsConstraintsImpl<T>(
@@ -363,7 +363,7 @@ abstract interface class _SuperUserCopyWithProxy {
   SuperUser id(int newValue);
 
   SuperUser call({
-    final int? id,
+    int? id,
   });
 }
 
@@ -379,7 +379,7 @@ class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
   @pragma('vm:prefer-inline')
   @override
   SuperUser call({
-    final int? id,
+    int? id,
   }) {
     return _$SuperUserImpl(
       id: id ?? _value.id,
@@ -388,15 +388,13 @@ class _SuperUserCopyWithProxyImpl implements _SuperUserCopyWithProxy {
 }
 
 sealed class $SuperUserCopyWithProxyChain<$Result> {
-  factory $SuperUserCopyWithProxyChain(
-    final SuperUser value,
-    final $Result Function(SuperUser update) chain,
-  ) = _SuperUserCopyWithProxyChainImpl<$Result>;
+  factory $SuperUserCopyWithProxyChain(SuperUser value, $Result Function(SuperUser update) chain) =
+      _SuperUserCopyWithProxyChainImpl<$Result>;
 
   $Result id(int newValue);
 
   $Result call({
-    final int? id,
+    int? id,
   });
 }
 
@@ -413,7 +411,7 @@ class _SuperUserCopyWithProxyChainImpl<$Result> implements $SuperUserCopyWithPro
   @pragma('vm:prefer-inline')
   @override
   $Result call({
-    final int? id,
+    int? id,
   }) {
     return _chain(
       _$SuperUserImpl(
