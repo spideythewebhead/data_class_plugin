@@ -223,6 +223,7 @@ class _$GetUsersResultImpl extends GetUsersResult {
   int get hashCode {
     return Object.hashAll(<Object?>[
       runtimeType,
+      deepHash(users),
     ]);
   }
 
