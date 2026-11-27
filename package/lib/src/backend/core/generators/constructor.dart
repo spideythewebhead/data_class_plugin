@@ -133,7 +133,7 @@ class ConstructorGenerator implements Generator {
             dartType.fullTypeName.length - 1,
           );
           _codeWriter.write(
-            '_${field.name} ?? $notNullableType.unmodifiable(_${field.name}!);',
+            '_${field.name} == null ? null : $notNullableType.unmodifiable(_${field.name});',
           );
         } else {
           _codeWriter.writeln(
