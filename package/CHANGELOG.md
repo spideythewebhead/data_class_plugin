@@ -1,3 +1,10 @@
+## 1.6.2
+
+- Fix inconsistent generated `hashCode` and `==` for collection fields (List / Map / Set) [(issue #439)](https://github.com/spideythewebhead/data_class_plugin/issues/439) - Thanks to [@nikosportolos](https://github.com/nikosportolos)
+- Remove `final` modifier from generated parameters for the latest Dart formatter [(issue #441)](https://github.com/spideythewebhead/data_class_plugin/issues/441) - Thanks to [@nikosportolos](https://github.com/nikosportolos)
+- Document new analyzer plugin registration [(issue #443)](https://github.com/spideythewebhead/data_class_plugin/issues/443) - Thanks to [@nikosportolos](https://github.com/nikosportolos)
+- Fix nullable collections with `unmodifiableCollections` flag generating incorrect code [(issue #446)](https://github.com/spideythewebhead/data_class_plugin/issues/446)
+
 ## 1.6.1
 
 - Fix an issue with missing type arguments when generating nested classes [(issue #425)](https://github.com/spideythewebhead/data_class_plugin/issues/425)
